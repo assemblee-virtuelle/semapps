@@ -1,19 +1,22 @@
 import { ActionSchema } from 'moleculer';
 
-const Schema = {
+const CreateAction = {
   visibility: 'public',
   params: {
-    containerUri: { type: 'string' },
+    path: { type: 'string', optional: true },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
-    options: { type: 'object', optional: true },
-    webId: { type: 'string', optional: true }
+    registration: { type: 'object', optional: true }
   },
   async handler(ctx) {
-    const { containerUri, title, description, options } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    let { path, title, description, registration } = ctx.params;
+
+    const baseUrl = await ctx.call('solid-storage.getBaseUrl');
+
+    const containerUri = await ctx.call('triplestore.named-graph.create', {
+      baseUrl,
+      slug: this.settings.allowSlugs ? path || registration?.path : undefined
+    });
 
     await ctx.call('triplestore.insert', {
       resource: {
@@ -26,8 +29,10 @@ const Schema = {
       webId: 'system'
     });
 
-    ctx.emit('ldp.container.created', { containerUri, options, webId });
+    ctx.emit('ldp.container.created', { containerUri, registration });
+
+    return containerUri;
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default CreateAction;

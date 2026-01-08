@@ -4,20 +4,19 @@ import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, OBJECT_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import matchActivity from '../../../utils/matchActivity.ts';
+import { CollectionRegistration } from '../../../types.ts';
 
 const ReplyService = {
   name: 'activitypub.reply' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    baseUri: null,
-    podProvider: false,
     collectionOptions: {
       path: '/replies',
       attachPredicate: 'https://www.w3.org/ns/activitystreams#replies',
       ordered: false,
       dereferenceItems: true,
       permissions: collectionPermissionsWithAnonRead
-    }
+    } as CollectionRegistration
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   actions: {
@@ -101,9 +100,9 @@ const ReplyService = {
         // We have a match only if there is a inReplyTo predicate to the object
         return { match: match && dereferencedActivity.object.inReplyTo, dereferencedActivity };
       },
-      async onEmit(ctx: any, activity: any, emitterUri: any) {
-        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
-        if (this.isLocalObject(activity.object.inReplyTo, emitterUri)) {
+      async onEmit(ctx: any, activity: any) {
+        // If the actor is replying to their own message, we need to add the reply immediately
+        if (!(await ctx.call('ldp.remote.isRemote', { resourceUri: activity.object.inReplyTo }))) {
           // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.addReply(
             { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
@@ -111,9 +110,8 @@ const ReplyService = {
           );
         }
       },
-      async onReceive(ctx: any, activity: any, recipientUri: any) {
-        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
-        if (this.isLocalObject(activity.object.inReplyTo, recipientUri)) {
+      async onReceive(ctx: any, activity: any) {
+        if (!(await ctx.call('ldp.remote.isRemote', { resourceUri: activity.object.inReplyTo }))) {
           // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.addReply(
             { objectUri: activity.object.inReplyTo, replyUri: activity.object.id },
@@ -137,25 +135,6 @@ const ReplyService = {
       async onReceive(ctx: any, activity: any) {
         // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeFromAllRepliesCollections({ objectUri: activity.object.id }, { parentCtx: ctx });
-      }
-    }
-  },
-  methods: {
-    isLocalObject(uri, actorUri) {
-      if (this.settings.podProvider) {
-        const { origin, pathname } = new URL(actorUri);
-        const aclBase = `${origin}/_acl${pathname}`; // URL of type http://localhost:3000/_acl/alice
-        const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
-        return (
-          uri === actorUri ||
-          uri.startsWith(`${actorUri}/`) ||
-          uri === aclBase ||
-          uri.startsWith(`${aclBase}/`) ||
-          uri === aclGroupBase ||
-          uri.startsWith(`${aclGroupBase}/`)
-        );
-      } else {
-        return uri.startsWith(this.settings.baseUri);
       }
     }
   }

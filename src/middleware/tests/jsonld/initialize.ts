@@ -1,5 +1,5 @@
 import path from 'path';
-import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import ApiGatewayService from 'moleculer-web';
 import { JsonLdService } from '@semapps/jsonld';
 import { OntologiesService } from '@semapps/ontologies';
@@ -27,7 +27,7 @@ export default async (cacher: any, persistRegistry: any) => {
   broker.createService({
     mixins: [JsonLdService],
     settings: {
-      baseUri: CONFIG.HOME_URL,
+      baseUrl: CONFIG.HOME_URL,
       // Fake contexts to avoid validation errors
       cachedContextFiles: [
         {
@@ -43,7 +43,6 @@ export default async (cacher: any, persistRegistry: any) => {
   });
 
   broker.createService({
-    // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
     mixins: [TripleStoreService],
     settings: {
       url: CONFIG.SPARQL_ENDPOINT,

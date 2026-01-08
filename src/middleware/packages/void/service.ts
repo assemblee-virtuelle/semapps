@@ -3,7 +3,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import { void as voidOntology } from '@semapps/ontologies';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
-import { createFragmentURL, arrayOf } from '@semapps/ldp';
+import { createFragmentURL, arrayOf, Registration } from '@semapps/ldp';
 import { parseHeader } from '@semapps/middlewares';
 import { ServiceSchema, Errors } from 'moleculer';
 
@@ -111,7 +111,6 @@ const VoidSchema = {
     getRemote: {
       visibility: 'public',
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
         serverUrl: { type: 'string', optional: false }
       },
       async handler(ctx) {
@@ -193,9 +192,9 @@ const VoidSchema = {
           o: literal(this.settings.baseUrl)
         });
 
-        const services = await ctx.call('$node.services');
+        const services: ServiceSchema[] = await ctx.call('$node.services');
         const hasSparql =
-          services.filter((s: any) => s.name === 'sparqlEndpoint').length > 0
+          services.filter(s => s.name === 'sparqlEndpoint').length > 0
             ? urlJoin(this.settings.baseUrl, 'sparql')
             : undefined;
         if (hasSparql)
@@ -222,7 +221,6 @@ const VoidSchema = {
           addClassPartition(thisServer, p, graph, i);
         }
 
-        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = accept;
 
         // TODO use Etag instead to keep track of changes in VOID
@@ -252,18 +250,15 @@ const VoidSchema = {
   methods: {
     async getContainers(ctx) {
       const { baseUrl } = this.settings;
-      const registeredContainers = await ctx.call('ldp.registry.list');
+      const registrations: Registration[] = await ctx.call('ldp.registry.list');
 
       const res = await Promise.all(
-        Object.values(registeredContainers)
-          // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
-          .filter(c => c.acceptedTypes)
+        registrations
+          .filter(c => c.types)
           .map(async c => {
             const partition = {
-              // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
               'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
-              // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
-              'http://rdfs.org/ns/void#class': arrayOf(c.acceptedTypes)
+              'http://rdfs.org/ns/void#class': arrayOf(c.types)
             };
             // @ts-expect-error TS(18046): 'c' is of type 'unknown'.
             if (c.excludeFromMirror) partition['http://semapps.org/ns/core#doNotMirror'] = true;

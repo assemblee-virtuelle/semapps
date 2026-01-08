@@ -4,12 +4,11 @@ import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-export const api = async function api(this: any, ctx: any) {
+export const api = async function api(ctx: any) {
   if (!ctx.params.memberUri) throw new MoleculerError('needs a memberUri in your PATCH (json)', 400, 'BAD_REQUEST');
-  if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
 
   await ctx.call('webacl.group.addMember', {
-    groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.params.id}` : ctx.params.id,
+    groupSlug: `${ctx.params.username}/${ctx.params.id}`,
     memberUri: ctx.params.memberUri
   });
 
@@ -26,7 +25,6 @@ export const action = {
   },
   async handler(ctx) {
     let { groupSlug, groupUri, memberUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');

@@ -1,16 +1,14 @@
-import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import fs from 'fs';
 import path, { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
-import { pair, petr } from '@semapps/ontologies';
+import { as, pair, petr, semapps, solid, vcard } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
-import { ControlledContainerMixin } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { dropDataset } from '../utils.ts';
+import { listDatasets, dropDataset } from '../utils.ts';
 
-// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Give write permission on all containers to anonymous users
@@ -24,32 +22,31 @@ const permissions = {
 const containers = [
   {
     path: '/resources',
-    permissions
-  },
-  {
-    path: '/resources2',
-    permissions
-  },
-  {
-    path: '/organizations',
+    types: ['pair:Project'],
     permissions
   },
   {
     path: '/places',
+    types: ['pair:Place'],
     permissions
   },
   {
     path: '/themes',
+    types: ['pair:Theme'],
     permissions
   },
   {
     path: '/files',
+    types: ['semapps:File'],
     permissions
   }
 ];
 
-const initialize = async () => {
-  await dropDataset(CONFIG.MAIN_DATASET);
+const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
+  const datasets: string[] = await listDatasets();
+  for (let dataset of datasets) {
+    await dropDataset(dataset);
+  }
 
   const uploadsPath = pathJoin(__dirname, '../uploads');
   if (fs.existsSync(uploadsPath)) {
@@ -67,8 +64,8 @@ const initialize = async () => {
     }
   });
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
     mixins: [CoreService],
     settings: {
       baseUrl: CONFIG.HOME_URL,
@@ -77,17 +74,15 @@ const initialize = async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET,
         secure: false // TODO Remove when we move to Fuseki 5
       },
       containers,
-      ontologies: [pair, petr],
+      ontologies: [as, pair, petr, solid, vcard, semapps],
       activitypub: false,
-      mirror: false,
-      void: false,
       webfinger: false,
-      webid: {
-        path: '/users'
+      webid: false,
+      ldp: {
+        allowSlugs
       }
     }
   });
@@ -101,29 +96,6 @@ const initialize = async () => {
       accountsDataset: CONFIG.SETTINGS_DATASET
     }
   });
-
-  broker.createService({
-    name: 'event' as const,
-    mixins: [ControlledContainerMixin],
-    settings: {
-      acceptedTypes: ['pair:Event'],
-      permissions
-    },
-    actions: {
-      getHeaderLinks: {
-        handler() {
-          return [
-            {
-              uri: 'http://foo.bar',
-              rel: 'http://foo.baz'
-            }
-          ];
-        }
-      }
-    }
-  });
-
-  await broker.start();
 
   return broker;
 };

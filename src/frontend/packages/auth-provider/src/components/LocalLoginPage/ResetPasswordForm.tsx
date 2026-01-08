@@ -32,7 +32,7 @@ const FormContent = ({
     setHandleSubmit(() => async (values: FormValues) => {
       setLoading(true);
       authProvider
-        .resetPassword({ ...values })
+        ?.resetPassword({ ...values })
         .then(() => {
           setLoading(false);
           notify('auth.notification.reset_password_submitted', { type: 'info' });

@@ -1,38 +1,37 @@
-import { SingleResourceContainerMixin } from '@semapps/ldp';
+import { ControlledResourceMixin } from '@semapps/ldp';
 import { pim } from '@semapps/ontologies';
-import { namedNode, triple } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { ServiceSchema } from 'moleculer';
 
 const SolidPreferencesFileSchema = {
   name: 'solid-preferences-file' as const,
-  mixins: [SingleResourceContainerMixin],
+  mixins: [ControlledResourceMixin],
   settings: {
-    acceptedTypes: ['pim:ConfigurationFile'],
+    path: '/preferences-file',
+    types: ['pim:ConfigurationFile'],
     permissions: {},
-    newResourcesPermissions: {},
-    excludeFromMirror: true,
-    activateTombstones: false,
-    podProvider: true
+    typeIndex: 'private'
   },
   dependencies: ['ontologies'],
   async started() {
     await this.broker.call('ontologies.register', pim);
   },
-  hooks: {
-    after: {
-      async post(ctx, res) {
+  events: {
+    'webid.created': {
+      async handler(ctx: any) {
+        const { resourceUri: webId } = ctx.params;
+        const preferencesUri = await this.actions.waitForCreation({}, { parentCtx: ctx });
         await ctx.call('ldp.resource.patch', {
-          resourceUri: ctx.params.webId,
+          resourceUri: webId,
           triplesToAdd: [
-            triple(
-              namedNode(ctx.params.webId),
-              namedNode('http://www.w3.org/ns/pim/space#preferencesFile'),
-              namedNode(res)
+            rdf.quad(
+              rdf.namedNode(webId),
+              rdf.namedNode('http://www.w3.org/ns/pim/space#preferencesFile'),
+              rdf.namedNode(preferencesUri)
             )
           ],
           webId: 'system'
         });
-        return res;
       }
     }
   }

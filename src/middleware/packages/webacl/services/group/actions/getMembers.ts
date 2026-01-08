@@ -4,11 +4,8 @@ import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-export const api = async function api(this: any, ctx: any) {
-  if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
-  return await ctx.call('webacl.group.getMembers', {
-    groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.params.id}` : ctx.params.id
-  });
+export const api = async function api(ctx: any) {
+  return await ctx.call('webacl.group.getMembers', { groupSlug: `${ctx.params.username}/${ctx.params.id}` });
 };
 
 export const action = {
@@ -20,7 +17,6 @@ export const action = {
   },
   async handler(ctx) {
     let { groupSlug, groupUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');

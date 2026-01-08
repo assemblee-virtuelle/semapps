@@ -29,9 +29,8 @@ const { WebhooksService } = require('@semapps/webhooks');
 module.exports = {
   mixins: [WebhooksService],
   settings: {
-    containerUri: "http://localhost:3000/webhooks/",
-    allowedActions: ['myAction'],
-    
+    containerUri: 'http://localhost:3000/webhooks/',
+    allowedActions: ['myAction']
   },
   actions: {
     async myAction(ctx) {
@@ -39,17 +38,16 @@ module.exports = {
       // Handle stuff here...
     }
   }
-}
+};
 ```
 
 ## Settings
 
-| Property         | Type                | Default                                     | Description                                                 |
-|------------------|---------------------|---------------------------------------------|-------------------------------------------------------------|
-| `containerUri`   | `String`            | **required**                                | Container where the webhooks will be stored.                |
-| `allowedActions` | `Array`             | **required**                                | Name of the webhook actions which can be used               |
-| `context`        | `Array` or `Object` | { "@vocab": "http://semapps.org/ns/core#" } | JSON-LD context used when returning the webhook information |
-
+| Property         | Type                | Default                                       | Description                                                 |
+| ---------------- | ------------------- | --------------------------------------------- | ----------------------------------------------------------- |
+| `containerUri`   | `String`            | **required**                                  | Container where the webhooks will be stored.                |
+| `allowedActions` | `Array`             | **required**                                  | Name of the webhook actions which can be used               |
+| `context`        | `Array` or `Object` | `{ "@vocab": "http://semapps.org/ns/core#" }` | JSON-LD context used when returning the webhook information |
 
 ## Use cases
 
@@ -83,7 +81,6 @@ Authorization: Bearer XXX
 ### Posting to a webhook
 
 When you generate a webhook, you will receive an URI in response. You can then post JSON data to this webhook. It will be handled by the action(s) you defined.
-
 
 ### Queuing incoming POSTs
 

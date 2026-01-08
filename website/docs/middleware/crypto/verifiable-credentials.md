@@ -36,7 +36,7 @@ You can sign RDF data with [data integrity proofs](https://www.w3.org/TR/vc-data
 
 There are two actions available:
 
-### `crypto.vc.data-integrity.signObject`
+### `vc.data-integrity.signObject`
 
 Sign an object using a data integrity proof.
 
@@ -55,7 +55,7 @@ Sign an object using a data integrity proof.
 
 `object` - The signed object. The signature is contained in the `proof` entry of the object.
 
-### `crypto.vc.data-integrity.verifyObject`
+### `vc.data-integrity.verifyObject`
 
 Verify an object signed with a data integrity proof.
 
@@ -73,7 +73,7 @@ Verify an object signed with a data integrity proof.
 
 ## Issuing and Verifying Verifiable Credentials
 
-### `crypto.vc.issuer.createVC`
+### `vc.issuer.createVC`
 
 Create a Verifiable Credential.
 
@@ -92,7 +92,7 @@ Create a Verifiable Credential.
 
 `object` - The signed Verifiable Credential.
 
-### `crypto.vc.verifier.verifyVC`
+### `vc.verifier.verifyVC`
 
 Verify a Verifiable Credential.
 
@@ -107,7 +107,7 @@ Verify a Verifiable Credential.
 
 `object` - The verification result. If verification succeeds, it will return `{ verified: true }`. If it fails, it will return `{ verified: false, error: <error> }`.
 
-### `crypto.vc.holder.createPresentation`
+### `vc.holder.createPresentation`
 
 Create a Verifiable Presentation.
 
@@ -129,7 +129,7 @@ Create a Verifiable Presentation.
 
 `object` - The signed Verifiable Presentation.
 
-### `crypto.vc.verifier.verifyPresentation`
+### `vc.verifier.verifyPresentation`
 
 Verify a Verifiable Presentation.
 
@@ -150,7 +150,7 @@ Verify a Verifiable Presentation.
 ## Issuing and Verifying Capabilities
 
 Capabilities are authorizations issued from someone and which authorize the issued holder to perform certain actions.
-In this context, capabilities are based on Verifiable Credentials. Each capability is a signed VC (created with `crypto.vc.issuer.createVC`). You invoke (use) a capability with a Verifiable Presentation (VP).
+In this context, capabilities are based on Verifiable Credentials. Each capability is a signed VC (created with `vc.issuer.createVC`). You invoke (use) a capability with a Verifiable Presentation (VP).
 
 See an [example below](#example-issuing-and-verifying-a-capability-chain).
 
@@ -161,12 +161,12 @@ For chains where the authorization is passed further on, the `credentialSubject.
 
 ### Creating a Capability Presentation
 
-For invoking (using) a capability, you need to create a capability presentation with `crypto.vc.holder.createPresentation`. In the presentation's `verifiableCredential` property, set all verifiable credentials of the capability chain, if more than one is used.
+For invoking (using) a capability, you need to create a capability presentation with `vc.holder.createPresentation`. In the presentation's `verifiableCredential` property, set all verifiable credentials of the capability chain, if more than one is used.
 
 To use the capability representation in a request, you need to serialize it as an unsigned JWT token (`"alg": "none"`). Use the token in the `Authorization` header: `Authorization: Bearer <signed VP serialized as JWT>`.
 For ActivityPub activities, you don't need Authorization headers. Instead, add a `sec:capability` property to the activity that contains the VP.
 
-### Capability Verification with `crypto.vc.verifier.verifyCapabilityPresentation`
+### Capability Verification with `vc.verifier.verifyCapabilityPresentation`
 
 #### Verification Steps and What is Not Checked
 
@@ -285,10 +285,10 @@ _Some properties are omitted._
    ```
 
 4. **Verifying the Capability Presentation**:
-   Use the `crypto.vc.verifier.verifyCapabilityPresentation` action to verify the presentation:
+   Use the `vc.verifier.verifyCapabilityPresentation` action to verify the presentation:
 
    ```javascript
-   const result = await ctx.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+   const result = await ctx.call('vc.verifier.verifyCapabilityPresentation', {
      verifiablePresentation: presentation,
      options: {
        maxChainLength: 2,
@@ -340,7 +340,7 @@ ctx.call('api.addRoute', {
 
 The Challenge Service is used to create and validate challenges. Challenges are used to prevent replay attacks when presenting a VP, by ensuring that each request is unique.
 
-### `crypto.vc.presentation.challenge.create`
+### `vc.challenge.create`
 
 Create a new challenge.
 
@@ -354,7 +354,7 @@ Create a new challenge.
 
 `string` - The created challenge.
 
-### `crypto.vc.presentation.challenge.validate`
+### `vc.challenge.validate`
 
 Validate a challenge.
 

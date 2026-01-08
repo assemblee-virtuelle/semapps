@@ -1,5 +1,6 @@
 import sparqljsModule from 'sparqljs';
 import { Errors } from 'moleculer';
+import { getDatasetFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 const SparqlParser = sparqljsModule.Parser;
@@ -14,6 +15,8 @@ export default async function patch(this: any, ctx: any) {
       throw new MoleculerError(`The Content-Type header should be application/sparql-update`, 400, 'BAD_REQUEST');
 
     const uri = this.getUriFromSlugParts(slugParts, username);
+    ctx.meta.dataset = getDatasetFromUri(uri);
+
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
     let parsedQuery;

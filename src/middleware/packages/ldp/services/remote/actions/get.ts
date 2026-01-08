@@ -1,5 +1,5 @@
 import { ActionSchema } from 'moleculer';
-import { cleanUndefined } from '../../../utils.ts';
+import { cleanUndefined, isWebId } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -23,10 +23,7 @@ const Schema = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     // Without webId, we have no way to know which dataset to look in, so get from network
-    const strategy =
-      this.settings.podProvider && (!webId || webId === 'anon' || webId === 'system')
-        ? 'networkOnly'
-        : ctx.params.strategy;
+    const strategy = !isWebId(webId) ? 'networkOnly' : ctx.params.strategy;
 
     if (!(await this.actions.isRemote({ resourceUri }, { parentCtx: ctx }))) {
       throw new Error(

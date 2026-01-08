@@ -1,29 +1,20 @@
 import fetch from 'node-fetch';
-import { namedNode, literal, triple, variable } from '@rdfjs/data-model';
-import { arrayOf } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
-import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
-import { getSlugFromUri, waitForResource } from '../../../utils.ts';
+import rdf from '@rdfjs/data-model';
+import { getDatasetFromUri } from '@semapps/ldp';
+import { Account } from '@semapps/auth';
+import { ServiceSchema, Context } from 'moleculer';
+import { AS_PREFIX } from '../../../constants.ts';
+import { waitForResource } from '../../../utils.ts';
 
 const ActorService = {
   name: 'activitypub.actor' as const,
   dependencies: ['activitypub.collection', 'ldp', 'signature'],
-  settings: {
-    baseUri: null,
-    selectActorData: null,
-    podProvider: false
-  },
   actions: {
     get: {
       async handler(ctx) {
         const { actorUri, webId } = ctx.params;
         // Check if the actor is remote
-        // If dataset is not in the meta, assume that actor is remote
-        if (
-          !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri })) &&
-          // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-          (!this.settings.podProvider || ctx.meta.dataset)
-        ) {
+        if (!(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri }))) {
           try {
             // Don't return immediately the promise, or we won't be able to catch errors
             const actor = await ctx.call('webid.get', { resourceUri: actorUri, webId });
@@ -55,38 +46,25 @@ const ActorService = {
     appendActorData: {
       async handler(ctx) {
         const { actorUri } = ctx.params;
-        const userData = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
-        const propertiesToAdd = this.settings.selectActorData ? this.settings.selectActorData(userData) : {};
 
-        if (!propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type']) {
-          // Ensure at least one actor type, otherwise ActivityPub-specific properties (inbox, public key...) will not be added
-          const resourceType = arrayOf(userData.type || userData['@type']);
-          const includeActorType = resourceType.some(type => Object.values(ACTOR_TYPES).includes(type));
-          if (!includeActorType) {
-            propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = `${AS_PREFIX}Person`;
-          }
-        }
+        const propertiesToAdd = {
+          'http://www.w3.org/1999/02/22-rdf-syntax-ns#type': `${AS_PREFIX}Person`,
+          'https://www.w3.org/ns/activitystreams#preferredUsername': getDatasetFromUri(actorUri)
+        };
 
-        if (!propertiesToAdd['https://www.w3.org/ns/activitystreams#preferredUsername']) {
-          propertiesToAdd['https://www.w3.org/ns/activitystreams#preferredUsername'] = getSlugFromUri(
-            userData.id || userData['@id']
-          );
-        }
-
-        if (Object.keys(propertiesToAdd).length > 0) {
-          await ctx.call('ldp.resource.patch', {
-            resourceUri: actorUri,
-            triplesToAdd: Object.entries(propertiesToAdd).map(([predicate, subject]) =>
-              triple(
-                namedNode(actorUri),
-                namedNode(predicate),
-                // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-                typeof subject === 'string' && subject.startsWith('http') ? namedNode(subject) : literal(subject)
-              )
-            ),
-            webId: 'system'
-          });
-        }
+        await ctx.call('ldp.resource.patch', {
+          resourceUri: actorUri,
+          triplesToAdd: Object.entries(propertiesToAdd).map(([predicate, subject]) =>
+            rdf.quad(
+              rdf.namedNode(actorUri),
+              rdf.namedNode(predicate),
+              typeof subject === 'string' && subject.startsWith('http')
+                ? rdf.namedNode(subject)
+                : rdf.literal(subject as string)
+            )
+          ),
+          webId: 'system'
+        });
       }
     },
 
@@ -94,7 +72,7 @@ const ActorService = {
       async handler(ctx) {
         const { actorUri, predicate, endpoint } = ctx.params;
 
-        const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
+        const account: Account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
         const dataset = account.username;
 
         await ctx.call('triplestore.update', {
@@ -106,14 +84,14 @@ const ActorService = {
                 insert: [
                   {
                     type: 'graph',
-                    name: namedNode(actorUri),
+                    name: rdf.namedNode(actorUri),
                     triples: [
-                      triple(
-                        namedNode(actorUri),
-                        namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
-                        variable('endpoints')
+                      rdf.quad(
+                        rdf.namedNode(actorUri),
+                        rdf.namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
+                        rdf.variable('endpoints')
                       ),
-                      triple(variable('endpoints'), namedNode(predicate), namedNode(endpoint))
+                      rdf.quad(rdf.variable('endpoints'), rdf.namedNode(predicate), rdf.namedNode(endpoint))
                     ]
                   }
                 ],
@@ -124,12 +102,12 @@ const ActorService = {
                     patterns: [
                       {
                         type: 'graph',
-                        name: namedNode(actorUri),
+                        name: rdf.namedNode(actorUri),
                         triples: [
-                          triple(
-                            namedNode(actorUri),
-                            namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
-                            variable('b0')
+                          rdf.quad(
+                            rdf.namedNode(actorUri),
+                            rdf.namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
+                            rdf.variable('b0')
                           )
                         ]
                       }
@@ -137,7 +115,7 @@ const ActorService = {
                   },
                   {
                     type: 'bind',
-                    variable: variable('endpoints'),
+                    variable: rdf.variable('endpoints'),
                     expression: {
                       type: 'operation',
                       operator: 'if',
@@ -145,9 +123,9 @@ const ActorService = {
                         {
                           type: 'operation',
                           operator: 'bound',
-                          args: [variable('b0')]
+                          args: [rdf.variable('b0')]
                         },
-                        variable('b0'),
+                        rdf.variable('b0'),
                         {
                           type: 'operation',
                           operator: 'BNODE',
@@ -189,37 +167,9 @@ const ActorService = {
       }
     }
   },
-  methods: {
-    isActor(resource) {
-      return arrayOf(resource['@type'] || resource.type).some(type => Object.values(ACTOR_TYPES).includes(type));
-    }
-  },
   events: {
-    'ldp.resource.created': {
-      async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
-        const { resourceUri, newData } = ctx.params;
-        if (this.isActor(newData)) {
-          await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
-          await ctx.call('signature.keypair.generate', { actorUri: resourceUri });
-          await ctx.call('signature.keypair.attachPublicKey', { actorUri: resourceUri });
-        }
-      }
-    },
-
-    'ldp.resource.deleted': {
-      async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
-        const { resourceUri, oldData } = ctx.params;
-        if (this.isActor(oldData)) {
-          await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });
-        }
-      }
-    },
-
-    'auth.registered': {
-      async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
+    'auth.account.created': {
+      async handler(ctx: Context<any>) {
         const { webId } = ctx.params;
         await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       }

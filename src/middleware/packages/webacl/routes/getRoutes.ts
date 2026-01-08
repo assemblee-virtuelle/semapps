@@ -1,6 +1,13 @@
 import path from 'path';
 
-import { parseHeader, parseRawBody, negotiateContentType, negotiateAccept, parseJson } from '@semapps/middlewares';
+import {
+  parseHeader,
+  parseRawBody,
+  negotiateContentType,
+  negotiateAccept,
+  parseJson,
+  saveDatasetMeta
+} from '@semapps/middlewares';
 
 const onError = (req: any, res: any, err: any) => {
   const { type, code, message, data, name } = err;
@@ -10,25 +17,19 @@ const onError = (req: any, res: any, err: any) => {
   res.end(JSON.stringify({ type, code, message, data, name }));
 };
 
-const getRoutes = (basePath: any, podProvider: any) => {
-  const middlewares = [parseHeader, negotiateContentType, negotiateAccept, parseRawBody, parseJson];
+const getRoutes = (basePath: string) => {
+  const middlewares = [parseHeader, negotiateContentType, negotiateAccept, parseRawBody, parseJson, saveDatasetMeta];
 
   return [
     {
-      path: path.join(basePath, '/_acl'),
+      path: path.join(basePath, '/_acl/:username([^/._][^/]+)'),
       name: 'acl',
       authorization: false,
       authentication: true,
-      bodyParsers: {
-        json: false,
-        urlencoded: false,
-        text: {
-          type: ['text/turtle', 'application/ld+json']
-        }
-      },
+      bodyParsers: false,
       aliases: {
-        'PATCH /:slugParts*': [parseHeader, 'webacl.resource.api_addRights'],
-        'PUT /:slugParts*': [parseHeader, 'webacl.resource.api_setRights'],
+        'PATCH /:slugParts*': [...middlewares, 'webacl.resource.api_addRights'],
+        'PUT /:slugParts*': [...middlewares, 'webacl.resource.api_setRights'],
         'GET /:slugParts*': [...middlewares, 'webacl.resource.api_getRights']
       },
       onError
@@ -42,27 +43,23 @@ const getRoutes = (basePath: any, podProvider: any) => {
         'GET /:slugParts*': [...middlewares, 'webacl.resource.api_hasRights'],
         'POST /:slugParts*': [...middlewares, 'webacl.resource.api_hasRights']
       },
-      bodyParsers: {
-        json: false
-      },
+      bodyParsers: false,
       onError
     },
     {
-      path: path.join(basePath, podProvider ? '/_groups/:username([^/._][^/]+)' : '/_groups'),
+      path: path.join(basePath, '/_groups/:username([^/._][^/]+)'),
       name: 'acl-groups',
       authorization: false,
       authentication: true,
       aliases: {
-        'POST /': [parseHeader, 'webacl.group.api_create'],
-        'GET /:id+': ['webacl.group.api_getMembers'],
-        'GET /': ['webacl.group.api_getGroups'],
-        'DELETE /:id+': ['webacl.group.api_delete'],
-        'PATCH /:id+': ['webacl.group.api_addMember'],
-        'PUT /:id+': ['webacl.group.api_removeMember']
+        'POST /': [...middlewares, 'webacl.group.api_create'],
+        'GET /:id+': [...middlewares, 'webacl.group.api_getMembers'],
+        'GET /': [...middlewares, 'webacl.group.api_getGroups'],
+        'DELETE /:id+': [...middlewares, 'webacl.group.api_delete'],
+        'PATCH /:id+': [...middlewares, 'webacl.group.api_addMember'],
+        'PUT /:id+': [...middlewares, 'webacl.group.api_removeMember']
       },
-      bodyParsers: {
-        json: true
-      },
+      bodyParsers: false,
       onError
     }
   ];

@@ -25,12 +25,10 @@ const Schema = {
     containerUri: {
       type: 'string'
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToAdd: {
       type: 'array',
       optional: true
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToRemove: {
       type: 'array',
       optional: true
@@ -42,7 +40,6 @@ const Schema = {
   },
   async handler(ctx) {
     const { containerUri, triplesToAdd, triplesToRemove } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const resourcesAdded = [];
     const resourcesRemoved = [];
@@ -73,13 +70,11 @@ const Schema = {
           // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
           if (e.code === 404 && isMirror(resourceUri, this.settings.baseUrl)) {
             // We need to import the remote resource
-            // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
             this.logger.info(`Importing ${resourceUri}...`);
             try {
               await ctx.call('ldp.remote.store', {
                 resourceUri,
-                keepInSync: true,
-                webId
+                keepInSync: true
               });
 
               // Now if the import went well, we can retry the attach
@@ -117,14 +112,8 @@ const Schema = {
         }
       }
     }
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
-      ctx.emit(
-        'ldp.container.patched',
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-        { containerUri, resourcesAdded, resourcesRemoved, dataset: ctx.meta.dataset },
-        { meta: { webId: null, dataset: null } }
-      );
+      ctx.emit('ldp.container.patched', { containerUri, resourcesAdded, resourcesRemoved, dataset: ctx.meta.dataset });
     }
   }
 } satisfies ActionSchema;

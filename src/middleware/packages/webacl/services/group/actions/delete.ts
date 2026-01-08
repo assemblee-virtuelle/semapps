@@ -2,14 +2,12 @@ import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema, Errors } from 'moleculer';
 import { removeAgentGroupOrAgentFromAuthorizations } from '../../../utils.ts';
+import { WacPermission } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
 
-export const api = async function api(this: any, ctx: any) {
-  if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
-  await ctx.call('webacl.group.delete', {
-    groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.params.id}` : ctx.params.id
-  });
+export const api = async function api(ctx: any) {
+  await ctx.call('webacl.group.delete', { groupSlug: `${ctx.params.username}/${ctx.params.id}` });
 
   ctx.meta.$statusCode = 204;
 };
@@ -23,18 +21,16 @@ export const action = {
   },
   async handler(ctx) {
     let { groupSlug, groupUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
-    // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
     if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
     // TODO: check that the group exists ?
 
     if (webId !== 'system') {
-      const groupRights = await ctx.call('webacl.resource.hasRights', {
+      const groupRights: WacPermission = await ctx.call('webacl.resource.hasRights', {
         resourceUri: groupUri,
         rights: {
           write: true

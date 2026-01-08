@@ -1,7 +1,7 @@
 import { DeleteParams, RaRecord } from 'react-admin';
-import { Configuration } from '../types';
+import { RuntimeConfiguration } from '../types';
 
-const deleteMethod = (config: Configuration) => async (resourceId: string, params: DeleteParams<RaRecord>) => {
+const deleteMethod = (config: RuntimeConfiguration) => async (resourceId: string, params: DeleteParams<RaRecord>) => {
   const { httpClient } = config;
 
   await httpClient(`${params.id}`, {

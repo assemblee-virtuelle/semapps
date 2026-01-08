@@ -3,7 +3,7 @@
 
 // Solves bug with Vite in dev mode. Can be removed when we upgrade to FullCalendar v6
 // See https://github.com/fullcalendar/fullcalendar-vue/issues/152
-import '@fullcalendar/core/vdom';
+import '@fullcalendar/react/dist/vdom';
 
 import { DatePicker, DatePickerProps } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker, TimePickerProps } from '@mui/x-date-pickers/TimePicker';

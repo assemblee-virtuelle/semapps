@@ -1,4 +1,3 @@
-import urlJoin from 'url-join';
 import { ActionSchema } from 'moleculer';
 
 const Schema = {
@@ -10,7 +9,6 @@ const Schema = {
     }
   },
   async handler(ctx) {
-    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
     if (!(await ctx.call('triplestore.dataset.exist', { dataset })))

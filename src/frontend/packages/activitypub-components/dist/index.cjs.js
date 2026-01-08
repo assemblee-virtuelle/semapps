@@ -4,19 +4,24 @@ var $583VT$reactadmin = require("react-admin");
 var $583VT$rainputrichtext = require("ra-input-rich-text");
 var $583VT$tiptapextensionplaceholder = require("@tiptap/extension-placeholder");
 var $583VT$muimaterial = require("@mui/material");
-var $583VT$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $583VT$tssreactmui = require("tss-react/mui");
 var $583VT$muiiconsmaterialSend = require("@mui/icons-material/Send");
 var $583VT$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
 var $583VT$semappsauthprovider = require("@semapps/auth-provider");
-var $583VT$reactquery = require("react-query");
-var $583VT$rdfvalidateshacl = require("rdf-validate-shacl");
+var $583VT$tanstackreactquery = require("@tanstack/react-query");
+var $583VT$jsonld = require("jsonld");
 var $583VT$rdfext = require("rdf-ext");
-var $583VT$rdfjsparserjsonld = require("@rdfjs/parser-jsonld");
-var $583VT$readablewebtonodestream = require("readable-web-to-node-stream");
 var $583VT$rdfjsparsern3 = require("@rdfjs/parser-n3");
+var $583VT$readablestream = require("readable-stream");
+var $583VT$shaclengine = require("shacl-engine");
+var $583VT$activitypodsshapedefinitions = require("@activitypods/shape-definitions");
+var $583VT$readablewebtonodestream = require("readable-web-to-node-stream");
 var $583VT$tiptapcore = require("@tiptap/core");
 var $583VT$tiptapextensionmention = require("@tiptap/extension-mention");
 var $583VT$semappsfieldcomponents = require("@semapps/field-components");
+var $583VT$ldoconnected = require("@ldo/connected");
+var $583VT$ldoconnectedsolid = require("@ldo/connected-solid");
+var $583VT$activitypodsldoshapes = require("@activitypods/ldo-shapes");
 var $583VT$tiptapreact = require("@tiptap/react");
 var $583VT$tippyjs = require("tippy.js");
 
@@ -29,19 +34,20 @@ function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
 
-$parcel$export(module.exports, "CommentsField", () => $2e5504cc4159ca8d$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "CollectionList", () => $505d598a33288aad$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ReferenceCollectionField", () => $b0c94a9bdea99da5$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "CommentsField", () => $484cf98a20a766f7$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "CollectionList", () => $78e7af8b8abfe6a7$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ReferenceCollectionField", () => $63048bed1787ac97$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCollection", () => $5ca5f7e9fc1c3544$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useTypedCollection", () => $c778e69ff9ab90c6$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useInbox", () => $486f741c94cd8f74$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useNodeinfo", () => $59fc2d2cba62bd8e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useOutbox", () => $456aea3814dded7d$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "useWebfinger", () => $5b61553556e35016$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "useMentions", () => $968ea07fb81eda0b$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ACTIVITY_TYPES", () => $ebea823cebb2f44b$export$1ec8e53e7d982d22);
-$parcel$export(module.exports, "ACTOR_TYPES", () => $ebea823cebb2f44b$export$9649665d7ccb0dc2);
-$parcel$export(module.exports, "OBJECT_TYPES", () => $ebea823cebb2f44b$export$c49cfb2681596b20);
-$parcel$export(module.exports, "PUBLIC_URI", () => $ebea823cebb2f44b$export$4d8d554031975581);
+$parcel$export(module.exports, "useWebfinger", () => $10f3abf411a5e9d4$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useMentions", () => $351e26ed1a2af792$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ACTIVITY_TYPES", () => $ca4f6bb216ebdfdd$export$1ec8e53e7d982d22);
+$parcel$export(module.exports, "ACTOR_TYPES", () => $ca4f6bb216ebdfdd$export$9649665d7ccb0dc2);
+$parcel$export(module.exports, "OBJECT_TYPES", () => $ca4f6bb216ebdfdd$export$c49cfb2681596b20);
+$parcel$export(module.exports, "PUBLIC_URI", () => $ca4f6bb216ebdfdd$export$4d8d554031975581);
 // Components
 
 
@@ -56,7 +62,7 @@ $parcel$export(module.exports, "PUBLIC_URI", () => $ebea823cebb2f44b$export$4d8d
 
 
 
-const $ebea823cebb2f44b$export$1ec8e53e7d982d22 = {
+const $ca4f6bb216ebdfdd$export$1ec8e53e7d982d22 = {
     ACCEPT: 'Accept',
     ADD: 'Add',
     ANNOUNCE: 'Announce',
@@ -86,14 +92,14 @@ const $ebea823cebb2f44b$export$1ec8e53e7d982d22 = {
     UPDATE: 'Update',
     VIEW: 'View'
 };
-const $ebea823cebb2f44b$export$9649665d7ccb0dc2 = {
+const $ca4f6bb216ebdfdd$export$9649665d7ccb0dc2 = {
     APPLICATION: 'Application',
     GROUP: 'Group',
     ORGANIZATION: 'Organization',
     PERSON: 'Person',
     SERVICE: 'Service'
 };
-const $ebea823cebb2f44b$export$c49cfb2681596b20 = {
+const $ca4f6bb216ebdfdd$export$c49cfb2681596b20 = {
     ARTICLE: 'Article',
     AUDIO: 'Audio',
     DOCUMENT: 'Document',
@@ -107,7 +113,11 @@ const $ebea823cebb2f44b$export$c49cfb2681596b20 = {
     TOMBSTONE: 'Tombstone',
     VIDEO: 'Video'
 };
-const $ebea823cebb2f44b$export$4d8d554031975581 = 'https://www.w3.org/ns/activitystreams#Public';
+const $ca4f6bb216ebdfdd$export$4d8d554031975581 = 'https://www.w3.org/ns/activitystreams#Public';
+
+
+
+
 
 
 
@@ -138,6 +148,43 @@ const $03510abb28fd3d8a$export$34aed805e991a647 = (iterable, predicate)=>{
         return true;
     });
 };
+const $03510abb28fd3d8a$export$2684df65fa35e98e = async (jsonLdObject)=>{
+    // Convert JSON-LD object to N-Quads string
+    const nquads = await (0, ($parcel$interopDefault($583VT$jsonld))).toRDF(jsonLdObject, {
+        format: 'application/n-quads'
+    });
+    // Parse N-Quads string to RDF/JS quads
+    const parser = new (0, ($parcel$interopDefault($583VT$rdfjsparsern3)))();
+    const quadStream = parser.import((0, $583VT$readablestream.Readable).from([
+        nquads
+    ]));
+    const dataset = await (0, ($parcel$interopDefault($583VT$rdfext))).dataset().import(quadStream);
+    return dataset;
+};
+const $03510abb28fd3d8a$export$7089f01fea2fc5c2 = async (jsonLdObject)=>{
+    // Convert JSON-LD object to N-Quads string
+    const nquads = await (0, ($parcel$interopDefault($583VT$jsonld))).toRDF(jsonLdObject, {
+        format: 'application/n-quads'
+    });
+    // Parse N-Quads string to RDF/JS quads
+    const parser = new (0, ($parcel$interopDefault($583VT$rdfjsparsern3)))();
+    const quadStream = parser.import((0, $583VT$readablestream.Readable).from([
+        nquads
+    ]));
+    // Convert the quad stream to an array of quads
+    const quads = [];
+    quadStream.on('data', (quad)=>{
+        quads.push(quad);
+    });
+    return new Promise((resolve, reject)=>{
+        quadStream.on('end', ()=>{
+            resolve(quads);
+        });
+        quadStream.on('error', (error)=>{
+            reject(error);
+        });
+    });
+};
 
 
 
@@ -145,10 +192,10 @@ const $03510abb28fd3d8a$export$34aed805e991a647 = (iterable, predicate)=>{
 
 
 
-// Cache of SHACL validators
-const $24b34de916fb30a8$var$validatorCache = {};
+
+
 // Helper function to convert a string to a Node.js Readable stream
-const $24b34de916fb30a8$var$stringToStream = (str)=>{
+const $a370eba7b7eca32b$export$7b2e5d6b7377fcaf = (str)=>{
     // Create a TextEncoder to convert string to Uint8Array
     const encoder = new TextEncoder();
     const uint8Array = encoder.encode(str);
@@ -162,81 +209,134 @@ const $24b34de916fb30a8$var$stringToStream = (str)=>{
     // Convert the web ReadableStream to a Node.js Readable stream
     return new (0, $583VT$readablewebtonodestream.ReadableWebToNodeStream)(readableStream);
 };
-// Helper function to parse JSON-LD and convert to RDF-ext quads
-const $24b34de916fb30a8$export$2684df65fa35e98e = async (jsonLdObj, context)=>{
-    try {
-        // Add context to the JSON-LD object if needed
-        const jsonLdWithContext = {
-            ...jsonLdObj,
-            '@context': context
-        };
-        // Convert JSON-LD object to string
-        const jsonString = JSON.stringify(jsonLdWithContext);
-        // Convert string to stream using the helper function
-        const textStream = $24b34de916fb30a8$var$stringToStream(jsonString);
-        // Use the JsonLdParser that outputs rdf-ext compatible quads directly
-        const parser = new (0, ($parcel$interopDefault($583VT$rdfjsparserjsonld)))({
-            factory: (0, ($parcel$interopDefault($583VT$rdfext)))
-        });
-        const quadStream = parser.import(textStream);
-        // Collect quads into a dataset
-        const dataset = (0, ($parcel$interopDefault($583VT$rdfext))).dataset();
-        for await (const quad of quadStream)dataset.add(quad);
-        return dataset;
-    } catch (error) {
-        console.error('Error parsing JSON-LD:', error);
-        throw error;
-    }
-};
-// Helper function to load a SHACL shape and return a validator
-const $24b34de916fb30a8$export$6de257db5bb9fd74 = async (shapeUri)=>{
-    // Check if the validator is already cached
-    if ($24b34de916fb30a8$var$validatorCache[shapeUri]) return $24b34de916fb30a8$var$validatorCache[shapeUri];
-    const response = await fetch(shapeUri, {
-        headers: {
-            Accept: 'text/turtle'
-        }
-    });
-    if (!response.ok) throw new Error(`Failed to load shape: ${response.status} ${response.statusText}`);
-    // Get the Turtle data as text
-    const turtleData = await response.text();
-    // Convert text to stream using the helper function
-    const textStream = $24b34de916fb30a8$var$stringToStream(turtleData);
+const $a370eba7b7eca32b$export$7304a15200aa09e5 = async (turtleData)=>{
+    // Convert Turtle data to a stream
+    const textStream = $a370eba7b7eca32b$export$7b2e5d6b7377fcaf(turtleData);
     // Use ParserN3 which outputs rdf-ext compatible quads directly
     const parser = new (0, ($parcel$interopDefault($583VT$rdfjsparsern3)))({
         factory: (0, ($parcel$interopDefault($583VT$rdfext)))
     });
     const quadStream = parser.import(textStream);
-    // Collect quads into a dataset
-    const shapeDataset = (0, ($parcel$interopDefault($583VT$rdfext))).dataset();
-    for await (const quad of quadStream)shapeDataset.add(quad);
-    // Create and cache the SHACL validator using the dataset
-    $24b34de916fb30a8$var$validatorCache[shapeUri] = new (0, ($parcel$interopDefault($583VT$rdfvalidateshacl)))(shapeDataset, {
-        factory: (0, ($parcel$interopDefault($583VT$rdfext)))
-    });
-    return $24b34de916fb30a8$var$validatorCache[shapeUri];
+    const dataset = await (0, ($parcel$interopDefault($583VT$rdfext))).dataset().import(quadStream);
+    return dataset;
 };
-const $24b34de916fb30a8$export$1558e55ae3912bbb = async (items, shaclValidator, context)=>{
+
+
+const $24b34de916fb30a8$var$activitystreams = (0, $583VT$activitypodsshapedefinitions.jsonld).activitystreams;
+// Cache of SHACL validators
+const $24b34de916fb30a8$var$validatorCache = {};
+/**
+ * Returns a SHACL validator for ActivityStreams shapes.
+ *
+ * This function creates a SHACL validator for ActivityStreams shapes using the
+ * `@activitypods/shape-definitions` package. It caches the validator to avoid
+ * creating it multiple times.
+ *
+ * @returns A Promise that resolves to a SHACL Validator instance.
+ */ const $24b34de916fb30a8$export$8b707c2a07270e94 = async ()=>{
+    // Check if the validator is already cached
+    if ($24b34de916fb30a8$var$validatorCache.activityStreams) return $24b34de916fb30a8$var$validatorCache.activityStreams;
+    try {
+        const shapeDataset = await (0, $a370eba7b7eca32b$export$7304a15200aa09e5)($24b34de916fb30a8$var$activitystreams);
+        // Create and cache the SHACL validator using the dataset
+        $24b34de916fb30a8$var$validatorCache.activityStreams = new (0, $583VT$shaclengine.Validator)(shapeDataset, {
+            factory: (0, ($parcel$interopDefault($583VT$rdfext))),
+            debug: true
+        });
+        return $24b34de916fb30a8$var$validatorCache.activityStreams;
+    } catch (error) {
+        throw new Error(`Failed to create ActivityStreams validator: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+    const shapeDataset = await (0, $a370eba7b7eca32b$export$7304a15200aa09e5)($24b34de916fb30a8$var$activitystreams);
+    // Create and cache the SHACL validator using the dataset
+    $24b34de916fb30a8$var$validatorCache.activityStreams = new (0, $583VT$shaclengine.Validator)(shapeDataset, {
+        factory: (0, ($parcel$interopDefault($583VT$rdfext))),
+        debug: true
+    });
+    return $24b34de916fb30a8$var$validatorCache.activitystreams;
+};
+// Helper function to load a SHACL shape and return a validator
+const $24b34de916fb30a8$export$6de257db5bb9fd74 = async (shapeUri)=>{
+    // Check if the validator is already cached
+    if ($24b34de916fb30a8$var$validatorCache[shapeUri]) return $24b34de916fb30a8$var$validatorCache[shapeUri];
+    try {
+        const response = await fetch(shapeUri, {
+            headers: {
+                Accept: 'text/turtle'
+            }
+        });
+        if (!response.ok) throw new Error(`Failed to load shape: ${response.status} ${response.statusText}`);
+        // Get the Turtle data as text
+        const turtleData = await response.text();
+        const shapeDataset = await (0, $a370eba7b7eca32b$export$7304a15200aa09e5)(turtleData);
+        // Create and cache the SHACL validator using the dataset
+        $24b34de916fb30a8$var$validatorCache[shapeUri] = new (0, $583VT$shaclengine.Validator)(shapeDataset, {
+            factory: (0, ($parcel$interopDefault($583VT$rdfext)))
+        });
+        return $24b34de916fb30a8$var$validatorCache[shapeUri];
+    } catch (error) {
+        throw new Error(`Failed to create SHACL validator for ${shapeUri}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+};
+/**
+ * Validates an array of items against a SHACL shape and returns the validation results.
+ *
+ * @param items The items to validate
+ * @param shaclValidator The SHACL validator to use
+ * @param context The context to use for the items
+ *
+ * @returns An array of objects containing the item and its validation result
+ */ const $24b34de916fb30a8$export$1558e55ae3912bbb = async (items, shaclValidator, context)=>{
     if (!shaclValidator) throw new Error('validateItems: shaclValidator is required');
-    if (!context) throw new Error('validateItems: context is required');
     return Promise.all(items.map(async (item)=>{
         try {
+            if (!item['@context']) item['@context'] = context;
             // Create a dataset from the item's JSON-LD
-            const itemDataset = await $24b34de916fb30a8$export$2684df65fa35e98e(item, context);
+            const itemDataset = await (0, $03510abb28fd3d8a$export$2684df65fa35e98e)(item);
             // Validate against the SHACL shape
-            const report = shaclValidator?.validate(itemDataset);
+            const report = shaclValidator.validate({
+                dataset: itemDataset
+            });
             return {
                 item: item,
-                isValid: report?.conforms
+                isValid: report.conforms
             };
         } catch (error) {
-            console.error(`Error validating item ${item.id}:`, error);
             return {
                 item: item,
-                isValid: false
+                isValid: false,
+                error: error
             };
         }
     }));
+};
+/**
+ * Validates a subject against a set of SHACL shapes and returns the typed item if valid.
+ *
+ * @param subjectUri The subject to validate
+ * @param dataset The dataset containing the subject
+ * @param shapeTypes The shape types to validate against
+ * @param validator The SHACL validator to use
+ *
+ * @returns A typed item if valid, or null if not valid
+ */ const $24b34de916fb30a8$export$c4cb1062f0ffb837 = async (subjectUri, dataset, shapeTypes, validator)=>{
+    const validationReport = await validator.validate(// Terms means the entry point from which should be validated, in our case the current item.
+    {
+        dataset: dataset,
+        terms: [
+            (0, ($parcel$interopDefault($583VT$rdfext))).namedNode(subjectUri)
+        ]
+    }, // Here, terms means the shapes to validate against.
+    {
+        terms: shapeTypes.map((shapeType)=>(0, ($parcel$interopDefault($583VT$rdfext))).namedNode(shapeType.shape))
+    });
+    if (!validationReport.conforms) return null;
+    const { results: results } = validationReport;
+    // Find the shape that matched the item in the report results.
+    const shapeType = shapeTypes.find((st)=>results.find((res)=>res.focusNode === subjectUri && res.shape === st.shape));
+    if (!shapeType) return null;
+    const typedItem = dataset.usingType(shapeType).fromSubject(subjectUri);
+    return typedItem;
 };
 
 
@@ -255,14 +355,17 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
         items
     ]);
     // Dereference all items, if necessary (even if shouldDereference is false, the hook needs to be called).
-    const itemQueries = (0, $583VT$reactquery.useQueries)(!shouldDereference ? $5ca5f7e9fc1c3544$var$emptyArray : items.filter((item)=>typeof item === 'string').map((itemUri)=>({
-            queryKey: [
-                'resource',
-                itemUri
-            ],
-            queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
-            staleTime: Infinity // Activities are immutable, so no need to refetch..
-        })));
+    const itemQueries = (0, $583VT$tanstackreactquery.useQueries)({
+        queries: !shouldDereference ? $5ca5f7e9fc1c3544$var$emptyArray : items.filter((item)=>typeof item === 'string').map((itemUri)=>({
+                queryKey: [
+                    'resource',
+                    itemUri
+                ],
+                queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
+                // TODO: Collections don't have to contain activities only, do they?
+                staleTime: Infinity // Activities are immutable, so no need to refetch..
+            }))
+    });
     if (!shouldDereference) return {
         loadedItems: items,
         isLoading: false,
@@ -281,7 +384,7 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     };
 };
 /**
- * Subscribe a collection. Supports pagination.
+ * Subscribe toa collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */ const $5ca5f7e9fc1c3544$var$useCollection = (predicateOrUrl, options = {})=>{
@@ -290,7 +393,7 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     const [totalItems, setTotalItems] = (0, $583VT$react.useState)(0);
     const [isPaginated, setIsPaginated] = (0, $583VT$react.useState)(false); // true if the collection is paginated
     const [yieldsTotalItems, setYieldsTotalItems] = (0, $583VT$react.useState)(false); // true if the collection server yields totalItems
-    const queryClient = (0, $583VT$reactquery.useQueryClient)();
+    const queryClient = (0, $583VT$tanstackreactquery.useQueryClient)();
     const [hasLiveUpdates, setHasLiveUpdates] = (0, $583VT$react.useState)({
         status: 'connecting'
     });
@@ -299,7 +402,7 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
     // Get collectionUrl from webId predicate or URL.
     const collectionUrl = (0, $583VT$react.useMemo)(()=>{
         if (predicateOrUrl) {
-            if (predicateOrUrl.startsWith('http')) return predicateOrUrl;
+            if (predicateOrUrl.startsWith('http') || predicateOrUrl.startsWith('did:ng:')) return predicateOrUrl;
             if (identity?.webIdData) return identity?.webIdData?.[predicateOrUrl];
         }
         return undefined;
@@ -348,6 +451,8 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
         // Validate the json with the SHACL shape
         if (shaclShapeUri !== '' && json[itemsKey] && json[itemsKey].length > 0) try {
             if (!json['@context']) throw new Error(`No context returned by the server.\nA context is required to expand the collection's items and validate them.`);
+            // TODO: Research: Is this used with the multi-purpose viewer already?
+            // How can multiple shapes be validated? Can we get this typed here?
             const shaclValidator = await (0, $24b34de916fb30a8$export$6de257db5bb9fd74)(shaclShapeUri);
             const validatedResults = await (0, $24b34de916fb30a8$export$1558e55ae3912bbb)((0, $03510abb28fd3d8a$export$e57ff0f701c44363)(json[itemsKey]), shaclValidator, json['@context']);
             // Keep only the valid item in the collection
@@ -366,16 +471,19 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
         shaclShapeUri
     ]);
     // Use infiniteQuery to handle pagination, fetching, etc.
-    const { data: pageData, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $583VT$reactquery.useInfiniteQuery)([
-        'collection',
-        {
-            collectionUrl: collectionUrl,
-            shaclShapeUri: shaclShapeUri
-        }
-    ], fetchCollection, {
+    const { data: pageData, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $583VT$tanstackreactquery.useInfiniteQuery)({
+        queryKey: [
+            'collection',
+            {
+                collectionUrl: collectionUrl,
+                shaclShapeUri: shaclShapeUri
+            }
+        ],
         enabled: !!(collectionUrl && identity?.id),
+        initialPageParam: collectionUrl,
         getNextPageParam: (lastPage)=>lastPage.next,
-        getPreviousPageParam: (firstPage)=>firstPage.prev
+        getPreviousPageParam: (firstPage)=>firstPage.prev,
+        queryFn: fetchCollection
     });
     // Put all items together in a list (and dereference, if required).
     const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $5ca5f7e9fc1c3544$var$useItemsFromPages(pageData?.pages ?? $5ca5f7e9fc1c3544$var$emptyArray, dereferenceItems);
@@ -405,13 +513,14 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
             oldData.pages = pages;
             return oldData;
         });
-        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
-                'collection',
-                {
-                    collectionUrl: collectionUrl
-                }
-            ], {
-                active: true,
+        if (shouldRefetch) setTimeout(async ()=>queryClient.refetchQueries({
+                queryKey: [
+                    'collection',
+                    {
+                        collectionUrl: collectionUrl
+                    }
+                ],
+                type: 'active',
                 exact: true
             }), typeof shouldRefetch === 'number' ? shouldRefetch : 2000);
     }, [
@@ -443,13 +552,14 @@ const $5ca5f7e9fc1c3544$var$useItemsFromPages = (pages, dereferenceItems)=>{
             oldData.pages = pages;
             return oldData;
         });
-        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
-                'collection',
-                {
-                    collectionUrl: collectionUrl
-                }
-            ], {
-                active: true,
+        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries({
+                queryKey: [
+                    'collection',
+                    {
+                        collectionUrl: collectionUrl
+                    }
+                ],
+                type: 'active',
                 exact: true
             }), typeof shouldRefetch === 'number' ? shouldRefetch : 2000);
     }, [
@@ -655,7 +765,7 @@ var $456aea3814dded7d$export$2e2bcd8739ae039 = $456aea3814dded7d$var$useOutbox;
 // Fix a bug in the current version of the mention extension
 // (The { id, label } object is located inside the id property)
 // See https://github.com/ueberdosis/tiptap/pull/1322
-const $9b1343b281972d72$var$CustomMention = (0, ($parcel$interopDefault($583VT$tiptapextensionmention))).extend({
+const $b8eb0286f5686802$var$CustomMention = (0, ($parcel$interopDefault($583VT$tiptapextensionmention))).extend({
     renderHTML ({ node: node, HTMLAttributes: HTMLAttributes }) {
         return [
             'span',
@@ -696,10 +806,10 @@ const $9b1343b281972d72$var$CustomMention = (0, ($parcel$interopDefault($583VT$t
         };
     }
 });
-var $9b1343b281972d72$export$2e2bcd8739ae039 = $9b1343b281972d72$var$CustomMention;
+var $b8eb0286f5686802$export$2e2bcd8739ae039 = $b8eb0286f5686802$var$CustomMention;
 
 
-const $703eba3e46be7ee5$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))((theme)=>({
+const $a2b68b573919c8a3$var$useStyles = (0, $583VT$tssreactmui.makeStyles)()((theme)=>({
         form: {
             marginTop: -12 // Negative margin to keep the form close to the label
         },
@@ -745,12 +855,12 @@ const $703eba3e46be7ee5$var$useStyles = (0, ($parcel$interopDefault($583VT$muist
             marginBottom: 15
         }
     }));
-const $703eba3e46be7ee5$var$EmptyToolbar = ()=>null;
-const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: placeholder, helperText: helperText, mentions: mentions, userResource: userResource, addItem: addItem, removeItem: removeItem })=>{
+const $a2b68b573919c8a3$var$EmptyToolbar = ()=>null;
+const $a2b68b573919c8a3$var$PostCommentForm = ({ context: context, placeholder: placeholder, helperText: helperText, mentions: mentions, userResource: userResource, addItem: addItem, removeItem: removeItem })=>{
     const record = (0, $583VT$reactadmin.useRecordContext)();
     const { data: identity, isLoading: isLoading } = (0, $583VT$reactadmin.useGetIdentity)();
     const userDataModel = (0, $583VT$semappssemanticdataprovider.useDataModel)(userResource);
-    const classes = $703eba3e46be7ee5$var$useStyles();
+    const { classes: classes } = $a2b68b573919c8a3$var$useStyles();
     const notify = (0, $583VT$reactadmin.useNotify)();
     const outbox = (0, $456aea3814dded7d$export$2e2bcd8739ae039)();
     const [expanded, setExpanded] = (0, $583VT$react.useState)(false);
@@ -760,11 +870,14 @@ const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: 
         const mentions = Array.from(document.body.getElementsByClassName('mention'));
         const mentionedUsersUris = [];
         mentions.forEach((node)=>{
+            // @ts-expect-error TS(7015): Element implicitly has an 'any' type because index... Remove this comment to see the full error message
             const userUri = node.attributes['data-mention-id'].value;
+            // @ts-expect-error TS(7015): Element implicitly has an 'any' type because index... Remove this comment to see the full error message
             const userLabel = node.attributes['data-mention-label'].value;
             const link = document.createElement('a');
             link.setAttribute('href', `${new URL(window.location.href).origin}/${userResource}/${encodeURIComponent(userUri)}/show`);
             link.textContent = `@${userLabel}`;
+            // @ts-expect-error TS(2531): Object is possibly 'null'.
             node.parentNode.replaceChild(link, node);
             mentionedUsersUris.push(userUri);
         });
@@ -774,10 +887,10 @@ const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: 
         else {
             const tempId = Date.now();
             const note = {
-                type: (0, $ebea823cebb2f44b$export$c49cfb2681596b20).NOTE,
+                type: (0, $ca4f6bb216ebdfdd$export$c49cfb2681596b20).NOTE,
                 attributedTo: outbox.owner,
                 content: document.body.innerHTML,
-                inReplyTo: record[context],
+                inReplyTo: record?.[context],
                 published: new Date().toISOString()
             };
             try {
@@ -791,7 +904,7 @@ const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: 
                     ...note,
                     to: [
                         ...mentionedUsersUris,
-                        (0, $ebea823cebb2f44b$export$4d8d554031975581)
+                        (0, $ca4f6bb216ebdfdd$export$4d8d554031975581)
                     ]
                 });
                 notify("Commentaire post\xe9 avec succ\xe8s", {
@@ -830,13 +943,15 @@ const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: 
                     onClick: openAuthIfDisconnected,
                     children: [
                         /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$muimaterial.Avatar), {
-                            src: identity?.webIdData?.[userDataModel?.fieldsMapping?.image] || identity?.profileData?.[userDataModel?.fieldsMapping?.image],
+                            src: // @ts-expect-error TS(2339): Property 'image' does not exist on type '{ title: ... Remove this comment to see the full error message
+                            identity?.webIdData?.[userDataModel?.fieldsMapping?.image] || // @ts-expect-error TS(2339): Property 'image' does not exist on type '{ title: ... Remove this comment to see the full error message
+                            identity?.profileData?.[userDataModel?.fieldsMapping?.image],
                             className: classes.avatar
                         }),
                         /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$rainputrichtext.RichTextInput), {
                             source: "comment",
                             label: " ",
-                            toolbar: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)($703eba3e46be7ee5$var$EmptyToolbar, {}),
+                            toolbar: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)($a2b68b573919c8a3$var$EmptyToolbar, {}),
                             fullWidth: true,
                             classes: {
                                 editorContent: classes.editorContent
@@ -847,11 +962,12 @@ const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: 
                                     setExpanded(true);
                                 },
                                 extensions: [
+                                    // @ts-expect-error TS(2461): Type 'Extensions | undefined' is not an array type... Remove this comment to see the full error message
                                     ...(0, $583VT$rainputrichtext.DefaultEditorOptions).extensions,
                                     placeholder ? (0, ($parcel$interopDefault($583VT$tiptapextensionplaceholder))).configure({
                                         placeholder: placeholder
                                     }) : null,
-                                    mentions ? (0, $9b1343b281972d72$export$2e2bcd8739ae039).configure({
+                                    mentions ? (0, $b8eb0286f5686802$export$2e2bcd8739ae039).configure({
                                         HTMLAttributes: {
                                             class: 'mention'
                                         },
@@ -883,7 +999,7 @@ const $703eba3e46be7ee5$var$PostCommentForm = ({ context: context, placeholder: 
         ]
     });
 };
-var $703eba3e46be7ee5$export$2e2bcd8739ae039 = $703eba3e46be7ee5$var$PostCommentForm;
+var $a2b68b573919c8a3$export$2e2bcd8739ae039 = $a2b68b573919c8a3$var$PostCommentForm;
 
 
 
@@ -893,7 +1009,7 @@ var $703eba3e46be7ee5$export$2e2bcd8739ae039 = $703eba3e46be7ee5$var$PostComment
 
 
 
-const $d68cd57b2d06b6d5$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))(()=>({
+const $0120d12473c65b5c$var$useStyles = (0, $583VT$tssreactmui.makeStyles)()(()=>({
         container: {
             paddingLeft: 80,
             marginTop: 8,
@@ -937,13 +1053,13 @@ const $d68cd57b2d06b6d5$var$useStyles = (0, ($parcel$interopDefault($583VT$muist
             marginTop: 5
         }
     }));
-const $d68cd57b2d06b6d5$var$CommentsList = ({ comments: comments, userResource: userResource, loading: loading })=>{
-    const classes = $d68cd57b2d06b6d5$var$useStyles();
+const $0120d12473c65b5c$var$CommentsList = ({ comments: comments, userResource: userResource, loading: loading })=>{
+    const { classes: classes } = $0120d12473c65b5c$var$useStyles();
     const userDataModel = (0, $583VT$semappssemanticdataprovider.useDataModel)(userResource);
     return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$muimaterial.Box), {
         position: "relative",
         children: [
-            comments && comments.sort((a, b)=>new Date(b.published) - new Date(a.published)).map((comment)=>/*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$muimaterial.Box), {
+            comments && comments.sort((a, b)=>new Date(b.published).getTime() - new Date(a.published).getTime()).map((comment)=>/*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$muimaterial.Box), {
                     className: classes.container,
                     children: [
                         /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$muimaterial.Box), {
@@ -971,7 +1087,7 @@ const $d68cd57b2d06b6d5$var$CommentsList = ({ comments: comments, userResource: 
                                             linkType: "show",
                                             children: /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $583VT$reactadmin.TextField), {
                                                 variant: "body2",
-                                                source: userDataModel?.fieldsMapping?.title,
+                                                source: userDataModel?.fieldsMapping?.title || '',
                                                 className: classes.label
                                             })
                                         }),
@@ -1008,17 +1124,19 @@ const $d68cd57b2d06b6d5$var$CommentsList = ({ comments: comments, userResource: 
         ]
     });
 };
-var $d68cd57b2d06b6d5$export$2e2bcd8739ae039 = $d68cd57b2d06b6d5$var$CommentsList;
+var $0120d12473c65b5c$export$2e2bcd8739ae039 = $0120d12473c65b5c$var$CommentsList;
 
 
 
-const $2e5504cc4159ca8d$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
+const $484cf98a20a766f7$var$CommentsField = ({ source: source = 'id', context: context = 'id', helperText: helperText, placeholder: placeholder = "Commencez \xe0 taper votre commentaire...", userResource: userResource, mentions: mentions })=>{
     const record = (0, $583VT$reactadmin.useRecordContext)();
-    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)(record.replies);
+    const { items: comments, isLoading: isLoading, addItem: addItem, removeItem: removeItem } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)(record?.replies, {
+        liveUpdates: true
+    });
     if (!userResource) throw new Error('No userResource defined for CommentsField');
     return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsxs)((0, $583VT$reactjsxruntime.Fragment), {
         children: [
-            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $703eba3e46be7ee5$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $a2b68b573919c8a3$export$2e2bcd8739ae039), {
                 context: context,
                 helperText: helperText,
                 userResource: userResource,
@@ -1027,28 +1145,22 @@ const $2e5504cc4159ca8d$var$CommentsField = ({ source: source, context: context,
                 addItem: addItem,
                 removeItem: removeItem
             }),
-            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $d68cd57b2d06b6d5$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $0120d12473c65b5c$export$2e2bcd8739ae039), {
                 comments: comments,
-                loading: loading,
+                loading: isLoading,
                 userResource: userResource
             })
         ]
     });
 };
-$2e5504cc4159ca8d$var$CommentsField.defaultProps = {
-    label: 'Commentaires',
-    placeholder: "Commencez \xe0 taper votre commentaire...",
-    source: 'id',
-    context: 'id'
-};
-var $2e5504cc4159ca8d$export$2e2bcd8739ae039 = $2e5504cc4159ca8d$var$CommentsField;
+var $484cf98a20a766f7$export$2e2bcd8739ae039 = $484cf98a20a766f7$var$CommentsField;
 
 
 
 
 
 
-const $505d598a33288aad$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
+const $78e7af8b8abfe6a7$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
     if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error('<CollectionList> only accepts a single child');
     const { items: actorsUris } = (0, $5ca5f7e9fc1c3544$export$2e2bcd8739ae039)(collectionUrl);
     const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $583VT$reactadmin.useGetMany)(resource, {
@@ -1068,26 +1180,297 @@ const $505d598a33288aad$var$CollectionList = ({ collectionUrl: collectionUrl, re
         children: children
     });
 };
-var $505d598a33288aad$export$2e2bcd8739ae039 = $505d598a33288aad$var$CollectionList;
+var $78e7af8b8abfe6a7$export$2e2bcd8739ae039 = $78e7af8b8abfe6a7$var$CollectionList;
 
 
 
 
 
 
-const $b0c94a9bdea99da5$var$ReferenceCollectionField = ({ source: source, reference: reference, children: children, ...rest })=>{
+const $63048bed1787ac97$var$ReferenceCollectionField = ({ source: source, reference: reference, children: children, ...rest })=>{
     const record = (0, $583VT$reactadmin.useRecordContext)();
     if ((0, ($parcel$interopDefault($583VT$react))).Children.count(children) !== 1) throw new Error('<ReferenceCollectionField> only accepts a single child');
     if (!record || !record[source]) return null;
-    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $505d598a33288aad$export$2e2bcd8739ae039), {
+    return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)((0, $78e7af8b8abfe6a7$export$2e2bcd8739ae039), {
         resource: reference,
         collectionUrl: record[source],
         ...rest,
         children: children
     });
 };
-var $b0c94a9bdea99da5$export$2e2bcd8739ae039 = $b0c94a9bdea99da5$var$ReferenceCollectionField;
+var $63048bed1787ac97$export$2e2bcd8739ae039 = $63048bed1787ac97$var$ReferenceCollectionField;
 
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Subscribe to a collection. Supports pagination.
+ * @param collectionUri The collection URI or the predicate to get the collection URI from the identity (webId).
+ * @param {UseCollectionOptions & UseTypedCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, pageSize: 10 }` and requires at least one ldo @see {ShapeType}.
+ */ const $c778e69ff9ab90c6$var$useTypedCollection = (collectionUri, options)=>{
+    const { pageSize: pageSize = 10, liveUpdates: subscribeToUpdates = false, shapeTypes: shapeTypes } = options;
+    if (!shapeTypes.length) throw new Error('At least one ShapeType is required to filter the collection by.');
+    // 1. Fetch the collection
+    const collectionQuery = $c778e69ff9ab90c6$var$useInfiniteCollectionQuery(collectionUri);
+    const { totalItems: totalItems, isPaginated: isPaginated } = $c778e69ff9ab90c6$var$useTotalItemsFromPages(collectionQuery.data);
+    // 2. Filter items from the collection pages that match the given shape types.
+    const filteredItems = $c778e69ff9ab90c6$var$useFilteredItemsFromPages(collectionQuery.data, shapeTypes);
+    // 3. Set up notifications for live updates, if enabled.
+    const liveUpdatesStatus = $c778e69ff9ab90c6$var$useSubscribeToUpdates({
+        uri: collectionUri,
+        enabled: subscribeToUpdates,
+        onAddItem: (_item)=>{
+            // Since we don't know where the item was added, we refetch the whole collection ¯\_(ツ)_/¯.
+            collectionQuery.refetch();
+        },
+        onRemoveItem: (uri)=>{
+            $c778e69ff9ab90c6$var$removeItemFromQueryData(uri, collectionQuery);
+        }
+    });
+    // 4. Pagination logic.
+    const [requestedNextItems, setRequestedNextItems] = (0, $583VT$react.useState)(pageSize);
+    const [requestedPrevItems, setRequestedPrevItems] = (0, $583VT$react.useState)(0);
+    // Automatically fetch next page, if more items are requested.
+    (0, $583VT$react.useEffect)(()=>{
+        if (requestedNextItems > filteredItems.length && collectionQuery.hasNextPage && !collectionQuery.isLoading) collectionQuery.fetchNextPage();
+    }, [
+        requestedNextItems,
+        filteredItems.length,
+        collectionQuery.hasNextPage,
+        collectionQuery.isLoading
+    ]);
+    // Automatically fetch previous page, if more items are requested.
+    (0, $583VT$react.useEffect)(()=>{
+        if (requestedPrevItems > filteredItems.length && collectionQuery.hasPreviousPage && !collectionQuery.isLoading) collectionQuery.fetchPreviousPage();
+    }, [
+        requestedPrevItems,
+        filteredItems.length,
+        collectionQuery.hasPreviousPage,
+        collectionQuery.isLoading
+    ]);
+    /** Fetch next n (filtered) items. */ const fetchNext = (0, $583VT$react.useCallback)((noItems = pageSize)=>{
+        setRequestedNextItems(filteredItems.length + noItems);
+    }, [
+        filteredItems.length,
+        pageSize
+    ]);
+    /** Fetch previous n (filtered) items. */ const fetchPrevious = (0, $583VT$react.useCallback)((noItems = pageSize)=>{
+        setRequestedPrevItems(filteredItems.length + noItems);
+    }, [
+        filteredItems.length,
+        pageSize
+    ]);
+    return {
+        // TODO: Do we want to expose all properties from the collection query?
+        ...collectionQuery,
+        items: filteredItems,
+        liveUpdatesStatus: liveUpdatesStatus,
+        fetchNext: fetchNext,
+        fetchPrevious: fetchPrevious,
+        totalItems: totalItems,
+        isPaginated: isPaginated
+    };
+};
+var $c778e69ff9ab90c6$export$2e2bcd8739ae039 = $c778e69ff9ab90c6$var$useTypedCollection;
+const $c778e69ff9ab90c6$var$useSubscribeToUpdates = ({ uri: uri, enabled: enabled = true, onAddItem: onAddItem, onRemoveItem: onRemoveItem })=>{
+    const { fetch: fetchFn } = (0, $583VT$reactadmin.useDataProvider)();
+    const [status, setStatus] = (0, $583VT$react.useState)({
+        status: enabled ? 'connecting' : 'disabled'
+    });
+    (0, $583VT$react.useEffect)(()=>{
+        const webSocketRef = (0, $583VT$react.useRef)(null);
+        // Nothing to do, return empty clean up function.
+        if (!enabled || !uri) return ()=>{};
+        // Create ws that listens to collectionUri changes
+        (0, $583VT$semappssemanticdataprovider.getOrCreateWsChannel)(fetchFn, uri).then((ws)=>{
+            webSocketRef.current = ws; // Keep a ref to the webSocket so that it can be used elsewhere
+            webSocketRef.current.addEventListener('message', (event)=>{
+                // TODO: correct ldo type
+                const data = JSON.parse(event.data);
+                if (data.type === 'Add') onAddItem(data.object);
+                else if (data.type === 'Remove') onRemoveItem(data.object);
+            });
+            webSocketRef.current.addEventListener('error', (event)=>{
+                setStatus({
+                    error: event,
+                    status: 'error'
+                });
+            // TODO: Retry after a while (use react query?).
+            });
+            webSocketRef.current.addEventListener('close', (_event)=>{
+                if (!status.error) setStatus({
+                    status: 'closed'
+                });
+            });
+        }).catch((error)=>{
+            setStatus({
+                status: 'error',
+                error: error
+            });
+        });
+        // Clean up, i.e. close channel.
+        return ()=>{
+            webSocketRef.current?.close();
+        };
+    }, [
+        uri,
+        enabled,
+        onAddItem,
+        onRemoveItem
+    ]);
+    return status;
+};
+const $c778e69ff9ab90c6$var$useInfiniteCollectionQuery = (collectionUri)=>{
+    const { data: identity } = (0, $583VT$reactadmin.useGetIdentity)();
+    const dataProvider = (0, $583VT$reactadmin.useDataProvider)();
+    const { fetch: fetchFn } = dataProvider;
+    const infiniteQueryData = (0, $583VT$tanstackreactquery.useInfiniteQuery)({
+        queryKey: [
+            'collection',
+            {
+                uri: collectionUri
+            }
+        ],
+        queryFn: $c778e69ff9ab90c6$var$getFetchCollectionPage(fetchFn),
+        initialPageParam: collectionUri,
+        enabled: !!(collectionUri && identity?.id),
+        getNextPageParam: (current)=>current.data?.next,
+        getPreviousPageParam: (current)=>current.data?.prev
+    });
+    return infiniteQueryData;
+};
+const $c778e69ff9ab90c6$var$getFetchCollectionPage = (fetchFn)=>async ({ pageParam: pageUri })=>{
+        // Note, page is not necessarily of type OrderedCollectionPage but it is a partial in any case.
+        const jsonPage = await (await fetchFn(pageUri)).json();
+        if (!jsonPage || typeof jsonPage !== 'object') throw new Error(`Could not fetch page ${pageUri}. Response is invalid.`);
+        const itemsKey = 'orderedItems' in jsonPage ? 'orderedItems' : 'items';
+        if ((0, $03510abb28fd3d8a$export$e57ff0f701c44363)(jsonPage[itemsKey]).length === 0) // No items in page.
+        return {
+            itemIds: [],
+            dataset: null,
+            data: null
+        };
+        // Keep track of item ids in this order (in the rdf dataset the order is lost).
+        const itemIds = (0, $03510abb28fd3d8a$export$e57ff0f701c44363)(jsonPage[itemsKey]).map((itemOrId)=>itemOrId?.['@id'] || itemOrId?.id || itemOrId).filter((item)=>item); // Ensure item is not undefined.
+        // Parse the page into a dataset.
+        // TODO: Move to data provider.
+        const dataset = (0, $583VT$ldoconnected.createConnectedLdoDataset)([
+            (0, $583VT$ldoconnectedsolid.solidConnectedPlugin)
+        ]);
+        dataset.setContext('solid', {
+            fetch: fetchFn
+        });
+        dataset.addAll(await (0, $03510abb28fd3d8a$export$7089f01fea2fc5c2)(jsonPage));
+        const resource = dataset.getResource(pageUri);
+        if (resource.type === 'InvalidIdentifierResource') return {
+            itemIds: itemIds,
+            dataset: null,
+            pageUri: pageUri,
+            data: null
+        };
+        const ldoBuilder = dataset.usingType((0, $583VT$activitypodsldoshapes.OrderedCollectionPageShapeType));
+        // Run a link query to ensure that all items are dereferenced (the results are kept in the dataset).
+        await ldoBuilder.startLinkQuery(resource, pageUri, {
+            items: true,
+            orderedItems: true
+        }).run({
+            reload: false
+        });
+        return {
+            dataset: dataset,
+            itemIds: itemIds,
+            pageUri: pageUri,
+            data: ldoBuilder.fromSubject(pageUri)
+        };
+    };
+const $c778e69ff9ab90c6$var$useTotalItemsFromPages = (queryData)=>{
+    if (!queryData?.pages.length) return {
+        isPaginated: undefined,
+        totalItems: undefined
+    };
+    const { pages: pages } = queryData;
+    // Check if collection is paginated. We assume that the collection is paginated if there are pages with first, last, prev or next.
+    const isPaginated = pages.length === 0 ? undefined : !!pages.find((page)=>page.data && ('first' in page.data || 'next' in page.data || 'last' in page.data || 'prev' in page.data));
+    // Approach 1: Get total items info by checking if the page has a totalItems property.
+    const totalItemsByCollectionInfo = pages.find((page)=>'totalItems' in page)?.data?.totalItems;
+    if (totalItemsByCollectionInfo) return {
+        totalItems: totalItemsByCollectionInfo,
+        isPaginated: isPaginated
+    };
+    // Approach 2: If collection is not paginated, we count the number of items in the collection.
+    if (!isPaginated) return {
+        totalItems: pages[0].itemIds.length,
+        isPaginated: isPaginated
+    };
+    // Approach 3: If we have the whole collection loaded, we can count the items.
+    const firstPage = pages.find((page)=>page.data?.first)?.data?.first;
+    const lastPage = pages.find((page)=>page.data?.last)?.data?.last;
+    // We assume that all pages are loaded if the first and last page is available.
+    // In that case, count all pages' items.
+    if (firstPage && lastPage) return {
+        isPaginated: isPaginated,
+        totalItems: pages// Get length of page
+        .map((page)=>page.data?.orderedItems?.size || page.data?.items?.size || 0)// Sum all page length counts.
+        .reduce((prev, current)=>prev + current)
+    };
+    // If no approach succeeded, we return undefined.
+    return {
+        totalItems: undefined,
+        isPaginated: isPaginated
+    };
+};
+const $c778e69ff9ab90c6$var$useFilteredItemsFromPages = (queryData, shapeTypes)=>{
+    const [filteredItems, setFilteredItems] = (0, $583VT$react.useState)([]);
+    const filterItems = (0, $583VT$react.useCallback)(async ()=>{
+        // We need to load the shacl resources and match them to the shape types.
+        const validator = await (0, $24b34de916fb30a8$export$8b707c2a07270e94)();
+        const pages = queryData?.pages;
+        if (!pages || pages.length === 0) {
+            setFilteredItems([]);
+            return;
+        }
+        const validatedItems = await Promise.all(// For every page, ...
+        queryData.pages.map(async (page)=>{
+            const items = await Promise.all(// For every item in the page, ...
+            page.itemIds.map(async (itemId)=>// Validate item against the shape types and return the ldo object of the correct type, if it is valid.
+                page.dataset && (0, $24b34de916fb30a8$export$c4cb1062f0ffb837)(itemId, page.dataset, shapeTypes, validator))).then((results)=>results.filter((item)=>!!item)); // Filter out null items.
+            return items;
+        })).then((results)=>results.flat());
+        // TODO: Order items by ids.
+        setFilteredItems(validatedItems);
+    // TODO: Cache filtered items by page, so that we don't have to re-filter them every time?
+    }, [
+        queryData?.pages,
+        shapeTypes
+    ]);
+    (0, $583VT$react.useEffect)(()=>{
+        filterItems();
+    }, [
+        filterItems
+    ]);
+    return filteredItems;
+};
+/** A somewhat hacky way to remove an item from the useInfiniteCollectionQuery. */ const $c778e69ff9ab90c6$var$removeItemFromQueryData = (itemUri, collectionQuery)=>{
+    // Manipulate data about total items. Sorry, a bit hacky...
+    collectionQuery.data?.pages.forEach((page)=>{
+        if (!page.dataset) return;
+        page.dataset.deleteMatches((0, ($parcel$interopDefault($583VT$rdfext))).namedNode(itemUri));
+        // There might be a totalItems property in the page, so we need to update it.
+        if (page.data.totalItems && Number.isInteger(page.data.totalItems)) // eslint-disable-next-line no-param-reassign
+        page.data.totalItems -= 1;
+    });
+}; // Open Question:
+ // - Use one dataset? It has the benefit of only having to define a single solid connected dataset and makes ng switching easier -> no need to create a connected dataset.
+ // - On the other hand (the only downside I can think of rn): Either you have to remove expired items from the dataset or you don't care about old data that is not used by react admin anymore. At a refetch all old data would have to be removed though.
 
 
 
@@ -1151,7 +1534,7 @@ var $59fc2d2cba62bd8e$export$2e2bcd8739ae039 = $59fc2d2cba62bd8e$var$useNodeinfo
 
 
 
-const $5b61553556e35016$var$useWebfinger = ()=>{
+const $10f3abf411a5e9d4$var$useWebfinger = ()=>{
     // Post an activity to the logged user's outbox and return its URI
     const fetch = (0, $583VT$react.useCallback)(async (id)=>{
         // eslint-disable-next-line
@@ -1172,7 +1555,7 @@ const $5b61553556e35016$var$useWebfinger = ()=>{
         fetch: fetch
     };
 };
-var $5b61553556e35016$export$2e2bcd8739ae039 = $5b61553556e35016$var$useWebfinger;
+var $10f3abf411a5e9d4$export$2e2bcd8739ae039 = $10f3abf411a5e9d4$var$useWebfinger;
 
 
 
@@ -1183,7 +1566,7 @@ var $5b61553556e35016$export$2e2bcd8739ae039 = $5b61553556e35016$var$useWebfinge
 
 
 
-const $27d3788851661769$var$useStyles = (0, ($parcel$interopDefault($583VT$muistylesmakeStyles)))((theme)=>({
+const $d217d582899c7580$var$useStyles = (0, $583VT$tssreactmui.makeStyles)()((theme)=>({
         items: {
             background: '#fff',
             borderRadius: '0.5rem',
@@ -1208,24 +1591,29 @@ const $27d3788851661769$var$useStyles = (0, ($parcel$interopDefault($583VT$muist
             }
         }
     }));
-var $27d3788851661769$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $583VT$react.forwardRef)((props, ref)=>{
+var $d217d582899c7580$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $583VT$react.forwardRef)((props, ref)=>{
     const [selectedIndex, setSelectedIndex] = (0, $583VT$react.useState)(0);
-    const classes = $27d3788851661769$var$useStyles();
+    const { classes: classes } = $d217d582899c7580$var$useStyles();
     const selectItem = (index)=>{
+        // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
         const item = props.items[index];
-        if (item) props.command({
+        if (item) // @ts-expect-error TS(2339): Property 'command' does not exist on type '{}'.
+        props.command({
             id: item
         });
     };
     const upHandler = ()=>{
+        // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
         setSelectedIndex((selectedIndex + props.items.length - 1) % props.items.length);
     };
     const downHandler = ()=>{
+        // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
         setSelectedIndex((selectedIndex + 1) % props.items.length);
     };
     const enterHandler = ()=>{
         selectItem(selectedIndex);
     };
+    // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
     (0, $583VT$react.useEffect)(()=>setSelectedIndex(0), [
         props.items
     ]);
@@ -1248,7 +1636,8 @@ var $27d3788851661769$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $583VT$react.fo
         }));
     return /*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)("div", {
         className: classes.items,
-        children: props.items.length ? props.items.map((item, index)=>/*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)("button", {
+        children: props.items.length ? // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
+        props.items.map((item, index)=>/*#__PURE__*/ (0, $583VT$reactjsxruntime.jsx)("button", {
                 className: classes.item + (index === selectedIndex ? ' selected' : ''),
                 onClick: ()=>selectItem(index),
                 children: item.label
@@ -1260,12 +1649,12 @@ var $27d3788851661769$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $583VT$react.fo
 });
 
 
-const $7b7f4b18327176f8$var$renderMentions = ()=>{
+const $05d587317cba4616$var$renderMentions = ()=>{
     let component;
     let popup;
     return {
         onStart: (props)=>{
-            component = new (0, $583VT$tiptapreact.ReactRenderer)((0, $27d3788851661769$export$2e2bcd8739ae039), {
+            component = new (0, $583VT$tiptapreact.ReactRenderer)((0, $d217d582899c7580$export$2e2bcd8739ae039), {
                 props: props,
                 editor: props.editor
             });
@@ -1298,10 +1687,10 @@ const $7b7f4b18327176f8$var$renderMentions = ()=>{
         }
     };
 };
-var $7b7f4b18327176f8$export$2e2bcd8739ae039 = $7b7f4b18327176f8$var$renderMentions;
+var $05d587317cba4616$export$2e2bcd8739ae039 = $05d587317cba4616$var$renderMentions;
 
 
-const $968ea07fb81eda0b$var$useMentions = (userResource)=>{
+const $351e26ed1a2af792$var$useMentions = (userResource)=>{
     const userDataModel = (0, $583VT$semappssemanticdataprovider.useDataModel)(userResource);
     const { data: data } = (0, $583VT$reactadmin.useGetList)(userResource, {
         filter: {
@@ -1316,7 +1705,7 @@ const $968ea07fb81eda0b$var$useMentions = (userResource)=>{
     const availableMentions = (0, $583VT$react.useMemo)(()=>{
         if (data) return data.map((item)=>({
                 id: item.id,
-                label: item[userDataModel?.fieldsMapping?.title]
+                label: item[userDataModel?.fieldsMapping?.title || '']
             }));
     }, [
         data
@@ -1330,10 +1719,10 @@ const $968ea07fb81eda0b$var$useMentions = (userResource)=>{
     ]);
     return {
         items: items,
-        render: (0, $7b7f4b18327176f8$export$2e2bcd8739ae039)
+        render: (0, $05d587317cba4616$export$2e2bcd8739ae039)
     };
 };
-var $968ea07fb81eda0b$export$2e2bcd8739ae039 = $968ea07fb81eda0b$var$useMentions;
+var $351e26ed1a2af792$export$2e2bcd8739ae039 = $351e26ed1a2af792$var$useMentions;
 
 
 

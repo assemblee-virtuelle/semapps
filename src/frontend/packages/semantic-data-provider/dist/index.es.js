@@ -1,6 +1,8 @@
+import {createConnectedLdoDataset as $fj9kP$createConnectedLdoDataset} from "@ldo/connected";
+import {solidConnectedPlugin as $fj9kP$solidConnectedPlugin} from "@ldo/connected-solid";
 import $fj9kP$speakingurl from "speakingurl";
 import $fj9kP$jsonld from "jsonld";
-import $fj9kP$rdfjsdatamodel, {triple as $fj9kP$triple, variable as $fj9kP$variable, namedNode as $fj9kP$namedNode} from "@rdfjs/data-model";
+import $fj9kP$rdfjsdatamodel from "@rdfjs/data-model";
 import {Generator as $fj9kP$Generator} from "sparqljs";
 import $fj9kP$cryptojsmd5 from "crypto-js/md5";
 import {fetchUtils as $fj9kP$fetchUtils, useDataProvider as $fj9kP$useDataProvider, DataProviderContext as $fj9kP$DataProviderContext, useRecordContext as $fj9kP$useRecordContext, useGetList as $fj9kP$useGetList, ArrayInput as $fj9kP$ArrayInput, SimpleFormIterator as $fj9kP$SimpleFormIterator, TextInput as $fj9kP$TextInput} from "react-admin";
@@ -10,14 +12,13 @@ import $fj9kP$httplinkheader from "http-link-header";
 import {capitalCase as $fj9kP$capitalCase} from "change-case";
 import $fj9kP$react, {useState as $fj9kP$useState, useEffect as $fj9kP$useEffect, useMemo as $fj9kP$useMemo, useCallback as $fj9kP$useCallback, useContext as $fj9kP$useContext} from "react";
 import {jsx as $fj9kP$jsx, Fragment as $fj9kP$Fragment, jsxs as $fj9kP$jsxs} from "react/jsx-runtime";
-import $fj9kP$muistylesmakeStyles from "@mui/styles/makeStyles";
-
-var $11242e90250f263e$exports = {};
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */ 
+import {makeStyles as $fj9kP$makeStyles} from "tss-react/mui";
 
 
 
-const $336b7edf722fe53e$var$fetchResource = async (resourceUri, config)=>{
+
+
+const $eadae1e342076a7b$var$fetchResource = async (resourceUri, config)=>{
     const { httpClient: httpClient, jsonContext: jsonContext } = config;
     let { json: data } = await httpClient(resourceUri);
     if (!data) throw new Error(`Not a valid JSON: ${resourceUri}`);
@@ -27,14 +28,14 @@ const $336b7edf722fe53e$var$fetchResource = async (resourceUri, config)=>{
     if (data['@context'] !== jsonContext) data = await (0, $fj9kP$jsonld).compact(data, jsonContext);
     return data;
 };
-var $336b7edf722fe53e$export$2e2bcd8739ae039 = $336b7edf722fe53e$var$fetchResource;
+var $eadae1e342076a7b$export$2e2bcd8739ae039 = $eadae1e342076a7b$var$fetchResource;
 
 
-const $ed447224dd38ce82$var$getOneMethod = (config)=>async (resourceId, params)=>{
+const $4861cda99f97e87d$var$getOneMethod = (config)=>async (resourceId, params)=>{
         const { resources: resources } = config;
         const dataModel = resources[resourceId];
         if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
-        const data = await (0, $336b7edf722fe53e$export$2e2bcd8739ae039)(params.id, config);
+        const data = await (0, $eadae1e342076a7b$export$2e2bcd8739ae039)(params.id, config);
         // Transform single value into array if forceArray is set
         if (dataModel.list?.forceArray) {
             for (const forceArrayItem of dataModel.list?.forceArray || [])if (data[forceArrayItem] && !Array.isArray(data[forceArrayItem])) data[forceArrayItem] = [
@@ -63,7 +64,7 @@ const $ed447224dd38ce82$var$getOneMethod = (config)=>async (resourceId, params)=
             data: data
         };
     };
-var $ed447224dd38ce82$export$2e2bcd8739ae039 = $ed447224dd38ce82$var$getOneMethod;
+var $4861cda99f97e87d$export$2e2bcd8739ae039 = $4861cda99f97e87d$var$getOneMethod;
 
 
 const $c35ffbda15247c32$var$getUploadsContainerUri = (config, serverKey)=>{
@@ -114,22 +115,22 @@ var $b17c43e3301545ca$export$2e2bcd8739ae039 = {
 };
 
 
-const $8326b88c1a913ca9$var$getServerKeyFromType = (type, dataServers)=>{
+const $aed10b8332b5d58a$var$getServerKeyFromType = (type, dataServers)=>{
     return dataServers && Object.keys(dataServers).find((key)=>{
         return dataServers[key][type];
     });
 };
-var $8326b88c1a913ca9$export$2e2bcd8739ae039 = $8326b88c1a913ca9$var$getServerKeyFromType;
+var $aed10b8332b5d58a$export$2e2bcd8739ae039 = $aed10b8332b5d58a$var$getServerKeyFromType;
 
 
 const $99cc2e4a2a3c100b$var$parseServerKey = (serverKey, dataServers)=>{
     switch(serverKey){
         case '@default':
-            return (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('default', dataServers);
+            return (0, $aed10b8332b5d58a$export$2e2bcd8739ae039)('default', dataServers);
         case '@pod':
-            return (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('pod', dataServers);
+            return (0, $aed10b8332b5d58a$export$2e2bcd8739ae039)('pod', dataServers);
         case '@authServer':
-            return (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('authServer', dataServers);
+            return (0, $aed10b8332b5d58a$export$2e2bcd8739ae039)('authServer', dataServers);
         default:
             return serverKey;
     }
@@ -143,7 +144,7 @@ const $99cc2e4a2a3c100b$var$parseServerKeys = (serverKeys, dataServers)=>{
     } else if (typeof serverKeys === 'string') {
         if (serverKeys === '@all') return Object.keys(dataServers);
         else if (serverKeys === '@remote') {
-            const defaultServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('default', dataServers);
+            const defaultServerKey = (0, $aed10b8332b5d58a$export$2e2bcd8739ae039)('default', dataServers);
             return Object.keys(dataServers).filter((serverKey)=>serverKey !== defaultServerKey);
         } else return [
             $99cc2e4a2a3c100b$var$parseServerKey(serverKeys, dataServers)
@@ -180,7 +181,7 @@ const $7c772a9c0c25a69d$var$findContainersWithURIs = (containersUris, dataServer
 var $7c772a9c0c25a69d$export$2e2bcd8739ae039 = $7c772a9c0c25a69d$var$findContainersWithURIs;
 
 
-const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=>{
+const $d12d4cfb47175317$var$createMethod = (config)=>async (resourceId, params)=>{
         const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext } = config;
         const dataModel = resources[resourceId];
         if (!dataModel) Error(`Resource ${resourceId} is not mapped in resources file`);
@@ -223,7 +224,7 @@ const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=
             });
             // Retrieve newly-created resource
             const resourceUri = responseHeaders.get('Location');
-            return await (0, $ed447224dd38ce82$export$2e2bcd8739ae039)(config)(resourceId, {
+            return await (0, $4861cda99f97e87d$export$2e2bcd8739ae039)(config)(resourceId, {
                 id: resourceUri
             });
         }
@@ -238,12 +239,12 @@ const $5a7a2f7583392866$var$createMethod = (config)=>async (resourceId, params)=
       `
             });
             // Create must return the new data, so get them from the remote URI
-            return await (0, $ed447224dd38ce82$export$2e2bcd8739ae039)(config)(resourceId, {
+            return await (0, $4861cda99f97e87d$export$2e2bcd8739ae039)(config)(resourceId, {
                 id: params.id
             });
         }
     };
-var $5a7a2f7583392866$export$2e2bcd8739ae039 = $5a7a2f7583392866$var$createMethod;
+var $d12d4cfb47175317$export$2e2bcd8739ae039 = $d12d4cfb47175317$var$createMethod;
 
 
 const $9510970b8e7eb9e2$var$deleteMethod = (config)=>async (resourceId, params)=>{
@@ -260,7 +261,7 @@ const $9510970b8e7eb9e2$var$deleteMethod = (config)=>async (resourceId, params)=
 var $9510970b8e7eb9e2$export$2e2bcd8739ae039 = $9510970b8e7eb9e2$var$deleteMethod;
 
 
-const $298dd1ae21173ea0$var$deleteManyMethod = (config)=>async (resourceId, params)=>{
+const $9b978ac85d859b57$var$deleteManyMethod = (config)=>async (resourceId, params)=>{
         const { httpClient: httpClient } = config;
         const ids = [];
         for (const id of params.ids)try {
@@ -275,19 +276,19 @@ const $298dd1ae21173ea0$var$deleteManyMethod = (config)=>async (resourceId, para
             data: ids
         };
     };
-var $298dd1ae21173ea0$export$2e2bcd8739ae039 = $298dd1ae21173ea0$var$deleteManyMethod;
+var $9b978ac85d859b57$export$2e2bcd8739ae039 = $9b978ac85d859b57$var$deleteManyMethod;
 
 
-const $7dd5bf9323d2d9c1$var$getDataServers = (config)=>()=>{
+const $294fdd580f2e7246$var$getDataServers = (config)=>()=>{
         return config.dataServers;
     };
-var $7dd5bf9323d2d9c1$export$2e2bcd8739ae039 = $7dd5bf9323d2d9c1$var$getDataServers;
+var $294fdd580f2e7246$export$2e2bcd8739ae039 = $294fdd580f2e7246$var$getDataServers;
 
 
-const $54a3fa40eed06111$var$getDataModels = (config)=>()=>{
+const $52333268224773ef$var$getDataModels = (config)=>()=>{
         return config.resources;
     };
-var $54a3fa40eed06111$export$2e2bcd8739ae039 = $54a3fa40eed06111$var$getDataModels;
+var $52333268224773ef$export$2e2bcd8739ae039 = $52333268224773ef$var$getDataModels;
 
 
 
@@ -312,7 +313,7 @@ const $c83d324c3b433284$var$fetchSelectedResources = async (containers, excluded
     let selectedResourcesUris = containers.filter((c)=>c.selectedResources).map((c)=>c.selectedResources).flat();
     // Filter out resources which are already included in the SPARQL query results
     selectedResourcesUris = selectedResourcesUris.filter((uri)=>!excludedResourcesUris.includes(uri));
-    const selectedResources = await Promise.all(selectedResourcesUris.map((resourceUri)=>(0, $336b7edf722fe53e$export$2e2bcd8739ae039)(resourceUri, config)));
+    const selectedResources = await Promise.all(selectedResourcesUris.map((resourceUri)=>(0, $eadae1e342076a7b$export$2e2bcd8739ae039)(resourceUri, config)));
     return selectedResources;
 };
 var $c83d324c3b433284$export$2e2bcd8739ae039 = $c83d324c3b433284$var$fetchSelectedResources;
@@ -404,7 +405,10 @@ const $aba124ea15ea8bc6$var$fetchContainers = async (containers, params, config)
     });
     // Sorting
     if (params.sort) resources = resources.sort((a, b)=>{
-        if (params.sort.order === 'ASC') return (a[params.sort.field] ?? '').localeCompare(b[params.sort.field] ?? '');
+        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+        if (params.sort.order === 'ASC') // @ts-expect-error TS(2532): Object is possibly 'undefined'.
+        return (a[params.sort.field] ?? '').localeCompare(b[params.sort.field] ?? '');
+        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         return (b[params.sort.field] ?? '').localeCompare(a[params.sort.field] ?? '');
     });
     // Pagination
@@ -419,7 +423,7 @@ var $aba124ea15ea8bc6$export$2e2bcd8739ae039 = $aba124ea15ea8bc6$var$fetchContai
 
 
 
-const $3007d5479dd82d51$var$getEmbedFrame = (blankNodes)=>{
+const $30358023049c31e9$var$getEmbedFrame = (blankNodes)=>{
     let embedFrame = {};
     let predicates;
     if (blankNodes) {
@@ -430,7 +434,8 @@ const $3007d5479dd82d51$var$getEmbedFrame = (blankNodes)=>{
             ];
             embedFrame = {
                 ...embedFrame,
-                ...predicates.reduce((accumulator, predicate)=>({
+                ...predicates.reduce(// @ts-expect-error TS(7006): Parameter 'accumulator' implicitly has an 'any' ty... Remove this comment to see the full error message
+                (accumulator, predicate)=>({
                         [predicate]: {
                             '@embed': '@last',
                             ...accumulator
@@ -441,7 +446,7 @@ const $3007d5479dd82d51$var$getEmbedFrame = (blankNodes)=>{
         return embedFrame;
     }
 };
-var $3007d5479dd82d51$export$2e2bcd8739ae039 = $3007d5479dd82d51$var$getEmbedFrame;
+var $30358023049c31e9$export$2e2bcd8739ae039 = $30358023049c31e9$var$getEmbedFrame;
 
 
 
@@ -462,22 +467,22 @@ const $4872a1c30c1fc60e$var$getUriFromPrefix = (item, ontologies)=>{
 var $4872a1c30c1fc60e$export$2e2bcd8739ae039 = $4872a1c30c1fc60e$var$getUriFromPrefix;
 
 
-const $47d734d7812e6861$var$defaultToArray = (value)=>!value ? [] : Array.isArray(value) ? value : [
+const $4e30f9af2d448bb4$var$defaultToArray = (value)=>!value ? [] : Array.isArray(value) ? value : [
         value
     ];
 // We need to always include the type or React-Admin will not work properly
-const $47d734d7812e6861$var$typeQuery = (0, $fj9kP$triple)((0, $fj9kP$variable)('s1'), (0, $fj9kP$namedNode)('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), (0, $fj9kP$variable)('type'));
-const $47d734d7812e6861$var$buildBaseQuery = (predicates, ontologies)=>{
+const $4e30f9af2d448bb4$var$typeQuery = (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('s1'), (0, $fj9kP$rdfjsdatamodel).namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), (0, $fj9kP$rdfjsdatamodel).variable('type'));
+const $4e30f9af2d448bb4$var$buildBaseQuery = (predicates, ontologies)=>{
     let baseTriples;
     if (predicates) {
-        baseTriples = $47d734d7812e6861$var$defaultToArray(predicates).map((predicate, i)=>(0, $fj9kP$triple)((0, $fj9kP$variable)('s1'), (0, $fj9kP$namedNode)((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`o${i + 1}`)));
+        baseTriples = $4e30f9af2d448bb4$var$defaultToArray(predicates).map((predicate, i)=>(0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('s1'), (0, $fj9kP$rdfjsdatamodel).namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$rdfjsdatamodel).variable(`o${i + 1}`)));
         return {
             construct: [
-                $47d734d7812e6861$var$typeQuery,
+                $4e30f9af2d448bb4$var$typeQuery,
                 ...baseTriples
             ],
             where: [
-                $47d734d7812e6861$var$typeQuery,
+                $4e30f9af2d448bb4$var$typeQuery,
                 ...baseTriples.map((triple)=>({
                         type: 'optional',
                         patterns: [
@@ -488,21 +493,22 @@ const $47d734d7812e6861$var$buildBaseQuery = (predicates, ontologies)=>{
         };
     }
     baseTriples = [
-        (0, $fj9kP$triple)((0, $fj9kP$variable)('s1'), (0, $fj9kP$variable)('p1'), (0, $fj9kP$variable)('o1'))
+        (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('s1'), (0, $fj9kP$rdfjsdatamodel).variable('p1'), (0, $fj9kP$rdfjsdatamodel).variable('o1'))
     ];
     return {
         construct: baseTriples,
         where: baseTriples
     };
 };
-var $47d734d7812e6861$export$2e2bcd8739ae039 = $47d734d7812e6861$var$buildBaseQuery;
+var $4e30f9af2d448bb4$export$2e2bcd8739ae039 = $4e30f9af2d448bb4$var$buildBaseQuery;
 
 
+// @ts-expect-error TS(7016): Could not find a declaration file for module 'cryp... Remove this comment to see the full error message
 
 
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
-const $865f630cc944e818$var$extractNodes = (blankNodes)=>{
+const $8ad7b5ebbca2bb3e$var$extractNodes = (blankNodes)=>{
     const nodes = [];
     if (blankNodes) {
         for (const predicate of blankNodes)if (predicate.includes('/')) {
@@ -512,10 +518,10 @@ const $865f630cc944e818$var$extractNodes = (blankNodes)=>{
     }
     return nodes;
 };
-const $865f630cc944e818$var$generateSparqlVarName = (node)=>(0, $fj9kP$cryptojsmd5)(node);
-const $865f630cc944e818$var$getParentNode = (node)=>node.includes('/') && node.split('/')[0];
-const $865f630cc944e818$var$getPredicate = (node)=>node.includes('/') ? node.split('/')[1] : node;
-const $865f630cc944e818$var$buildUnionQuery = (queries)=>queries.map((q)=>{
+const $8ad7b5ebbca2bb3e$var$generateSparqlVarName = (node)=>(0, $fj9kP$cryptojsmd5)(node);
+const $8ad7b5ebbca2bb3e$var$getParentNode = (node)=>node.includes('/') && node.split('/')[0];
+const $8ad7b5ebbca2bb3e$var$getPredicate = (node)=>node.includes('/') ? node.split('/')[1] : node;
+const $8ad7b5ebbca2bb3e$var$buildUnionQuery = (queries)=>queries.map((q)=>{
         let triples = q.query;
         const firstTriple = queries.find((q2)=>q.parentNode === q2.node);
         if (firstTriple !== undefined) triples = triples.concat(firstTriple.query[0]);
@@ -524,18 +530,18 @@ const $865f630cc944e818$var$buildUnionQuery = (queries)=>queries.map((q)=>{
             triples: triples
         };
     });
-const $865f630cc944e818$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontologies)=>{
+const $8ad7b5ebbca2bb3e$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontologies)=>{
     const queries = [];
-    const nodes = $865f630cc944e818$var$extractNodes(blankNodes);
+    const nodes = $8ad7b5ebbca2bb3e$var$extractNodes(blankNodes);
     if (nodes && ontologies && ontologies.length > 0) {
         for (const node of nodes){
-            const parentNode = $865f630cc944e818$var$getParentNode(node);
-            const predicate = $865f630cc944e818$var$getPredicate(node);
-            const varName = $865f630cc944e818$var$generateSparqlVarName(node);
-            const parentVarName = parentNode ? $865f630cc944e818$var$generateSparqlVarName(parentNode) : '1';
+            const parentNode = $8ad7b5ebbca2bb3e$var$getParentNode(node);
+            const predicate = $8ad7b5ebbca2bb3e$var$getPredicate(node);
+            const varName = $8ad7b5ebbca2bb3e$var$generateSparqlVarName(node);
+            const parentVarName = parentNode ? $8ad7b5ebbca2bb3e$var$generateSparqlVarName(parentNode) : '1';
             const query = [
-                (0, $fj9kP$triple)((0, $fj9kP$variable)(`s${parentVarName}`), (0, $fj9kP$namedNode)((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$variable)(`s${varName}`)),
-                (0, $fj9kP$triple)((0, $fj9kP$variable)(`s${varName}`), (0, $fj9kP$variable)(`p${varName}`), (0, $fj9kP$variable)(`o${varName}`))
+                (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable(`s${parentVarName}`), (0, $fj9kP$rdfjsdatamodel).namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $fj9kP$rdfjsdatamodel).variable(`s${varName}`)),
+                (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable(`s${varName}`), (0, $fj9kP$rdfjsdatamodel).variable(`p${varName}`), (0, $fj9kP$rdfjsdatamodel).variable(`o${varName}`))
             ];
             queries.push({
                 node: node,
@@ -550,7 +556,7 @@ const $865f630cc944e818$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
                 type: 'union',
                 patterns: [
                     baseQuery.where,
-                    ...$865f630cc944e818$var$buildUnionQuery(queries)
+                    ...$8ad7b5ebbca2bb3e$var$buildUnionQuery(queries)
                 ]
             }
         };
@@ -560,11 +566,11 @@ const $865f630cc944e818$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
         where: ''
     };
 };
-var $865f630cc944e818$export$2e2bcd8739ae039 = $865f630cc944e818$var$buildBlankNodesQuery;
+var $8ad7b5ebbca2bb3e$export$2e2bcd8739ae039 = $8ad7b5ebbca2bb3e$var$buildBlankNodesQuery;
 
 
 
-const $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=>{
+const $6aa919fd3fcf3e9c$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=>{
     const construct = [
         ...baseQuery.construct
     ];
@@ -575,7 +581,7 @@ const $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=
             baseQuery.where
         ]);
         for(let i = 1; i <= depth; i++){
-            construct.push((0, $fj9kP$triple)((0, $fj9kP$variable)(`o${i}`), (0, $fj9kP$variable)(`p${i + 1}`), (0, $fj9kP$variable)(`o${i + 1}`)));
+            construct.push((0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable(`o${i}`), (0, $fj9kP$rdfjsdatamodel).variable(`p${i + 1}`), (0, $fj9kP$rdfjsdatamodel).variable(`o${i + 1}`)));
             whereQueries.push([
                 ...whereQueries[whereQueries.length - 1],
                 {
@@ -584,11 +590,11 @@ const $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=
                         type: 'operation',
                         operator: 'isblank',
                         args: [
-                            (0, $fj9kP$variable)(`o${i}`)
+                            (0, $fj9kP$rdfjsdatamodel).variable(`o${i}`)
                         ]
                     }
                 },
-                (0, $fj9kP$triple)((0, $fj9kP$variable)(`o${i}`), (0, $fj9kP$variable)(`p${i + 1}`), (0, $fj9kP$variable)(`o${i + 1}`))
+                (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable(`o${i}`), (0, $fj9kP$rdfjsdatamodel).variable(`p${i + 1}`), (0, $fj9kP$rdfjsdatamodel).variable(`o${i + 1}`))
             ]);
         }
         where = {
@@ -602,16 +608,15 @@ const $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=
         where: where
     };
 };
-var $efbe3fa6f1479c06$export$2e2bcd8739ae039 = $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery;
+var $6aa919fd3fcf3e9c$export$2e2bcd8739ae039 = $6aa919fd3fcf3e9c$var$buildAutoDetectBlankNodesQuery;
 
 
 
 
-var $6cde9a8fbbde3ffb$require$SparqlGenerator = $fj9kP$Generator;
-const { literal: $6cde9a8fbbde3ffb$var$literal, namedNode: $6cde9a8fbbde3ffb$var$namedNode, triple: $6cde9a8fbbde3ffb$var$triple, variable: $6cde9a8fbbde3ffb$var$variable } = (0, $fj9kP$rdfjsdatamodel);
-const $6cde9a8fbbde3ffb$var$generator = new $6cde9a8fbbde3ffb$require$SparqlGenerator({
+var $dcde11998342d30d$require$SparqlGenerator = $fj9kP$Generator;
+const $dcde11998342d30d$var$generator = new $dcde11998342d30d$require$SparqlGenerator({
 });
-const $6cde9a8fbbde3ffb$var$reservedFilterKeys = [
+const $dcde11998342d30d$var$reservedFilterKeys = [
     'q',
     'sparqlWhere',
     'blankNodes',
@@ -619,7 +624,7 @@ const $6cde9a8fbbde3ffb$var$reservedFilterKeys = [
     '_servers',
     '_predicates'
 ];
-const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris, params: params, dataModel: dataModel, ontologies: ontologies })=>{
+const $dcde11998342d30d$var$buildSparqlQuery = ({ containersUris: containersUris, params: params, dataModel: dataModel, ontologies: ontologies })=>{
     const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
     const predicates = params.filter?._predicates || dataModel.list?.predicates;
     const blankNodesDepth = params.filter?.blankNodesDepth ?? dataModel.list?.blankNodesDepth ?? 2;
@@ -627,7 +632,7 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris
         ...dataModel.list?.filter,
         ...params.filter
     };
-    const baseQuery = (0, $47d734d7812e6861$export$2e2bcd8739ae039)(predicates, ontologies);
+    const baseQuery = (0, $4e30f9af2d448bb4$export$2e2bcd8739ae039)(predicates, ontologies);
     const sparqlJsParams = {
         queryType: 'CONSTRUCT',
         template: baseQuery.construct,
@@ -639,17 +644,17 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris
         {
             type: 'values',
             values: containersUris.map((containerUri)=>({
-                    '?containerUri': $6cde9a8fbbde3ffb$var$namedNode(containerUri)
+                    '?containerUri': (0, $fj9kP$rdfjsdatamodel).namedNode(containerUri)
                 }))
         },
-        $6cde9a8fbbde3ffb$var$triple($6cde9a8fbbde3ffb$var$variable('containerUri'), $6cde9a8fbbde3ffb$var$namedNode('http://www.w3.org/ns/ldp#contains'), $6cde9a8fbbde3ffb$var$variable('s1')),
+        (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('containerUri'), (0, $fj9kP$rdfjsdatamodel).namedNode('http://www.w3.org/ns/ldp#contains'), (0, $fj9kP$rdfjsdatamodel).variable('s1')),
         {
             type: 'filter',
             expression: {
                 type: 'operation',
                 operator: 'isiri',
                 args: [
-                    $6cde9a8fbbde3ffb$var$variable('s1')
+                    (0, $fj9kP$rdfjsdatamodel).variable('s1')
                 ]
             }
         }
@@ -661,10 +666,10 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris
       {
         "sparqlWhere": {
           "type": "bgp",
-          "triples": [{
-            "subject": {"termType": "Variable", "value": "s1"},
+          "rdf.quads": [{
+            "subject": {"termType": "rdf.variable", "value": "s1"},
             "predicate": {"termType": "NameNode", "value": "http://virtual-assembly.org/ontologies/pair#label"},
-            "object": {"termType": "Literal", "value": "My Organization"}
+            "object": {"termType": "rdf.literal", "value": "My Organization"}
           }]
         }
       }
@@ -681,17 +686,17 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris
                 {
                     queryType: 'SELECT',
                     variables: [
-                        $6cde9a8fbbde3ffb$var$variable('s1')
+                        (0, $fj9kP$rdfjsdatamodel).variable('s1')
                     ],
                     where: [
-                        $6cde9a8fbbde3ffb$var$triple($6cde9a8fbbde3ffb$var$variable('s1'), $6cde9a8fbbde3ffb$var$variable('p1'), $6cde9a8fbbde3ffb$var$variable('o1')),
+                        (0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('s1'), (0, $fj9kP$rdfjsdatamodel).variable('p1'), (0, $fj9kP$rdfjsdatamodel).variable('o1')),
                         {
                             type: 'filter',
                             expression: {
                                 type: 'operation',
                                 operator: 'isliteral',
                                 args: [
-                                    $6cde9a8fbbde3ffb$var$variable('o1')
+                                    (0, $fj9kP$rdfjsdatamodel).variable('o1')
                                 ]
                             }
                         },
@@ -709,12 +714,13 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris
                                                 type: 'operation',
                                                 operator: 'str',
                                                 args: [
-                                                    $6cde9a8fbbde3ffb$var$variable('o1')
+                                                    (0, $fj9kP$rdfjsdatamodel).variable('o1')
                                                 ]
                                             }
                                         ]
                                     },
-                                    $6cde9a8fbbde3ffb$var$literal(filter.q.toLowerCase(), '', $6cde9a8fbbde3ffb$var$namedNode('http://www.w3.org/2001/XMLSchema#string'))
+                                    // @ts-expect-error TS(2554): Expected 1-2 arguments, but got 3.
+                                    (0, $fj9kP$rdfjsdatamodel).literal(filter.q.toLowerCase(), '', (0, $fj9kP$rdfjsdatamodel).namedNode('http://www.w3.org/2001/XMLSchema#string'))
                                 ]
                             }
                         }
@@ -727,23 +733,27 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containersUris: containersUris
         // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
         // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
         Object.entries(filter).forEach(([predicate, object])=>{
-            if (!$6cde9a8fbbde3ffb$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift($6cde9a8fbbde3ffb$var$triple($6cde9a8fbbde3ffb$var$variable('s1'), $6cde9a8fbbde3ffb$var$namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), $6cde9a8fbbde3ffb$var$namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(object, ontologies))));
+            if (!$dcde11998342d30d$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift((0, $fj9kP$rdfjsdatamodel).quad((0, $fj9kP$rdfjsdatamodel).variable('s1'), (0, $fj9kP$rdfjsdatamodel).namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(predicate, ontologies)), // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
+            (0, $fj9kP$rdfjsdatamodel).namedNode((0, $4872a1c30c1fc60e$export$2e2bcd8739ae039)(object, ontologies))));
         });
     }
     // Blank nodes
-    const blankNodesQuery = blankNodes ? (0, $865f630cc944e818$export$2e2bcd8739ae039)(blankNodes, baseQuery, ontologies) : (0, $efbe3fa6f1479c06$export$2e2bcd8739ae039)(blankNodesDepth, baseQuery);
+    const blankNodesQuery = blankNodes ? (0, $8ad7b5ebbca2bb3e$export$2e2bcd8739ae039)(blankNodes, baseQuery, ontologies) : (0, $6aa919fd3fcf3e9c$export$2e2bcd8739ae039)(blankNodesDepth, baseQuery);
     if (blankNodesQuery && blankNodesQuery.construct) {
+        // @ts-expect-error TS(2769): No overload matches this call.
         resourceWhere = resourceWhere.concat(blankNodesQuery.where);
+        // @ts-expect-error TS(2769): No overload matches this call.
         sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
     } else resourceWhere.push(baseQuery.where);
+    // @ts-expect-error TS(2345): Argument of type '(uad | { type: string; values: ... Remove this comment to see the full error message
     sparqlJsParams.where.push(containerWhere, resourceWhere);
-    return $6cde9a8fbbde3ffb$var$generator.stringify(sparqlJsParams);
+    return $dcde11998342d30d$var$generator.stringify(sparqlJsParams);
 };
-var $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 = $6cde9a8fbbde3ffb$var$buildSparqlQuery;
+var $dcde11998342d30d$export$2e2bcd8739ae039 = $dcde11998342d30d$var$buildSparqlQuery;
 
 
 
-const $05a1b4063d50f1b7$var$compare = (a, b)=>{
+const $4aa3fb2e83f6c3a3$var$compare = (a, b)=>{
     switch(typeof a){
         case 'string':
             return a.localeCompare(b);
@@ -753,7 +763,7 @@ const $05a1b4063d50f1b7$var$compare = (a, b)=>{
             return 0;
     }
 };
-const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId, params, config)=>{
+const $4aa3fb2e83f6c3a3$var$fetchSparqlEndpoints = async (containers, resourceId, params, config)=>{
     const { dataServers: dataServers, httpClient: httpClient, jsonContext: jsonContext, ontologies: ontologies } = config;
     const dataModel = config.resources[resourceId];
     // Find servers to query with SPARQL
@@ -765,7 +775,7 @@ const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId
     // Run simultaneous SPARQL queries
     const results = await Promise.all(serversToQuery.map((serverKey)=>new Promise((resolve, reject)=>{
             const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
-            const sparqlQuery = (0, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039)({
+            const sparqlQuery = (0, $dcde11998342d30d$export$2e2bcd8739ae039)({
                 containersUris: containers.filter((c)=>c.server === serverKey && !c.selectedResources).map((c)=>c.uri),
                 params: params,
                 dataModel: dataModel,
@@ -782,7 +792,7 @@ const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId
                     '@context': jsonContext,
                     '@type': dataModel.types,
                     '@embed': '@never',
-                    ...(0, $3007d5479dd82d51$export$2e2bcd8739ae039)(blankNodes)
+                    ...(0, $30358023049c31e9$export$2e2bcd8739ae039)(blankNodes)
                 } : {
                     '@context': jsonContext,
                     '@type': dataModel.types
@@ -824,8 +834,8 @@ const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId
     // TODO sort and paginate the results in the SPARQL query to improve performances
     if (params.sort) returnData = returnData.sort((a, b)=>{
         if (a[params.sort.field] !== undefined && b[params.sort.field] !== undefined) {
-            if (params.sort.order === 'ASC') return $05a1b4063d50f1b7$var$compare(a[params.sort.field], b[params.sort.field]);
-            return $05a1b4063d50f1b7$var$compare(b[params.sort.field], a[params.sort.field]);
+            if (params.sort.order === 'ASC') return $4aa3fb2e83f6c3a3$var$compare(a[params.sort.field], b[params.sort.field]);
+            return $4aa3fb2e83f6c3a3$var$compare(b[params.sort.field], a[params.sort.field]);
         }
         return 0;
     });
@@ -835,7 +845,7 @@ const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId
         total: results.length
     };
 };
-var $05a1b4063d50f1b7$export$2e2bcd8739ae039 = $05a1b4063d50f1b7$var$fetchSparqlEndpoints;
+var $4aa3fb2e83f6c3a3$export$2e2bcd8739ae039 = $4aa3fb2e83f6c3a3$var$fetchSparqlEndpoints;
 
 
 
@@ -869,15 +879,15 @@ const $1caf729dc3ce856d$var$getListMethod = (config)=>async (resourceId, params)
         else // Otherwise find the container URIs on the given servers (either in the filter or the data model)
         containers = (0, $15b841e67a1ba752$export$2e2bcd8739ae039)((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataModel.types), params?.filter?._servers || dataModel.list?.servers, dataServers);
         if (dataModel.list?.fetchContainer) return (0, $aba124ea15ea8bc6$export$2e2bcd8739ae039)(containers, params, config);
-        else return (0, $05a1b4063d50f1b7$export$2e2bcd8739ae039)(containers, resourceId, params, config);
+        else return (0, $4aa3fb2e83f6c3a3$export$2e2bcd8739ae039)(containers, resourceId, params, config);
     };
 var $1caf729dc3ce856d$export$2e2bcd8739ae039 = $1caf729dc3ce856d$var$getListMethod;
 
 
 
-const $f1e05270f9a21255$var$getManyMethod = (config)=>async (resourceId, params)=>{
+const $4704ee0f6c5ac80d$var$getManyMethod = (config)=>async (resourceId, params)=>{
         const { returnFailedResources: returnFailedResources } = config;
-        let returnData = await Promise.all(params.ids.map((id)=>(0, $ed447224dd38ce82$export$2e2bcd8739ae039)(config)(resourceId, {
+        let returnData = await Promise.all(params.ids.map((id)=>(0, $4861cda99f97e87d$export$2e2bcd8739ae039)(config)(resourceId, {
                 id: typeof id === 'object' ? id['@id'] : id
             }).then(({ data: data })=>data).catch(()=>{
                 // Catch if one resource fails to load
@@ -895,19 +905,20 @@ const $f1e05270f9a21255$var$getManyMethod = (config)=>async (resourceId, params)
             data: returnData
         };
     };
-var $f1e05270f9a21255$export$2e2bcd8739ae039 = $f1e05270f9a21255$var$getManyMethod;
+var $4704ee0f6c5ac80d$export$2e2bcd8739ae039 = $4704ee0f6c5ac80d$var$getManyMethod;
 
 
 
-const $b5979a9678f57756$var$getManyReferenceMethod = (config)=>async (resourceId, params)=>{
+const $ca9c98aad8d79793$var$getManyReferenceMethod = (config)=>async (resourceId, params)=>{
         params.filter = {
             ...params.filter,
             [params.target]: params.id
         };
+        // @ts-expect-error ts(2790): The operand of a 'delete' operator must be optional.
         delete params.target;
         return await (0, $1caf729dc3ce856d$export$2e2bcd8739ae039)(config)(resourceId, params);
     };
-var $b5979a9678f57756$export$2e2bcd8739ae039 = $b5979a9678f57756$var$getManyReferenceMethod;
+var $ca9c98aad8d79793$export$2e2bcd8739ae039 = $ca9c98aad8d79793$var$getManyReferenceMethod;
 
 
 
@@ -951,7 +962,7 @@ var $cdfdce6efa87baab$export$2e2bcd8739ae039 = $cdfdce6efa87baab$var$patchMethod
 
 
 // Return the first server matching with the baseUrl
-const $47e21ee81eed09a6$var$getServerKeyFromUri = (uri, dataServers)=>{
+const $2ae722513e522d60$var$getServerKeyFromUri = (uri, dataServers)=>{
     if (!uri) throw Error(`No URI provided to getServerKeyFromUri`);
     return dataServers && Object.keys(dataServers).find((key)=>{
         if (dataServers[key].pod) // The baseUrl ends with /data so remove this part to match with the webId and webId-related URLs (/inbox, /outbox...)
@@ -959,12 +970,12 @@ const $47e21ee81eed09a6$var$getServerKeyFromUri = (uri, dataServers)=>{
         return uri.startsWith(dataServers[key].baseUrl);
     });
 };
-var $47e21ee81eed09a6$export$2e2bcd8739ae039 = $47e21ee81eed09a6$var$getServerKeyFromUri;
+var $2ae722513e522d60$export$2e2bcd8739ae039 = $2ae722513e522d60$var$getServerKeyFromUri;
 
 
 const $c5031381f4dfc62d$var$updateMethod = (config)=>async (resourceId, params)=>{
         const { httpClient: httpClient, jsonContext: jsonContext, dataServers: dataServers } = config;
-        const serverKey = (0, $47e21ee81eed09a6$export$2e2bcd8739ae039)(params.id, dataServers);
+        const serverKey = (0, $2ae722513e522d60$export$2e2bcd8739ae039)(params.id, dataServers);
         // Upload files, if there are any
         const { updatedRecord: updatedRecord } = await (0, $b17c43e3301545ca$export$2e2bcd8739ae039).upload(params.data, config, serverKey);
         params.data = updatedRecord;
@@ -985,40 +996,43 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
 
 
 
-/*
- * HTTP client used by all calls in data provider and auth provider
- * Do proxy calls if a proxy endpoint is available and the server is different from the auth server
- */ const $22b4895a4ca7d626$var$httpClient = (dataServers)=>(url, options = {})=>{
+/**
+ *
+ * @param dataServers Data servers configuration
+ * @param fetchFn The fetch function to use for the actual fetch call, e.g. `fetchUtils.fetchJson` or `fetch`
+ * @returns
+ */ const $00b6445d7042c29d$var$fetchBase = (dataServers, fetchFn)=>(url, options = {})=>{
         if (!url) throw new Error(`No URL provided on httpClient call`);
-        const authServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('authServer', dataServers);
-        const serverKey = (0, $47e21ee81eed09a6$export$2e2bcd8739ae039)(url, dataServers);
-        const useProxy = serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
-        if (!options.headers) options.headers = new Headers();
+        const authServerKey = (0, $aed10b8332b5d58a$export$2e2bcd8739ae039)('authServer', dataServers);
+        const serverKey = (0, $2ae722513e522d60$export$2e2bcd8739ae039)(url, dataServers);
+        const useProxy = serverKey !== authServerKey && // The server is different from the auth server.
+        !!dataServers[authServerKey]?.proxyUrl && // A proxy URL is configured on the auth server.
+        dataServers[serverKey]?.noProxy !== true; // The server does not explicitly disable the proxy.
+        const headers = new Headers(options.headers);
         switch(options.method){
             case 'POST':
             case 'PATCH':
             case 'PUT':
-                if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
-                if (!options.headers.has('Content-Type')) options.headers.set('Content-Type', 'application/ld+json');
+                if (!headers.has('Accept')) headers.set('Accept', 'application/ld+json');
+                if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/ld+json');
                 break;
             case 'DELETE':
                 break;
             case 'GET':
             default:
-                if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
+                if (!headers.has('Accept')) headers.set('Accept', 'application/ld+json');
                 break;
         }
         if (useProxy) {
+            // To the proxy endpoint, we post the URL, method, headers and body (if any) as multipart/form-data.
             const formData = new FormData();
             formData.append('id', url);
             formData.append('method', options.method || 'GET');
-            formData.append('headers', JSON.stringify(Object.fromEntries(options.headers.entries())));
-            if (options.body) {
-                if (options.body instanceof File) formData.append('body', options.body, options.body.name);
-                else formData.append('body', options.body);
-            }
-            // Post to proxy endpoint with multipart/form-data format
-            return (0, $fj9kP$fetchUtils).fetchJson(dataServers[authServerKey].proxyUrl, {
+            formData.append('headers', JSON.stringify(Object.fromEntries(headers.entries())));
+            if (options.body instanceof File) formData.append('body', options.body, options.body.name);
+            else if (options.body instanceof Blob || typeof options.body === 'string') formData.append('body', options.body);
+            // POST request to proxy endpoint.
+            return fetchFn(dataServers[authServerKey].proxyUrl, {
                 method: 'POST',
                 headers: new Headers({
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -1026,14 +1040,39 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
                 body: formData
             });
         }
-        // Add token if the server is the same as the auth server
+        // Add token if the server is the same as the auth server.
         if (serverKey === authServerKey) {
             const token = localStorage.getItem('token');
-            if (token) options.headers.set('Authorization', `Bearer ${token}`);
+            if (token) headers.set('Authorization', `Bearer ${token}`);
         }
-        return (0, $fj9kP$fetchUtils).fetchJson(url, options);
+        options.headers = headers;
+        return fetchFn(url, options);
     };
-var $22b4895a4ca7d626$export$2e2bcd8739ae039 = $22b4895a4ca7d626$var$httpClient;
+/**
+ * Creates a fetch function that can be used to make calls to the data servers and which returns data formatted as JSON.
+ * It will use the proxy endpoint if available and if the server is different from the auth server.
+ * It will also set the Accept and Content-Type headers to `application/ld+json` for `POST`, `PATCH`, `PUT` and `GET` requests.
+ * @param dataServers Data servers configuration
+ * @returns A function with react-admin's fetchJson signature that can be used to make calls to the data servers.
+ *
+ */ const $00b6445d7042c29d$export$5ff1805767bd358a = (dataServers)=>{
+    const fetchBaseFn = $00b6445d7042c29d$var$fetchBase(dataServers, (0, $fj9kP$fetchUtils).fetchJson);
+    return (url, options)=>{
+        return fetchBaseFn(url, options);
+    };
+};
+/**
+ * Creates an authenticated fetch function that can be used to make calls to the data servers.
+ * It will use the proxy endpoint if available and if the server is different from the auth server.
+ * @param dataServers Data servers configuration
+ * @returns A function that can be used to make authenticated fetch calls.
+ */ const $00b6445d7042c29d$export$1ac69e0fa5b5498b = (dataServers)=>{
+    const fetchBaseFn = $00b6445d7042c29d$var$fetchBase(dataServers, fetch);
+    const fetchFunction = (url, options)=>{
+        return fetchBaseFn(url, options);
+    };
+    return fetchFunction;
+};
 
 
 
@@ -1099,7 +1138,10 @@ const $ab7d38fd091ff1b6$var$getTypesFromShapeTree = async (shapeTreeUri)=>{
 var $ab7d38fd091ff1b6$export$2e2bcd8739ae039 = $ab7d38fd091ff1b6$var$getTypesFromShapeTree;
 
 
-const $33bf2a661b5c0cbd$var$normalizeConfig = async (config)=>{
+/**
+ * For data server containers, expands types and adds `uri` and `server` properties.
+ * For resources, expands types (if applicable from shape tree information).
+ */ const $33bf2a661b5c0cbd$var$normalizeConfig = async (config)=>{
     const newConfig = {
         ...config
     };
@@ -1151,64 +1193,89 @@ const $143de1c1f21344e7$var$getOntologiesFromContext = async (context)=>{
 var $143de1c1f21344e7$export$2e2bcd8739ae039 = $143de1c1f21344e7$var$getOntologiesFromContext;
 
 
-/** @type {(originalConfig: Configuration) => SemanticDataProvider} */ const $243bf28fbb1b868f$var$dataProvider = (originalConfig)=>{
+const $9808be090468fc68$var$dataProvider = (originalConfig)=>{
     // Keep in memory for refresh
-    let config = {
-        ...originalConfig
-    };
+    let config;
     const prepareConfig = async ()=>{
+        const fetchJson = (0, $00b6445d7042c29d$export$5ff1805767bd358a)(originalConfig.dataServers);
+        const authFetchFn = (0, $00b6445d7042c29d$export$1ac69e0fa5b5498b)(originalConfig.dataServers);
+        const dataset = (0, $fj9kP$createConnectedLdoDataset)([
+            (0, $fj9kP$solidConnectedPlugin)
+        ]);
+        dataset.setContext('solid', {
+            fetch: authFetchFn
+        });
+        config = {
+            ...originalConfig,
+            httpClient: fetchJson,
+            authFetch: authFetchFn,
+            dataset: dataset
+        };
         config.dataServers ??= {};
-        // Configure httpClient with initial data servers, so that plugins may use it
-        config.httpClient = (0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(config.dataServers);
-        // Useful for debugging.
+        // Load plugins.
+        for (const plugin of config.plugins){
+            if (plugin.transformConfig) try {
+                config = await plugin.transformConfig(config);
+            } catch (error) {
+                console.error('Error setting up data provider plugin', plugin.name, error);
+            }
+        }
+        // Configure httpClient & authFetch again with possibly updated data servers
+        config.httpClient = (0, $00b6445d7042c29d$export$5ff1805767bd358a)(config.dataServers);
+        config.authFetch = (0, $00b6445d7042c29d$export$1ac69e0fa5b5498b)(config.dataServers);
+        dataset.setContext('solid', {
+            fetch: config.authFetch
+        });
+        // Create the LDO dataset with the solidConnectedPlugin. It will be used to manage the RDF data.
+        config.dataset = dataset;
+        // Useful for debugging: Attach httpClient & authFetch to global document.
+        // @ts-expect-error TS(2339)
         document.httpClient = config.httpClient;
-        for (const plugin of config.plugins)if (plugin.transformConfig) config = await plugin.transformConfig(config);
-        // Configure again httpClient with possibly updated data servers
-        config.httpClient = (0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(config.dataServers);
+        // @ts-expect-error TS(2339)
+        document.authFetch = authFetchFn;
         if (!config.ontologies && config.jsonContext) config.ontologies = await (0, $143de1c1f21344e7$export$2e2bcd8739ae039)(config.jsonContext);
         else if (!config.jsonContext && config.ontologies) config.jsonContext = config.ontologies;
         else if (!config.jsonContext && !config.ontologies) throw new Error(`Either the JSON context or the ontologies must be set`);
         if (!config.returnFailedResources) config.returnFailedResources = false;
         config = await (0, $33bf2a661b5c0cbd$export$2e2bcd8739ae039)(config);
-        console.log('Config after plugins', config);
+        console.debug('Config after plugins', config);
     };
     // Immediately call the preload plugins
     const prepareConfigPromise = prepareConfig();
-    const waitForPrepareConfig = (method)=>async (...arg)=>{
+    const waitForPrepareConfig = (method)=>async (...args)=>{
             await prepareConfigPromise; // Return immediately if plugins have already been loaded
-            return method(config)(...arg);
+            return method(config)(...args);
         };
     return {
         getList: waitForPrepareConfig((0, $1caf729dc3ce856d$export$2e2bcd8739ae039)),
-        getMany: waitForPrepareConfig((0, $f1e05270f9a21255$export$2e2bcd8739ae039)),
-        getManyReference: waitForPrepareConfig((0, $b5979a9678f57756$export$2e2bcd8739ae039)),
-        getOne: waitForPrepareConfig((0, $ed447224dd38ce82$export$2e2bcd8739ae039)),
-        create: waitForPrepareConfig((0, $5a7a2f7583392866$export$2e2bcd8739ae039)),
+        getMany: waitForPrepareConfig((0, $4704ee0f6c5ac80d$export$2e2bcd8739ae039)),
+        getManyReference: waitForPrepareConfig((0, $ca9c98aad8d79793$export$2e2bcd8739ae039)),
+        getOne: waitForPrepareConfig((0, $4861cda99f97e87d$export$2e2bcd8739ae039)),
+        create: waitForPrepareConfig((0, $d12d4cfb47175317$export$2e2bcd8739ae039)),
         update: waitForPrepareConfig((0, $c5031381f4dfc62d$export$2e2bcd8739ae039)),
         updateMany: ()=>{
             throw new Error('updateMany is not implemented yet');
         },
         delete: waitForPrepareConfig((0, $9510970b8e7eb9e2$export$2e2bcd8739ae039)),
-        deleteMany: waitForPrepareConfig((0, $298dd1ae21173ea0$export$2e2bcd8739ae039)),
+        deleteMany: waitForPrepareConfig((0, $9b978ac85d859b57$export$2e2bcd8739ae039)),
         // Custom methods
         patch: waitForPrepareConfig((0, $cdfdce6efa87baab$export$2e2bcd8739ae039)),
-        getDataModels: waitForPrepareConfig((0, $54a3fa40eed06111$export$2e2bcd8739ae039)),
-        getDataServers: waitForPrepareConfig((0, $7dd5bf9323d2d9c1$export$2e2bcd8739ae039)),
-        getLocalDataServers: (0, $7dd5bf9323d2d9c1$export$2e2bcd8739ae039)(originalConfig),
-        fetch: waitForPrepareConfig((c)=>(0, $22b4895a4ca7d626$export$2e2bcd8739ae039)(c.dataServers)),
+        getDataModels: waitForPrepareConfig((0, $52333268224773ef$export$2e2bcd8739ae039)),
+        getDataServers: waitForPrepareConfig((0, $294fdd580f2e7246$export$2e2bcd8739ae039)),
+        getLocalDataServers: (0, $294fdd580f2e7246$export$2e2bcd8739ae039)(originalConfig),
+        fetch: waitForPrepareConfig((c)=>(0, $00b6445d7042c29d$export$5ff1805767bd358a)(c.dataServers)),
+        authFetch: waitForPrepareConfig((c)=>(0, $00b6445d7042c29d$export$1ac69e0fa5b5498b)(c.dataServers)),
+        getDataset: waitForPrepareConfig((c)=>()=>c.dataset),
         uploadFile: waitForPrepareConfig((c)=>(rawFile)=>(0, $b17c43e3301545ca$export$a5575dbeeffdad98)(rawFile, c)),
         expandTypes: waitForPrepareConfig((c)=>(types)=>(0, $36aa010ec46eaf45$export$2e2bcd8739ae039)(types, c.jsonContext)),
         getConfig: waitForPrepareConfig((c)=>()=>c),
         refreshConfig: async ()=>{
-            config = {
-                ...originalConfig
-            };
             await prepareConfig();
             return config;
         }
     };
 };
-var $243bf28fbb1b868f$export$2e2bcd8739ae039 = $243bf28fbb1b868f$var$dataProvider;
+var $9808be090468fc68$export$2e2bcd8739ae039 = $9808be090468fc68$var$dataProvider;
 
 
 
@@ -1225,7 +1292,10 @@ var $861da9be2c0e62eb$export$2e2bcd8739ae039 = $861da9be2c0e62eb$var$getPrefixFr
 
 
 
-const $cdd3c71a628eeefe$var$configureUserStorage = ()=>({
+/**
+ * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
+ */ const $cdd3c71a628eeefe$var$configureUserStorage = ()=>({
+        name: 'configureUserStorage',
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1299,7 +1369,7 @@ const $d7a7484a035f15cd$var$getContainerFromDataRegistration = async (dataRegist
             '@container': '@language'
         }
     });
-    const userStorage = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('default', config.dataServers);
+    const userStorage = (0, $aed10b8332b5d58a$export$2e2bcd8739ae039)('default', config.dataServers);
     const { baseUrl: baseUrl } = config.dataServers[userStorage];
     const containerPath = dataRegistration.id.replace(baseUrl, '');
     const container = {
@@ -1329,6 +1399,7 @@ var $d7a7484a035f15cd$export$2e2bcd8739ae039 = $d7a7484a035f15cd$var$getContaine
  */ const $2c257b4237cb14ca$var$fetchAppRegistration = (pluginConfig = {})=>{
     const { includeSelectedResources: includeSelectedResources = true } = pluginConfig;
     return {
+        name: 'fetchAppRegistration',
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1385,7 +1456,14 @@ var $2c257b4237cb14ca$export$2e2bcd8739ae039 = $2c257b4237cb14ca$var$fetchAppReg
 
 
 
-const $91255e144bb55afc$var$fetchDataRegistry = ()=>({
+/**
+ * Plugin to add data registrations to the user containers, by fetching the registry set.
+ *
+ * Requires the `configureUserStorage` plugin.
+ *
+ * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
+ */ const $91255e144bb55afc$var$fetchDataRegistry = ()=>({
+        name: 'fetchDataRegistry',
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1394,7 +1472,9 @@ const $91255e144bb55afc$var$fetchDataRegistry = ()=>({
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
                 if (!config.dataServers[webId]) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
                 const { json: user } = await config.httpClient(webId);
+                if (!user['interop:hasRegistrySet']) throw new Error(`User ${webId} is missing interop:hasRegistrySet`);
                 const { json: registrySet } = await config.httpClient(user['interop:hasRegistrySet']);
+                if (!registrySet['interop:hasDataRegistry']) throw new Error(`User ${webId} is missing interop:hasDataRegistry`);
                 const { json: dataRegistry } = await config.httpClient(registrySet['interop:hasDataRegistry']);
                 if (dataRegistry['interop:hasDataRegistration']) {
                     const results = await Promise.all(dataRegistry['interop:hasDataRegistration'].map((dataRegistrationUri)=>{
@@ -1418,7 +1498,14 @@ var $91255e144bb55afc$export$2e2bcd8739ae039 = $91255e144bb55afc$var$fetchDataRe
 
 
 
-const $2d5f75df63129ebc$var$fetchTypeIndexes = ()=>({
+/**
+ * Plugin to add type indexes to the user containers, by fetching the them.
+ *
+ * Requires the `configureUserStorage` plugin.
+ *
+ * @returns {Configuration} The configuration with the data registrations added to `dataServers.user.containers`
+ */ const $2d5f75df63129ebc$var$fetchTypeIndexes = ()=>({
+        name: 'fetchTypeIndexes',
         transformConfig: async (config)=>{
             const token = localStorage.getItem('token');
             // If the user is logged in
@@ -1478,6 +1565,7 @@ var $2d5f75df63129ebc$export$2e2bcd8739ae039 = $2d5f75df63129ebc$var$fetchTypeIn
 
 
 const $a87fd63d8fca0380$var$fetchVoidEndpoints = ()=>({
+        name: 'fetchVoidEndpoints',
         transformConfig: async (config)=>{
             let results = [];
             try {
@@ -1706,12 +1794,12 @@ const $8dbb0c8c3814e663$var$useGetCreateContainerUri = ()=>{
     const dataModels = (0, $3a9656756670cb78$export$2e2bcd8739ae039)();
     const dataServers = (0, $4daf4cf698ee4eed$export$2e2bcd8739ae039)();
     const getCreateContainerUri = (0, $fj9kP$useCallback)((resourceId)=>{
-        if (!dataModels || !dataServers || !dataModels[resourceId]) return undefined;
+        if (!resourceId || !dataModels || !dataServers || !dataModels[resourceId]) return undefined;
         const dataModel = dataModels[resourceId];
         if (dataModel.create?.container) return dataModel.create.container;
         else if (dataModel.create?.server) return (0, $7d9911a250866af6$export$2e2bcd8739ae039)(dataModel.types, dataModel.create.server, dataServers);
         else {
-            const defaultServerKey = (0, $8326b88c1a913ca9$export$2e2bcd8739ae039)('default', dataServers);
+            const defaultServerKey = (0, $aed10b8332b5d58a$export$2e2bcd8739ae039)('default', dataServers);
             if (!defaultServerKey) throw new Error(`No default dataServer found. You can set explicitly one setting the "default" attribute to true`);
             return (0, $7d9911a250866af6$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers);
         }
@@ -1749,16 +1837,19 @@ var $e5a0eacd756fd1d5$export$2e2bcd8739ae039 = $e5a0eacd756fd1d5$var$useDataMode
 
 
 
-const $87656edf926c0f1f$var$compute = (externalLinks, record)=>typeof externalLinks === 'function' ? externalLinks(record) : externalLinks;
-const $87656edf926c0f1f$var$isURL = (url)=>typeof url === 'string' && url.startsWith('http');
-const $87656edf926c0f1f$var$useGetExternalLink = (componentExternalLinks)=>{
+const $0c5cccc31d3b196d$var$compute = (externalLinks, record)=>typeof externalLinks === 'function' ? externalLinks(record) : externalLinks;
+const $0c5cccc31d3b196d$var$isURL = (url)=>typeof url === 'string' && url.startsWith('http');
+const $0c5cccc31d3b196d$var$useGetExternalLink = (componentExternalLinks)=>{
     // Since the externalLinks config is defined only locally, we don't need to wait for VOID endpoints fetching
     const dataProvider = (0, $fj9kP$useContext)((0, $fj9kP$DataProviderContext));
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     const dataServers = dataProvider.getLocalDataServers();
     const serversExternalLinks = (0, $fj9kP$useMemo)(()=>{
         if (dataServers) return Object.fromEntries(Object.values(dataServers).map((server)=>{
             // If externalLinks is not defined in the data server, use external links for non-default servers
+            // @ts-expect-error TS(2571): Object is of type 'unknown'.
             const externalLinks = server.externalLinks !== undefined ? server.externalLinks : !server.default;
+            // @ts-expect-error TS(2571): Object is of type 'unknown'.
             return [
                 server.baseUrl,
                 externalLinks
@@ -1768,25 +1859,25 @@ const $87656edf926c0f1f$var$useGetExternalLink = (componentExternalLinks)=>{
         dataServers
     ]);
     return (0, $fj9kP$useCallback)((record)=>{
-        const computedComponentExternalLinks = $87656edf926c0f1f$var$compute(componentExternalLinks, record);
+        const computedComponentExternalLinks = $0c5cccc31d3b196d$var$compute(componentExternalLinks, record);
         // If the component explicitly asks not to display as external links, use an internal link
         if (computedComponentExternalLinks === false) return false;
         if (!record?.id) return false;
         const serverBaseUrl = Object.keys(serversExternalLinks).find((baseUrl)=>record?.id.startsWith(baseUrl));
         // If no matching data servers could be found, assume we have an internal link
         if (!serverBaseUrl) return false;
-        const computedServerExternalLinks = $87656edf926c0f1f$var$compute(serversExternalLinks[serverBaseUrl], record);
+        const computedServerExternalLinks = $0c5cccc31d3b196d$var$compute(serversExternalLinks[serverBaseUrl], record);
         // If the data server explicitly asks not to display as external links, use an internal link
         if (computedServerExternalLinks === false) return false;
-        if ($87656edf926c0f1f$var$isURL(computedComponentExternalLinks)) return computedComponentExternalLinks;
-        if ($87656edf926c0f1f$var$isURL(computedServerExternalLinks)) return computedServerExternalLinks;
+        if ($0c5cccc31d3b196d$var$isURL(computedComponentExternalLinks)) return computedComponentExternalLinks;
+        if ($0c5cccc31d3b196d$var$isURL(computedServerExternalLinks)) return computedServerExternalLinks;
         return record.id;
     }, [
         serversExternalLinks,
         componentExternalLinks
     ]);
 };
-var $87656edf926c0f1f$export$2e2bcd8739ae039 = $87656edf926c0f1f$var$useGetExternalLink;
+var $0c5cccc31d3b196d$export$2e2bcd8739ae039 = $0c5cccc31d3b196d$var$useGetExternalLink;
 
 
 
@@ -1816,7 +1907,7 @@ var $487567a146508c4e$export$2e2bcd8739ae039 = $487567a146508c4e$var$useGetPrefi
  *    </SingleFieldList>
  *   </FilterHandler>
  * </Show>
- */ const $406574efa35ec6f1$var$FilterHandler = ({ children: children, record: record, filter: filter, source: source, ...otherProps })=>{
+ */ const $d8039fd362ad4925$var$FilterHandler = ({ children: children, record: record, filter: filter, source: source, ...otherProps })=>{
     const [filtered, setFiltered] = (0, $fj9kP$useState)();
     (0, $fj9kP$useEffect)(()=>{
         if (record && source && Array.isArray(record?.[source])) {
@@ -1852,7 +1943,7 @@ var $487567a146508c4e$export$2e2bcd8739ae039 = $487567a146508c4e$var$useGetPrefi
         })
     });
 };
-var $406574efa35ec6f1$export$2e2bcd8739ae039 = $406574efa35ec6f1$var$FilterHandler;
+var $d8039fd362ad4925$export$2e2bcd8739ae039 = $d8039fd362ad4925$var$FilterHandler;
 
 
 
@@ -1919,12 +2010,13 @@ var $406574efa35ec6f1$export$2e2bcd8739ae039 = $406574efa35ec6f1$var$FilterHandl
  * </GroupedReferenceHandler>
  *
  *
- */ const $1d8c1cbe606a94ae$var$GroupedReferenceHandler = ({ children: children, groupReference: groupReference, groupLabel: groupLabel, groupHeader: groupHeader, filterProperty: filterProperty, ...otherProps })=>{
+ */ const $207a50667fa8cffa$var$GroupedReferenceHandler = ({ children: children, groupReference: groupReference, groupLabel: groupLabel, groupHeader: groupHeader, filterProperty: filterProperty, ...otherProps })=>{
     const record = (0, $fj9kP$useRecordContext)();
     const { data: data } = (0, $fj9kP$useGetList)(groupReference);
     return /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$Fragment), {
         children: data?.map((data, index)=>{
             const filter = {};
+            // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
             filter[filterProperty] = data.id;
             return /*#__PURE__*/ (0, $fj9kP$jsxs)((0, $fj9kP$Fragment), {
                 children: [
@@ -1932,7 +2024,7 @@ var $406574efa35ec6f1$export$2e2bcd8739ae039 = $406574efa35ec6f1$var$FilterHandl
                         ...otherProps,
                         group: data
                     }),
-                    /*#__PURE__*/ (0, $fj9kP$jsx)((0, $406574efa35ec6f1$export$2e2bcd8739ae039), {
+                    /*#__PURE__*/ (0, $fj9kP$jsx)((0, $d8039fd362ad4925$export$2e2bcd8739ae039), {
                         ...otherProps,
                         record: record,
                         filter: filter,
@@ -1944,14 +2036,14 @@ var $406574efa35ec6f1$export$2e2bcd8739ae039 = $406574efa35ec6f1$var$FilterHandl
         })
     });
 };
-var $1d8c1cbe606a94ae$export$2e2bcd8739ae039 = $1d8c1cbe606a94ae$var$GroupedReferenceHandler;
+var $207a50667fa8cffa$export$2e2bcd8739ae039 = $207a50667fa8cffa$var$GroupedReferenceHandler;
 
 
 
 
 
 
-const $6844bbce0ad66151$var$useReferenceInputStyles = (0, $fj9kP$muistylesmakeStyles)({
+const $1a24ef5e038900c4$var$useReferenceInputStyles = (0, $fj9kP$makeStyles)()({
     form: {
         display: 'flex'
     },
@@ -1959,18 +2051,19 @@ const $6844bbce0ad66151$var$useReferenceInputStyles = (0, $fj9kP$muistylesmakeSt
         paddingRight: '20px'
     }
 });
-const $6844bbce0ad66151$var$useHideInputStyles = (0, $fj9kP$muistylesmakeStyles)({
+const $1a24ef5e038900c4$var$useHideInputStyles = (0, $fj9kP$makeStyles)()({
     root: {
         display: 'none'
     }
 });
-const $6844bbce0ad66151$var$ReificationArrayInput = (props)=>{
+const $1a24ef5e038900c4$var$ReificationArrayInput = (props)=>{
     const { reificationClass: reificationClass, children: children, ...otherProps } = props;
-    const flexFormClasses = $6844bbce0ad66151$var$useReferenceInputStyles();
-    const hideInputStyles = $6844bbce0ad66151$var$useHideInputStyles();
+    const { classes: flexFormClasses } = $1a24ef5e038900c4$var$useReferenceInputStyles();
+    const { classes: hideInputStyles } = $1a24ef5e038900c4$var$useHideInputStyles();
     return /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$ArrayInput), {
         ...otherProps,
         children: /*#__PURE__*/ (0, $fj9kP$jsxs)((0, $fj9kP$SimpleFormIterator), {
+            // @ts-expect-error TS(2322): Type '{ children: any[]; classes: { form: any; }; ... Remove this comment to see the full error message
             classes: {
                 form: flexFormClasses.form
             },
@@ -1983,13 +2076,14 @@ const $6844bbce0ad66151$var$ReificationArrayInput = (props)=>{
                 /*#__PURE__*/ (0, $fj9kP$jsx)((0, $fj9kP$TextInput), {
                     className: hideInputStyles.root,
                     source: "type",
+                    // @ts-expect-error TS(2322): Type '{ className: any; source: string; initialVal... Remove this comment to see the full error message
                     initialValue: reificationClass
                 })
             ]
         })
     });
 };
-var $6844bbce0ad66151$export$2e2bcd8739ae039 = $6844bbce0ad66151$var$ReificationArrayInput;
+var $1a24ef5e038900c4$export$2e2bcd8739ae039 = $1a24ef5e038900c4$var$ReificationArrayInput;
 
 
 
@@ -2093,8 +2187,10 @@ const $03d52e691e8dc945$var$registeredWebSockets = new Map();
 };
 
 
+var $11242e90250f263e$exports = {};
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */ 
 
 
 
-export {$243bf28fbb1b868f$export$2e2bcd8739ae039 as dataProvider, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 as buildSparqlQuery, $865f630cc944e818$export$2e2bcd8739ae039 as buildBlankNodesQuery, $4872a1c30c1fc60e$export$2e2bcd8739ae039 as getUriFromPrefix, $861da9be2c0e62eb$export$2e2bcd8739ae039 as getPrefixFromUri, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $2d5f75df63129ebc$export$2e2bcd8739ae039 as fetchTypeIndexes, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $72db0904d77f0f1e$export$2e2bcd8739ae039 as useCompactPredicate, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $9d2c669bd52faa31$export$2e2bcd8739ae039 as useContainersByTypes, $43097d0b613bd4db$export$2e2bcd8739ae039 as useContainerByUri, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $3677b4de74c3d10d$export$2e2bcd8739ae039 as useDataProviderConfig, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $87656edf926c0f1f$export$2e2bcd8739ae039 as useGetExternalLink, $487567a146508c4e$export$2e2bcd8739ae039 as useGetPrefixFromUri, $406574efa35ec6f1$export$2e2bcd8739ae039 as FilterHandler, $1d8c1cbe606a94ae$export$2e2bcd8739ae039 as GroupedReferenceHandler, $6844bbce0ad66151$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
+export {$9808be090468fc68$export$2e2bcd8739ae039 as dataProvider, $dcde11998342d30d$export$2e2bcd8739ae039 as buildSparqlQuery, $8ad7b5ebbca2bb3e$export$2e2bcd8739ae039 as buildBlankNodesQuery, $4872a1c30c1fc60e$export$2e2bcd8739ae039 as getUriFromPrefix, $861da9be2c0e62eb$export$2e2bcd8739ae039 as getPrefixFromUri, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $2d5f75df63129ebc$export$2e2bcd8739ae039 as fetchTypeIndexes, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $72db0904d77f0f1e$export$2e2bcd8739ae039 as useCompactPredicate, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $9d2c669bd52faa31$export$2e2bcd8739ae039 as useContainersByTypes, $43097d0b613bd4db$export$2e2bcd8739ae039 as useContainerByUri, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $3677b4de74c3d10d$export$2e2bcd8739ae039 as useDataProviderConfig, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $0c5cccc31d3b196d$export$2e2bcd8739ae039 as useGetExternalLink, $487567a146508c4e$export$2e2bcd8739ae039 as useGetPrefixFromUri, $d8039fd362ad4925$export$2e2bcd8739ae039 as FilterHandler, $207a50667fa8cffa$export$2e2bcd8739ae039 as GroupedReferenceHandler, $1a24ef5e038900c4$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
 //# sourceMappingURL=index.es.js.map

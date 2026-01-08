@@ -33,34 +33,16 @@ Delete all the resources attached to a container
 
 ### `create`
 
-- Create a new LDP container
-- This does **not** create the relative API routes.
+Create a new LDP container
 
 ##### Parameters
 
-| Property       | Type     | Default             | Description                                   |
-| -------------- | -------- | ------------------- | --------------------------------------------- |
-| `containerUri` | `String` | **required**        | URI of the container to create                |
-| `title`        | `String` |                     | Title of the container                        |
-| `description`  | `String` |                     | Description of the container                  |
-| `permissions`  | `String` |                     | WAC permissions to apply to the new container |
-| `webId`        | `String` | Logged user's webId | User doing the action                         |
-
-### `createAndAttach`
-
-- Create a container and attach it to its parent container(s)
-- Recursively create the parent container(s) if they don't exist
-- In Pod provider config, the webId is required to find the Pod root
-
-##### Parameters
-
-| Property       | Type     | Default             | Description                                   |
-| -------------- | -------- | ------------------- | --------------------------------------------- |
-| `containerUri` | `String` | **required**        | URI of the container to create                |
-| `title`        | `String` |                     | Title of the container                        |
-| `description`  | `String` |                     | Description of the container                  |
-| `permissions`  | `String` |                     | WAC permissions to apply to the new container |
-| `webId`        | `String` | Logged user's webId | User doing the action                         |
+| Property       | Type           | Default      | Description                    |
+| -------------- | -------------- | ------------ | ------------------------------ |
+| `containerUri` | `String`       | **required** | URI of the container to create |
+| `title`        | `String`       |              | Title of the container         |
+| `description`  | `String`       |              | Description of the container   |
+| `registration` | `Registration` |              | The container options          |
 
 ### `detach`
 
@@ -94,20 +76,21 @@ Get the LDP container with all its resources (which are dereferenced)
 
 ##### Parameters
 
-| Property                | Type                | Default             | Description                                        |
-| ----------------------- | ------------------- | ------------------- | -------------------------------------------------- |
-| `containerUri`          | `String`            | **required**        | URI of container                                   |
-| `accept`                | `String`            | **required**        | Type to return                                     |
-| `filters`               | `Object`            |                     | Key/value with predicates and value                |
-| `doNotIncludeResources` | `Boolean`           | false               | If true, does not return the contained resources   |
-| `jsonContext`           | `Object`or `String` |                     | JSON-LD context to use when compacting the results |
-| `webId`                 | `String`            | Logged user's webId | User doing the action                              |
+| Property                | Type                | Default             | Description                                                           |
+| ----------------------- | ------------------- | ------------------- | --------------------------------------------------------------------- |
+| `containerUri`          | `String`            | **required**        | URI of container                                                      |
+| `filters`               | `Object`            |                     | Key/value with predicates and value                                   |
+| `doNotIncludeResources` | `Boolean`           | false               | If true, does not return the contained resources                      |
+| `maxPerPage`            | `Number`            |                     | Number of resources to return                                         |
+| `page`                  | `Number`            | 1                   | If paging is activated, the page to display                           |
+| `sortPredicate`         | `String`            |                     | Sort the resources according to this predicate (full URI or prefixed) |
+| `sortOrder`             | `String`            | "ASC"               | Sort the resources in ascending (ASC) or descending (DESC) order      |
+| `jsonContext`           | `Object`or `String` |                     | JSON-LD context to use when compacting the results                    |
+| `webId`                 | `String`            | Logged user's webId | User doing the action                                                 |
 
-You can also pass parameters defined in the [container options](index.md#container-options).
+#### Return
 
-##### Return
-
-Triples, Turtle or JSON-LD depending on `accept` type.
+The LDP container in JSON-LD format
 
 ### `getAll`
 
@@ -123,25 +106,9 @@ Get the list of all existing containers
 
 Array of URIs
 
-### `getPath`
-
-Get the container path based on the provided resourceType.
-For example, if you pass `pair:ProjectType`, it will return `/pair/project-type`.
-Ontologies must be previously [registered](../ontologies#register) or the action will throw an error.
-
-##### Parameters
-
-| Property       | Type     | Default      | Description                   |
-| -------------- | -------- | ------------ | ----------------------------- |
-| `resourceType` | `String` | **required** | URI or prefixed resource type |
-
-##### Return
-
-The path of the container
-
 ### `getUris`
 
-Get the list of all resources within a container
+Get the URIs of all resources within a container
 
 ##### Parameters
 
@@ -231,7 +198,7 @@ If the resource being patched is a remote resource, it will be stored locally (w
 | `slug`         | `String` |                     | Specific ID tu use for URI instead generated UUID |
 | `webId`        | `String` | Logged user's webId | User doing the action                             |
 
-The `slug` parameter is ignored if the `resourcesWithContainerPath` setting is `false`.
+The `slug` parameter is ignored if the `allowSlugs` setting is `false`.
 
 ##### Return
 

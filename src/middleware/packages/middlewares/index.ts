@@ -6,7 +6,13 @@ import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
-const handledMimeTypes = [MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE, MIME_TYPES.SPARQL_UPDATE];
+const handledMimeTypes = [
+  MIME_TYPES.JSON,
+  MIME_TYPES.TURTLE,
+  MIME_TYPES.TRIPLE,
+  MIME_TYPES.SPARQL_QUERY,
+  MIME_TYPES.SPARQL_UPDATE
+];
 
 // Put requested URL and query string in meta so that services may use them independently
 // Set here https://github.com/moleculerjs/moleculer-web/blob/c6ec80056a64ea15c57d6e2b946ce978d673ae92/src/index.js#L151-L161
@@ -49,7 +55,9 @@ const negotiateContentType = (req: any, res: any, next: any) => {
 
 const negotiateAccept = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
-    throw new Error(`The parseHeader middleware must be added before the negotiateAccept middleware`);
+    throw new Error(
+      `The parseHeader middleware must be added before the negotiateAccept middleware (${req.method} ${req.parsedUrl})`
+    );
 
   if (req.$ctx.meta.headers.accept === '*/*') {
     delete req.$ctx.meta.headers.accept;
@@ -68,7 +76,9 @@ const negotiateAccept = (req: any, res: any, next: any) => {
 
 const parseRawBody = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.contentTypeNegotiated)
-    throw new Error(`The negotiateContentType middleware must be added before the parseRawBody middleware`);
+    throw new Error(
+      `The negotiateContentType middleware must be added before the parseRawBody middleware (${req.method} ${req.parsedUrl})`
+    );
 
   // We don't want to parse the raw body for files, otherwise the stream will not be available anymore
   if (handledMimeTypes.includes(req.$ctx.meta.headers['content-type'])) {
@@ -81,6 +91,9 @@ const parseRawBody = (req: any, res: any, next: any) => {
       req.$ctx.meta.rawBodyParsed = true; // Used to detect if the middleware was added
       next();
     });
+    req.on('error', (e: Error) => {
+      console.error(e);
+    });
   } else {
     req.$ctx.meta.rawBodyParsed = true; // Used to detect if the middleware was added
     next();
@@ -89,10 +102,14 @@ const parseRawBody = (req: any, res: any, next: any) => {
 
 const parseJson = async (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
-    throw new Error(`The parseHeader middleware must be added before the parseJson middleware`);
+    throw new Error(
+      `The parseHeader middleware must be added before the parseJson middleware (${req.method} ${req.parsedUrl})`
+    );
 
   if (!req.$ctx.meta.rawBodyParsed)
-    throw new Error(`The parseRawBody middleware must be added before the parseJson middleware`);
+    throw new Error(
+      `The parseRawBody middleware must be added before the parseJson middleware (${req.method} ${req.parsedUrl})`
+    );
 
   if (req.$ctx.meta.headers['content-type'] === MIME_TYPES.JSON && req.$ctx.meta.rawBody) {
     try {
@@ -108,11 +125,13 @@ const parseJson = async (req: any, res: any, next: any) => {
 
 const parseFile = (req: any, res: any, next: any) => {
   if (!req.$ctx.meta.headers)
-    throw new Error(`The parseHeader middleware must be added before the parseFile middleware`);
+    throw new Error(
+      `The parseHeader middleware must be added before the parseFile middleware (${req.method} ${req.parsedUrl})`
+    );
 
   const contentType = req.$ctx.meta.headers['content-type'];
 
-  if (!handledMimeTypes.includes(contentType) && (req.method === 'POST' || req.method === 'PUT')) {
+  if (contentType && !handledMimeTypes.includes(contentType) && (req.method === 'POST' || req.method === 'PUT')) {
     if (contentType.includes('multipart/form-data')) {
       const busboy = new Busboy({ headers: req.$ctx.meta.headers });
       const files: any = [];
@@ -157,22 +176,19 @@ const saveDatasetMeta = (req: any, res: any, next: any) => {
   next();
 };
 
-/** @type {(msg: string) => never} */
-const throw400 = (msg: any) => {
+const throw400 = (msg: string): never => {
   throw new MoleculerError(msg, 400, 'BAD_REQUEST', { status: 'Bad Request', text: msg });
 };
 
-/** @type {(msg: string) => never} */
-const throw403 = (msg: any) => {
+const throw403 = (msg: string): never => {
   throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
 
-/** @type {(msg: string) => never} */
-const throw404 = (msg: any) => {
+const throw404 = (msg: string): never => {
   throw new MoleculerError('Forbidden', 404, 'NOT_FOUND', { status: 'Not found', text: msg });
 };
 
-const throw500 = (msg: any) => {
+const throw500 = (msg: string): never => {
   throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
 };
 

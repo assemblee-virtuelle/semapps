@@ -56,15 +56,7 @@ const setRightsHandler = {
     const activityUri = getId(activity);
     const newRecipients = await ctx.call('activitypub.activity.getRecipients', { activity });
     const activityIsPublic = await ctx.call('activitypub.activity.isPublic', { activity });
-    /** @type {string} */
     const objectUri = typeof activity.object === 'string' ? activity.object : activity.object?.id;
-
-    // When a new activity is created, ensure the emitter has read rights as well.
-    // Don't do that on podProvider config, because the Pod owner already has all rights.
-    // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ matc... Remove this comment to see the full error message
-    if (!this.settings.podProvider) {
-      if (!newRecipients.includes(activity.actor)) newRecipients.push(activity.actor);
-    }
 
     // Give read rights to the recipients, unless the activity is transient
     if (!activityUri.includes('#')) {

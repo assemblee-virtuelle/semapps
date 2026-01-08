@@ -1,6 +1,4 @@
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'mole... Remove this comment to see the full error message
-import Schedule from 'moleculer-schedule';
-import { ServiceSchema } from 'moleculer';
+import { Service, ServiceSchema } from 'moleculer';
 import deleteAction from './actions/delete.ts';
 import getAction from './actions/get.ts';
 import getNetworkAction from './actions/getNetwork.ts';
@@ -10,10 +8,8 @@ import storeAction from './actions/store.ts';
 
 const LdpRemoteSchema = {
   name: 'ldp.remote' as const,
-  mixins: [Schedule],
   settings: {
-    baseUrl: null,
-    podProvider: false
+    baseUrl: null
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -32,48 +28,10 @@ const LdpRemoteSchema = {
   },
   methods: {
     async proxyAvailable() {
-      const services = await this.broker.call('$node.services');
-      return services.some((s: any) => s.name === 'signature.proxy');
-    },
-    async updateSingleMirroredResources() {
-      if (!this.settings.podProvider) {
-        const singles = await this.broker.call('triplestore.query', {
-          query: `
-            SELECT DISTINCT ?s 
-            WHERE { 
-              GRAPH ?g { 
-                ?s <http://semapps.org/ns/core#singleMirroredResource> ?o 
-              }
-            }
-          `
-        });
-
-        for (const resourceUri of singles.map((node: any) => node.s.value)) {
-          try {
-            await this.actions.store({
-              resourceUri,
-              keepInSync: true
-            });
-          } catch (e) {
-            // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-            if (e.code === 403 || e.code === 404 || e.code === 401) {
-              await this.actions.delete({ resourceUri });
-            } else {
-              // Connection errors are not counted as errors that indicate the resource is gone.
-              // Those error just indicate that the remote server is not responding. Can be temporary.
-              this.logger.warn(`Failed to update single mirrored resource: ${resourceUri}`);
-            }
-          }
-        }
-      }
+      const services: ServiceSchema[] = await this.broker.call('$node.services');
+      return services.some(s => s.name === 'signature.proxy');
     }
-  },
-  jobs: [
-    {
-      rule: '0 * * * *',
-      handler: 'updateSingleMirroredResources'
-    }
-  ]
+  }
 } satisfies ServiceSchema;
 
 export default LdpRemoteSchema;

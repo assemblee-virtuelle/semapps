@@ -3,7 +3,8 @@ import arrayOf from '../utils/arrayOf';
 import expandTypes from '../utils/expandTypes';
 
 const fetchVoidEndpoints = (): Plugin => ({
-  transformConfig: async (config: Configuration) => {
+  name: 'fetchVoidEndpoints',
+  transformConfig: async config => {
     let results = [] as VoidResults[];
 
     try {
@@ -33,7 +34,7 @@ const fetchVoidEndpoints = (): Plugin => ({
     results = results.filter(result => result.datasets);
 
     if (results.length > 0) {
-      const newConfig = { ...config } as Configuration;
+      const newConfig = { ...config };
 
       for (const result of results) {
         // Ignore unfetchable endpoints

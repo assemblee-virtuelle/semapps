@@ -6,18 +6,19 @@ import LdpRegistryService from './services/registry/index.ts';
 import LdpResourceService from './services/resource/index.ts';
 import PermissionsService from './services/permissions/index.ts';
 import ControlledContainerMixin from './mixins/controlled-container.ts';
+import ControlledResourceMixin from './mixins/controlled-resource.ts';
 import DereferenceMixin from './mixins/dereference.ts';
 import ImageProcessorMixin from './mixins/image-processor.ts';
 import MimeTypesMixin from './mixins/mime-types.ts';
 import DocumentTaggerMixin from './mixins/document-tagger.ts';
 import DisassemblyMixin from './mixins/disassembly.ts';
-import SingleResourceContainerMixin from './mixins/single-resource-container.ts';
 import SpecialEndpointMixin from './mixins/special-endpoint.ts';
 import OrphanFilesDeletionMixin from './mixins/orphan-files-deletion.ts';
 import defaultContainerOptions from './services/registry/defaultOptions.ts';
 import LdpAdapter from './adapter.ts';
 
 export * from './utils.ts';
+export * from './types.ts';
 export {
   LdpService,
   LdpCacheService,
@@ -27,12 +28,12 @@ export {
   LdpResourceService,
   PermissionsService,
   ControlledContainerMixin,
+  ControlledResourceMixin,
   DereferenceMixin,
   ImageProcessorMixin,
   MimeTypesMixin,
   DocumentTaggerMixin,
   DisassemblyMixin,
-  SingleResourceContainerMixin,
   SpecialEndpointMixin,
   OrphanFilesDeletionMixin,
   defaultContainerOptions,

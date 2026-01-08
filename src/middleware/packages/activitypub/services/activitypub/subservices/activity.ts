@@ -11,14 +11,12 @@ const ActivityService = {
   name: 'activitypub.activity' as const,
   mixins: [ControlledContainerMixin, ActivitiesHandlerMixin],
   settings: {
-    baseUri: null,
-    podProvider: false,
+    baseUrl: null,
     // ControlledContainerMixin settings
     path: '/as/activity',
-    acceptedTypes: Object.values(FULL_ACTIVITY_TYPES),
+    types: Object.values(FULL_ACTIVITY_TYPES),
     permissions: {},
     newResourcesPermissions: {},
-    readOnly: true,
     excludeFromMirror: true,
     activateTombstones: false,
     controlledActions: {
@@ -45,8 +43,8 @@ const ActivityService = {
 
         for (const predicates of ['to', 'bto', 'cc', 'bcc']) {
           if (activity[predicates]) {
-            for (const recipient of arrayOf(activity[predicates])) {
-              switch (recipient) {
+            for (const recipientUri of arrayOf(activity[predicates])) {
+              switch (recipientUri) {
                 // Skip public URI
                 case PUBLIC_URI:
                 case 'as:Public':
@@ -57,9 +55,9 @@ const ActivityService = {
                 case actor.followers:
                   // Ignore remote followers list
                   // TODO Fetch remote followers list ?
-                  if (recipient.startsWith(this.settings.baseUri)) {
+                  if (this.isLocalActor(recipientUri)) {
                     const collection = await ctx.call('activitypub.collection.get', {
-                      resourceUri: recipient,
+                      resourceUri: recipientUri,
                       webId: activity.actor
                     });
                     if (collection && collection.items) output.push(...arrayOf(collection.items));
@@ -68,7 +66,7 @@ const ActivityService = {
 
                 // Simple actor URI
                 default:
-                  output.push(recipient);
+                  output.push(recipientUri);
                   break;
               }
             }
@@ -101,7 +99,7 @@ const ActivityService = {
   },
   methods: {
     isLocalActor(uri) {
-      return uri.startsWith(this.settings.baseUri);
+      return uri.startsWith(this.settings.baseUrl);
     }
   },
   hooks: {

@@ -153,7 +153,6 @@ const InferenceSchema = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'newData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { newData } = ctx.params;
         newData = await ctx.call('jsonld.parser.expand', { input: newData });
 
@@ -186,7 +185,6 @@ const InferenceSchema = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { oldData } = ctx.params;
         oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
 
@@ -215,7 +213,6 @@ const InferenceSchema = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Optiona... Remove this comment to see the full error message
         let { oldData, newData } = ctx.params;
         oldData = await ctx.call('jsonld.parser.expand', { input: oldData });
         newData = await ctx.call('jsonld.parser.expand', { input: newData });
@@ -253,7 +250,7 @@ const InferenceSchema = {
 
         // Dealing with remotes
 
-        // remote relationships are sent to relay actor of remote server
+        // Remote relationships are sent to remote server
         if (this.settings.offerToRemoteServers) {
           for (const triple of addRemotes) {
             await this.broker.call('inference.remote.offerInference', {
@@ -277,7 +274,6 @@ const InferenceSchema = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'triplesAdded' does not exist on type 'Op... Remove this comment to see the full error message
         const { triplesAdded, triplesRemoved, skipInferenceCheck } = ctx.params;
 
         // If the patch is done following a remote inference offer
@@ -312,7 +308,7 @@ const InferenceSchema = {
 
         // Dealing with remotes
 
-        // remote relationships are sent to relay actor of remote server
+        // Remote relationships are sent to remote server
         if (this.settings.offerToRemoteServers) {
           for (const triple of addRemotes) {
             await this.broker.call('inference.remote.offerInference', {

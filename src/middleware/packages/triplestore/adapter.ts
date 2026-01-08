@@ -1,17 +1,17 @@
 /* eslint-disable class-methods-use-this */
 import { MIME_TYPES } from '@semapps/mime-types';
-
+import { DbAdapter } from 'moleculer-db';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
 import { frame } from 'jsonld';
 import { sanitizeSparqlUri, sanitizeSparqlString } from './utils.ts';
 
-class TripleStoreAdapter {
-  constructor({ type, dataset, baseUri, ontology = 'http://semapps.org/ns/core#' }: any) {
+class TripleStoreAdapter implements DbAdapter {
+  constructor({ type, dataset, baseUrl, ontology = 'http://semapps.org/ns/core#' }: any) {
     // @ts-expect-error TS(2339): Property 'type' does not exist on type 'TripleStor... Remove this comment to see the full error message
     this.type = type;
-    // @ts-expect-error TS(2339): Property 'baseUri' does not exist on type 'TripleS... Remove this comment to see the full error message
-    this.baseUri = baseUri || `urn:${type}:`;
+    // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type 'TripleS... Remove this comment to see the full error message
+    this.baseUrl = baseUrl || `urn:${type}:`;
     // @ts-expect-error TS(2339): Property 'dataset' does not exist on type 'TripleS... Remove this comment to see the full error message
     this.dataset = dataset;
     // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
@@ -160,8 +160,8 @@ class TripleStoreAdapter {
    */
   insert(entity: any) {
     const { slug, ...resource } = entity;
-    // @ts-expect-error TS(2339): Property 'baseUri' does not exist on type 'TripleS... Remove this comment to see the full error message
-    resource['@id'] = this.baseUri + (slug || uuidv4());
+    // @ts-expect-error TS(2339): Property 'baseUrl' does not exist on type 'TripleS... Remove this comment to see the full error message
+    resource['@id'] = this.baseUrl + (slug || uuidv4());
 
     // Ensure no predicates include an ontology
     const keyWithOntology = Object.keys(resource).find(key => key.includes(':'));

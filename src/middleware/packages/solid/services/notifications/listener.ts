@@ -21,7 +21,7 @@ const SolidNotificationsListenerSchema = {
     // DbService settings
     idField: '@id'
   },
-  dependencies: ['api', 'app', 'ontologies'],
+  dependencies: ['api', 'ontologies'],
   async started() {
     if (!this.settings.baseUrl) throw new Error(`The baseUrl setting is required`);
 
@@ -55,8 +55,7 @@ const SolidNotificationsListenerSchema = {
     register: {
       async handler(ctx) {
         const { resourceUri, actionName } = ctx.params;
-
-        const appActor = await ctx.call('app.get');
+        const webId = ctx.params.webId || ctx.meta.webId;
 
         // Check if a listener already exist
         const existingListener = this.listeners.find(
@@ -68,7 +67,7 @@ const SolidNotificationsListenerSchema = {
             // Check if channel still exist. If not, it will throw an error.
             await ctx.call('ldp.remote.get', {
               resourceUri: existingListener.channelUri,
-              webId: appActor.id,
+              webId,
               strategy: 'networkOnly'
             });
 
@@ -138,7 +137,7 @@ const SolidNotificationsListenerSchema = {
             'notify:topic': resourceUri,
             'notify:sendTo': webhookUrl
           }),
-          actorUri: appActor.id
+          actorUri: webId
         });
 
         // Keep track of the channel URI, to be able to check if it still exists
@@ -165,7 +164,6 @@ const SolidNotificationsListenerSchema = {
           } catch (e) {
             // Ignore errors that the actions may generate (otherwise 404 errors will be considered as non-existing webhooks)
           }
-          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = 200;
         } else {
           throw new MoleculerError(`No webhook found with URL ${webhookUrl}`, 404, 'NOT_FOUND');

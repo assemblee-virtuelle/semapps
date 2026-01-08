@@ -1,18 +1,20 @@
 import path from 'path';
-import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import { CoreService } from '@semapps/core';
-import { as } from '@semapps/ontologies';
+import { as, solid } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { fileURLToPath } from 'url';
-import { dropDataset } from '../utils.ts';
+import { dropDataset, listDatasets } from '../utils.ts';
 import * as CONFIG from '../config.ts';
 
-// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const initialize = async () => {
-  await dropDataset(CONFIG.MAIN_DATASET);
+  const datasets: string[] = await listDatasets();
+  for (let dataset of datasets) {
+    await dropDataset(dataset);
+  }
 
   const broker = new ServiceBroker({
     // @ts-expect-error TS(2322): Type '{ name: string; created(broker: any): void; ... Remove this comment to see the full error message
@@ -25,8 +27,8 @@ const initialize = async () => {
     }
   });
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
     mixins: [CoreService],
     settings: {
       baseUrl: CONFIG.HOME_URL,
@@ -38,13 +40,15 @@ const initialize = async () => {
         mainDataset: CONFIG.MAIN_DATASET,
         secure: false // TODO Remove when we move to Fuseki 5
       },
-      ontologies: [as],
+      ontologies: [as, solid],
       containers: [
         {
-          path: '/resources'
+          path: '/resources',
+          types: ['as:Article']
         },
         {
           path: '/resources2',
+          types: ['as:Video'],
           permissions: {},
           newResourcesPermissions: (webId: any) => {
             switch (webId) {
@@ -65,14 +69,11 @@ const initialize = async () => {
       ],
       activitypub: false,
       ldp: {
-        documentTagger: false
+        documentTagger: false,
+        allowSlugs: false
       },
       mirror: false,
-      void: false,
-      webfinger: false,
-      webid: {
-        path: '/users'
-      }
+      webfinger: false
     }
   });
 
@@ -85,8 +86,6 @@ const initialize = async () => {
       accountsDataset: CONFIG.SETTINGS_DATASET
     }
   });
-
-  await broker.start();
 
   return broker;
 };

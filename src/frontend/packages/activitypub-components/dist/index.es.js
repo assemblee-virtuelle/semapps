@@ -4,19 +4,24 @@ import {useRecordContext as $85cNH$useRecordContext, useGetIdentity as $85cNH$us
 import {RichTextInput as $85cNH$RichTextInput, DefaultEditorOptions as $85cNH$DefaultEditorOptions} from "ra-input-rich-text";
 import $85cNH$tiptapextensionplaceholder from "@tiptap/extension-placeholder";
 import {Box as $85cNH$Box, Avatar as $85cNH$Avatar, Button as $85cNH$Button, Typography as $85cNH$Typography, CircularProgress as $85cNH$CircularProgress} from "@mui/material";
-import $85cNH$muistylesmakeStyles from "@mui/styles/makeStyles";
+import {makeStyles as $85cNH$makeStyles} from "tss-react/mui";
 import $85cNH$muiiconsmaterialSend from "@mui/icons-material/Send";
 import {useDataModel as $85cNH$useDataModel, getOrCreateWsChannel as $85cNH$getOrCreateWsChannel} from "@semapps/semantic-data-provider";
 import {AuthDialog as $85cNH$AuthDialog} from "@semapps/auth-provider";
-import {useQueries as $85cNH$useQueries, useQueryClient as $85cNH$useQueryClient, useInfiniteQuery as $85cNH$useInfiniteQuery} from "react-query";
-import $85cNH$rdfvalidateshacl from "rdf-validate-shacl";
+import {useQueries as $85cNH$useQueries, useQueryClient as $85cNH$useQueryClient, useInfiniteQuery as $85cNH$useInfiniteQuery} from "@tanstack/react-query";
+import $85cNH$jsonld from "jsonld";
 import $85cNH$rdfext from "rdf-ext";
-import $85cNH$rdfjsparserjsonld from "@rdfjs/parser-jsonld";
-import {ReadableWebToNodeStream as $85cNH$ReadableWebToNodeStream} from "readable-web-to-node-stream";
 import $85cNH$rdfjsparsern3 from "@rdfjs/parser-n3";
+import {Readable as $85cNH$Readable} from "readable-stream";
+import {Validator as $85cNH$Validator} from "shacl-engine";
+import {jsonld as $85cNH$jsonld1} from "@activitypods/shape-definitions";
+import {ReadableWebToNodeStream as $85cNH$ReadableWebToNodeStream} from "readable-web-to-node-stream";
 import {mergeAttributes as $85cNH$mergeAttributes} from "@tiptap/core";
 import $85cNH$tiptapextensionmention from "@tiptap/extension-mention";
 import {ReferenceField as $85cNH$ReferenceField, AvatarWithLabelField as $85cNH$AvatarWithLabelField} from "@semapps/field-components";
+import {createConnectedLdoDataset as $85cNH$createConnectedLdoDataset} from "@ldo/connected";
+import {solidConnectedPlugin as $85cNH$solidConnectedPlugin} from "@ldo/connected-solid";
+import {OrderedCollectionPageShapeType as $85cNH$OrderedCollectionPageShapeType} from "@activitypods/ldo-shapes";
 import {ReactRenderer as $85cNH$ReactRenderer} from "@tiptap/react";
 import $85cNH$tippyjs from "tippy.js";
 
@@ -34,7 +39,7 @@ import $85cNH$tippyjs from "tippy.js";
 
 
 
-const $338f387df48a40d7$export$1ec8e53e7d982d22 = {
+const $cb5f912aee8137fc$export$1ec8e53e7d982d22 = {
     ACCEPT: 'Accept',
     ADD: 'Add',
     ANNOUNCE: 'Announce',
@@ -64,14 +69,14 @@ const $338f387df48a40d7$export$1ec8e53e7d982d22 = {
     UPDATE: 'Update',
     VIEW: 'View'
 };
-const $338f387df48a40d7$export$9649665d7ccb0dc2 = {
+const $cb5f912aee8137fc$export$9649665d7ccb0dc2 = {
     APPLICATION: 'Application',
     GROUP: 'Group',
     ORGANIZATION: 'Organization',
     PERSON: 'Person',
     SERVICE: 'Service'
 };
-const $338f387df48a40d7$export$c49cfb2681596b20 = {
+const $cb5f912aee8137fc$export$c49cfb2681596b20 = {
     ARTICLE: 'Article',
     AUDIO: 'Audio',
     DOCUMENT: 'Document',
@@ -85,7 +90,11 @@ const $338f387df48a40d7$export$c49cfb2681596b20 = {
     TOMBSTONE: 'Tombstone',
     VIDEO: 'Video'
 };
-const $338f387df48a40d7$export$4d8d554031975581 = 'https://www.w3.org/ns/activitystreams#Public';
+const $cb5f912aee8137fc$export$4d8d554031975581 = 'https://www.w3.org/ns/activitystreams#Public';
+
+
+
+
 
 
 
@@ -116,6 +125,43 @@ const $577f4953dfa5de4f$export$34aed805e991a647 = (iterable, predicate)=>{
         return true;
     });
 };
+const $577f4953dfa5de4f$export$2684df65fa35e98e = async (jsonLdObject)=>{
+    // Convert JSON-LD object to N-Quads string
+    const nquads = await (0, $85cNH$jsonld).toRDF(jsonLdObject, {
+        format: 'application/n-quads'
+    });
+    // Parse N-Quads string to RDF/JS quads
+    const parser = new (0, $85cNH$rdfjsparsern3)();
+    const quadStream = parser.import((0, $85cNH$Readable).from([
+        nquads
+    ]));
+    const dataset = await (0, $85cNH$rdfext).dataset().import(quadStream);
+    return dataset;
+};
+const $577f4953dfa5de4f$export$7089f01fea2fc5c2 = async (jsonLdObject)=>{
+    // Convert JSON-LD object to N-Quads string
+    const nquads = await (0, $85cNH$jsonld).toRDF(jsonLdObject, {
+        format: 'application/n-quads'
+    });
+    // Parse N-Quads string to RDF/JS quads
+    const parser = new (0, $85cNH$rdfjsparsern3)();
+    const quadStream = parser.import((0, $85cNH$Readable).from([
+        nquads
+    ]));
+    // Convert the quad stream to an array of quads
+    const quads = [];
+    quadStream.on('data', (quad)=>{
+        quads.push(quad);
+    });
+    return new Promise((resolve, reject)=>{
+        quadStream.on('end', ()=>{
+            resolve(quads);
+        });
+        quadStream.on('error', (error)=>{
+            reject(error);
+        });
+    });
+};
 
 
 
@@ -123,10 +169,10 @@ const $577f4953dfa5de4f$export$34aed805e991a647 = (iterable, predicate)=>{
 
 
 
-// Cache of SHACL validators
-const $25cb6caf33e2f460$var$validatorCache = {};
+
+
 // Helper function to convert a string to a Node.js Readable stream
-const $25cb6caf33e2f460$var$stringToStream = (str)=>{
+const $58194f7610fd9353$export$7b2e5d6b7377fcaf = (str)=>{
     // Create a TextEncoder to convert string to Uint8Array
     const encoder = new TextEncoder();
     const uint8Array = encoder.encode(str);
@@ -140,81 +186,134 @@ const $25cb6caf33e2f460$var$stringToStream = (str)=>{
     // Convert the web ReadableStream to a Node.js Readable stream
     return new (0, $85cNH$ReadableWebToNodeStream)(readableStream);
 };
-// Helper function to parse JSON-LD and convert to RDF-ext quads
-const $25cb6caf33e2f460$export$2684df65fa35e98e = async (jsonLdObj, context)=>{
-    try {
-        // Add context to the JSON-LD object if needed
-        const jsonLdWithContext = {
-            ...jsonLdObj,
-            '@context': context
-        };
-        // Convert JSON-LD object to string
-        const jsonString = JSON.stringify(jsonLdWithContext);
-        // Convert string to stream using the helper function
-        const textStream = $25cb6caf33e2f460$var$stringToStream(jsonString);
-        // Use the JsonLdParser that outputs rdf-ext compatible quads directly
-        const parser = new (0, $85cNH$rdfjsparserjsonld)({
-            factory: (0, $85cNH$rdfext)
-        });
-        const quadStream = parser.import(textStream);
-        // Collect quads into a dataset
-        const dataset = (0, $85cNH$rdfext).dataset();
-        for await (const quad of quadStream)dataset.add(quad);
-        return dataset;
-    } catch (error) {
-        console.error('Error parsing JSON-LD:', error);
-        throw error;
-    }
-};
-// Helper function to load a SHACL shape and return a validator
-const $25cb6caf33e2f460$export$6de257db5bb9fd74 = async (shapeUri)=>{
-    // Check if the validator is already cached
-    if ($25cb6caf33e2f460$var$validatorCache[shapeUri]) return $25cb6caf33e2f460$var$validatorCache[shapeUri];
-    const response = await fetch(shapeUri, {
-        headers: {
-            Accept: 'text/turtle'
-        }
-    });
-    if (!response.ok) throw new Error(`Failed to load shape: ${response.status} ${response.statusText}`);
-    // Get the Turtle data as text
-    const turtleData = await response.text();
-    // Convert text to stream using the helper function
-    const textStream = $25cb6caf33e2f460$var$stringToStream(turtleData);
+const $58194f7610fd9353$export$7304a15200aa09e5 = async (turtleData)=>{
+    // Convert Turtle data to a stream
+    const textStream = $58194f7610fd9353$export$7b2e5d6b7377fcaf(turtleData);
     // Use ParserN3 which outputs rdf-ext compatible quads directly
     const parser = new (0, $85cNH$rdfjsparsern3)({
         factory: (0, $85cNH$rdfext)
     });
     const quadStream = parser.import(textStream);
-    // Collect quads into a dataset
-    const shapeDataset = (0, $85cNH$rdfext).dataset();
-    for await (const quad of quadStream)shapeDataset.add(quad);
-    // Create and cache the SHACL validator using the dataset
-    $25cb6caf33e2f460$var$validatorCache[shapeUri] = new (0, $85cNH$rdfvalidateshacl)(shapeDataset, {
-        factory: (0, $85cNH$rdfext)
-    });
-    return $25cb6caf33e2f460$var$validatorCache[shapeUri];
+    const dataset = await (0, $85cNH$rdfext).dataset().import(quadStream);
+    return dataset;
 };
-const $25cb6caf33e2f460$export$1558e55ae3912bbb = async (items, shaclValidator, context)=>{
+
+
+const $25cb6caf33e2f460$var$activitystreams = (0, $85cNH$jsonld1).activitystreams;
+// Cache of SHACL validators
+const $25cb6caf33e2f460$var$validatorCache = {};
+/**
+ * Returns a SHACL validator for ActivityStreams shapes.
+ *
+ * This function creates a SHACL validator for ActivityStreams shapes using the
+ * `@activitypods/shape-definitions` package. It caches the validator to avoid
+ * creating it multiple times.
+ *
+ * @returns A Promise that resolves to a SHACL Validator instance.
+ */ const $25cb6caf33e2f460$export$8b707c2a07270e94 = async ()=>{
+    // Check if the validator is already cached
+    if ($25cb6caf33e2f460$var$validatorCache.activityStreams) return $25cb6caf33e2f460$var$validatorCache.activityStreams;
+    try {
+        const shapeDataset = await (0, $58194f7610fd9353$export$7304a15200aa09e5)($25cb6caf33e2f460$var$activitystreams);
+        // Create and cache the SHACL validator using the dataset
+        $25cb6caf33e2f460$var$validatorCache.activityStreams = new (0, $85cNH$Validator)(shapeDataset, {
+            factory: (0, $85cNH$rdfext),
+            debug: true
+        });
+        return $25cb6caf33e2f460$var$validatorCache.activityStreams;
+    } catch (error) {
+        throw new Error(`Failed to create ActivityStreams validator: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+    const shapeDataset = await (0, $58194f7610fd9353$export$7304a15200aa09e5)($25cb6caf33e2f460$var$activitystreams);
+    // Create and cache the SHACL validator using the dataset
+    $25cb6caf33e2f460$var$validatorCache.activityStreams = new (0, $85cNH$Validator)(shapeDataset, {
+        factory: (0, $85cNH$rdfext),
+        debug: true
+    });
+    return $25cb6caf33e2f460$var$validatorCache.activitystreams;
+};
+// Helper function to load a SHACL shape and return a validator
+const $25cb6caf33e2f460$export$6de257db5bb9fd74 = async (shapeUri)=>{
+    // Check if the validator is already cached
+    if ($25cb6caf33e2f460$var$validatorCache[shapeUri]) return $25cb6caf33e2f460$var$validatorCache[shapeUri];
+    try {
+        const response = await fetch(shapeUri, {
+            headers: {
+                Accept: 'text/turtle'
+            }
+        });
+        if (!response.ok) throw new Error(`Failed to load shape: ${response.status} ${response.statusText}`);
+        // Get the Turtle data as text
+        const turtleData = await response.text();
+        const shapeDataset = await (0, $58194f7610fd9353$export$7304a15200aa09e5)(turtleData);
+        // Create and cache the SHACL validator using the dataset
+        $25cb6caf33e2f460$var$validatorCache[shapeUri] = new (0, $85cNH$Validator)(shapeDataset, {
+            factory: (0, $85cNH$rdfext)
+        });
+        return $25cb6caf33e2f460$var$validatorCache[shapeUri];
+    } catch (error) {
+        throw new Error(`Failed to create SHACL validator for ${shapeUri}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+};
+/**
+ * Validates an array of items against a SHACL shape and returns the validation results.
+ *
+ * @param items The items to validate
+ * @param shaclValidator The SHACL validator to use
+ * @param context The context to use for the items
+ *
+ * @returns An array of objects containing the item and its validation result
+ */ const $25cb6caf33e2f460$export$1558e55ae3912bbb = async (items, shaclValidator, context)=>{
     if (!shaclValidator) throw new Error('validateItems: shaclValidator is required');
-    if (!context) throw new Error('validateItems: context is required');
     return Promise.all(items.map(async (item)=>{
         try {
+            if (!item['@context']) item['@context'] = context;
             // Create a dataset from the item's JSON-LD
-            const itemDataset = await $25cb6caf33e2f460$export$2684df65fa35e98e(item, context);
+            const itemDataset = await (0, $577f4953dfa5de4f$export$2684df65fa35e98e)(item);
             // Validate against the SHACL shape
-            const report = shaclValidator?.validate(itemDataset);
+            const report = shaclValidator.validate({
+                dataset: itemDataset
+            });
             return {
                 item: item,
-                isValid: report?.conforms
+                isValid: report.conforms
             };
         } catch (error) {
-            console.error(`Error validating item ${item.id}:`, error);
             return {
                 item: item,
-                isValid: false
+                isValid: false,
+                error: error
             };
         }
     }));
+};
+/**
+ * Validates a subject against a set of SHACL shapes and returns the typed item if valid.
+ *
+ * @param subjectUri The subject to validate
+ * @param dataset The dataset containing the subject
+ * @param shapeTypes The shape types to validate against
+ * @param validator The SHACL validator to use
+ *
+ * @returns A typed item if valid, or null if not valid
+ */ const $25cb6caf33e2f460$export$c4cb1062f0ffb837 = async (subjectUri, dataset, shapeTypes, validator)=>{
+    const validationReport = await validator.validate(// Terms means the entry point from which should be validated, in our case the current item.
+    {
+        dataset: dataset,
+        terms: [
+            (0, $85cNH$rdfext).namedNode(subjectUri)
+        ]
+    }, // Here, terms means the shapes to validate against.
+    {
+        terms: shapeTypes.map((shapeType)=>(0, $85cNH$rdfext).namedNode(shapeType.shape))
+    });
+    if (!validationReport.conforms) return null;
+    const { results: results } = validationReport;
+    // Find the shape that matched the item in the report results.
+    const shapeType = shapeTypes.find((st)=>results.find((res)=>res.focusNode === subjectUri && res.shape === st.shape));
+    if (!shapeType) return null;
+    const typedItem = dataset.usingType(shapeType).fromSubject(subjectUri);
+    return typedItem;
 };
 
 
@@ -233,14 +332,17 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
         items
     ]);
     // Dereference all items, if necessary (even if shouldDereference is false, the hook needs to be called).
-    const itemQueries = (0, $85cNH$useQueries)(!shouldDereference ? $8281f3ce3b9d6123$var$emptyArray : items.filter((item)=>typeof item === 'string').map((itemUri)=>({
-            queryKey: [
-                'resource',
-                itemUri
-            ],
-            queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
-            staleTime: Infinity // Activities are immutable, so no need to refetch..
-        })));
+    const itemQueries = (0, $85cNH$useQueries)({
+        queries: !shouldDereference ? $8281f3ce3b9d6123$var$emptyArray : items.filter((item)=>typeof item === 'string').map((itemUri)=>({
+                queryKey: [
+                    'resource',
+                    itemUri
+                ],
+                queryFn: async ()=>(await dataProvider.fetch(itemUri)).json,
+                // TODO: Collections don't have to contain activities only, do they?
+                staleTime: Infinity // Activities are immutable, so no need to refetch..
+            }))
+    });
     if (!shouldDereference) return {
         loadedItems: items,
         isLoading: false,
@@ -259,7 +361,7 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
     };
 };
 /**
- * Subscribe a collection. Supports pagination.
+ * Subscribe toa collection. Supports pagination.
  * @param predicateOrUrl The collection URI or the predicate to get the collection URI from the identity (webId).
  * @param {UseCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false }`
  */ const $8281f3ce3b9d6123$var$useCollection = (predicateOrUrl, options = {})=>{
@@ -277,7 +379,7 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
     // Get collectionUrl from webId predicate or URL.
     const collectionUrl = (0, $85cNH$useMemo)(()=>{
         if (predicateOrUrl) {
-            if (predicateOrUrl.startsWith('http')) return predicateOrUrl;
+            if (predicateOrUrl.startsWith('http') || predicateOrUrl.startsWith('did:ng:')) return predicateOrUrl;
             if (identity?.webIdData) return identity?.webIdData?.[predicateOrUrl];
         }
         return undefined;
@@ -326,6 +428,8 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
         // Validate the json with the SHACL shape
         if (shaclShapeUri !== '' && json[itemsKey] && json[itemsKey].length > 0) try {
             if (!json['@context']) throw new Error(`No context returned by the server.\nA context is required to expand the collection's items and validate them.`);
+            // TODO: Research: Is this used with the multi-purpose viewer already?
+            // How can multiple shapes be validated? Can we get this typed here?
             const shaclValidator = await (0, $25cb6caf33e2f460$export$6de257db5bb9fd74)(shaclShapeUri);
             const validatedResults = await (0, $25cb6caf33e2f460$export$1558e55ae3912bbb)((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(json[itemsKey]), shaclValidator, json['@context']);
             // Keep only the valid item in the collection
@@ -344,16 +448,19 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
         shaclShapeUri
     ]);
     // Use infiniteQuery to handle pagination, fetching, etc.
-    const { data: pageData, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $85cNH$useInfiniteQuery)([
-        'collection',
-        {
-            collectionUrl: collectionUrl,
-            shaclShapeUri: shaclShapeUri
-        }
-    ], fetchCollection, {
+    const { data: pageData, error: collectionError, fetchNextPage: fetchNextPage, refetch: refetch, hasNextPage: hasNextPage, isLoading: isLoadingPage, isFetching: isFetchingPage, isFetchingNextPage: isFetchingNextPage } = (0, $85cNH$useInfiniteQuery)({
+        queryKey: [
+            'collection',
+            {
+                collectionUrl: collectionUrl,
+                shaclShapeUri: shaclShapeUri
+            }
+        ],
         enabled: !!(collectionUrl && identity?.id),
+        initialPageParam: collectionUrl,
         getNextPageParam: (lastPage)=>lastPage.next,
-        getPreviousPageParam: (firstPage)=>firstPage.prev
+        getPreviousPageParam: (firstPage)=>firstPage.prev,
+        queryFn: fetchCollection
     });
     // Put all items together in a list (and dereference, if required).
     const { loadedItems: items, isLoading: isLoadingItems, isFetching: isFetchingItems, errors: itemErrors } = $8281f3ce3b9d6123$var$useItemsFromPages(pageData?.pages ?? $8281f3ce3b9d6123$var$emptyArray, dereferenceItems);
@@ -383,13 +490,14 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
             oldData.pages = pages;
             return oldData;
         });
-        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
-                'collection',
-                {
-                    collectionUrl: collectionUrl
-                }
-            ], {
-                active: true,
+        if (shouldRefetch) setTimeout(async ()=>queryClient.refetchQueries({
+                queryKey: [
+                    'collection',
+                    {
+                        collectionUrl: collectionUrl
+                    }
+                ],
+                type: 'active',
                 exact: true
             }), typeof shouldRefetch === 'number' ? shouldRefetch : 2000);
     }, [
@@ -421,13 +529,14 @@ const $8281f3ce3b9d6123$var$useItemsFromPages = (pages, dereferenceItems)=>{
             oldData.pages = pages;
             return oldData;
         });
-        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries([
-                'collection',
-                {
-                    collectionUrl: collectionUrl
-                }
-            ], {
-                active: true,
+        if (shouldRefetch) setTimeout(()=>queryClient.refetchQueries({
+                queryKey: [
+                    'collection',
+                    {
+                        collectionUrl: collectionUrl
+                    }
+                ],
+                type: 'active',
                 exact: true
             }), typeof shouldRefetch === 'number' ? shouldRefetch : 2000);
     }, [
@@ -633,7 +742,7 @@ var $4d1d40fdbcd30589$export$2e2bcd8739ae039 = $4d1d40fdbcd30589$var$useOutbox;
 // Fix a bug in the current version of the mention extension
 // (The { id, label } object is located inside the id property)
 // See https://github.com/ueberdosis/tiptap/pull/1322
-const $6080c8a288f71367$var$CustomMention = (0, $85cNH$tiptapextensionmention).extend({
+const $40f4c00d51a137ec$var$CustomMention = (0, $85cNH$tiptapextensionmention).extend({
     renderHTML ({ node: node, HTMLAttributes: HTMLAttributes }) {
         return [
             'span',
@@ -674,10 +783,10 @@ const $6080c8a288f71367$var$CustomMention = (0, $85cNH$tiptapextensionmention).e
         };
     }
 });
-var $6080c8a288f71367$export$2e2bcd8739ae039 = $6080c8a288f71367$var$CustomMention;
+var $40f4c00d51a137ec$export$2e2bcd8739ae039 = $40f4c00d51a137ec$var$CustomMention;
 
 
-const $3c17312a40ebf1ed$var$useStyles = (0, $85cNH$muistylesmakeStyles)((theme)=>({
+const $3047004939eff50c$var$useStyles = (0, $85cNH$makeStyles)()((theme)=>({
         form: {
             marginTop: -12 // Negative margin to keep the form close to the label
         },
@@ -723,12 +832,12 @@ const $3c17312a40ebf1ed$var$useStyles = (0, $85cNH$muistylesmakeStyles)((theme)=
             marginBottom: 15
         }
     }));
-const $3c17312a40ebf1ed$var$EmptyToolbar = ()=>null;
-const $3c17312a40ebf1ed$var$PostCommentForm = ({ context: context, placeholder: placeholder, helperText: helperText, mentions: mentions, userResource: userResource, addItem: addItem, removeItem: removeItem })=>{
+const $3047004939eff50c$var$EmptyToolbar = ()=>null;
+const $3047004939eff50c$var$PostCommentForm = ({ context: context, placeholder: placeholder, helperText: helperText, mentions: mentions, userResource: userResource, addItem: addItem, removeItem: removeItem })=>{
     const record = (0, $85cNH$useRecordContext)();
     const { data: identity, isLoading: isLoading } = (0, $85cNH$useGetIdentity)();
     const userDataModel = (0, $85cNH$useDataModel)(userResource);
-    const classes = $3c17312a40ebf1ed$var$useStyles();
+    const { classes: classes } = $3047004939eff50c$var$useStyles();
     const notify = (0, $85cNH$useNotify)();
     const outbox = (0, $4d1d40fdbcd30589$export$2e2bcd8739ae039)();
     const [expanded, setExpanded] = (0, $85cNH$useState)(false);
@@ -738,11 +847,14 @@ const $3c17312a40ebf1ed$var$PostCommentForm = ({ context: context, placeholder: 
         const mentions = Array.from(document.body.getElementsByClassName('mention'));
         const mentionedUsersUris = [];
         mentions.forEach((node)=>{
+            // @ts-expect-error TS(7015): Element implicitly has an 'any' type because index... Remove this comment to see the full error message
             const userUri = node.attributes['data-mention-id'].value;
+            // @ts-expect-error TS(7015): Element implicitly has an 'any' type because index... Remove this comment to see the full error message
             const userLabel = node.attributes['data-mention-label'].value;
             const link = document.createElement('a');
             link.setAttribute('href', `${new URL(window.location.href).origin}/${userResource}/${encodeURIComponent(userUri)}/show`);
             link.textContent = `@${userLabel}`;
+            // @ts-expect-error TS(2531): Object is possibly 'null'.
             node.parentNode.replaceChild(link, node);
             mentionedUsersUris.push(userUri);
         });
@@ -752,10 +864,10 @@ const $3c17312a40ebf1ed$var$PostCommentForm = ({ context: context, placeholder: 
         else {
             const tempId = Date.now();
             const note = {
-                type: (0, $338f387df48a40d7$export$c49cfb2681596b20).NOTE,
+                type: (0, $cb5f912aee8137fc$export$c49cfb2681596b20).NOTE,
                 attributedTo: outbox.owner,
                 content: document.body.innerHTML,
-                inReplyTo: record[context],
+                inReplyTo: record?.[context],
                 published: new Date().toISOString()
             };
             try {
@@ -769,7 +881,7 @@ const $3c17312a40ebf1ed$var$PostCommentForm = ({ context: context, placeholder: 
                     ...note,
                     to: [
                         ...mentionedUsersUris,
-                        (0, $338f387df48a40d7$export$4d8d554031975581)
+                        (0, $cb5f912aee8137fc$export$4d8d554031975581)
                     ]
                 });
                 notify("Commentaire post\xe9 avec succ\xe8s", {
@@ -808,13 +920,15 @@ const $3c17312a40ebf1ed$var$PostCommentForm = ({ context: context, placeholder: 
                     onClick: openAuthIfDisconnected,
                     children: [
                         /*#__PURE__*/ (0, $85cNH$jsx)((0, $85cNH$Avatar), {
-                            src: identity?.webIdData?.[userDataModel?.fieldsMapping?.image] || identity?.profileData?.[userDataModel?.fieldsMapping?.image],
+                            src: // @ts-expect-error TS(2339): Property 'image' does not exist on type '{ title: ... Remove this comment to see the full error message
+                            identity?.webIdData?.[userDataModel?.fieldsMapping?.image] || // @ts-expect-error TS(2339): Property 'image' does not exist on type '{ title: ... Remove this comment to see the full error message
+                            identity?.profileData?.[userDataModel?.fieldsMapping?.image],
                             className: classes.avatar
                         }),
                         /*#__PURE__*/ (0, $85cNH$jsx)((0, $85cNH$RichTextInput), {
                             source: "comment",
                             label: " ",
-                            toolbar: /*#__PURE__*/ (0, $85cNH$jsx)($3c17312a40ebf1ed$var$EmptyToolbar, {}),
+                            toolbar: /*#__PURE__*/ (0, $85cNH$jsx)($3047004939eff50c$var$EmptyToolbar, {}),
                             fullWidth: true,
                             classes: {
                                 editorContent: classes.editorContent
@@ -825,11 +939,12 @@ const $3c17312a40ebf1ed$var$PostCommentForm = ({ context: context, placeholder: 
                                     setExpanded(true);
                                 },
                                 extensions: [
+                                    // @ts-expect-error TS(2461): Type 'Extensions | undefined' is not an array type... Remove this comment to see the full error message
                                     ...(0, $85cNH$DefaultEditorOptions).extensions,
                                     placeholder ? (0, $85cNH$tiptapextensionplaceholder).configure({
                                         placeholder: placeholder
                                     }) : null,
-                                    mentions ? (0, $6080c8a288f71367$export$2e2bcd8739ae039).configure({
+                                    mentions ? (0, $40f4c00d51a137ec$export$2e2bcd8739ae039).configure({
                                         HTMLAttributes: {
                                             class: 'mention'
                                         },
@@ -861,7 +976,7 @@ const $3c17312a40ebf1ed$var$PostCommentForm = ({ context: context, placeholder: 
         ]
     });
 };
-var $3c17312a40ebf1ed$export$2e2bcd8739ae039 = $3c17312a40ebf1ed$var$PostCommentForm;
+var $3047004939eff50c$export$2e2bcd8739ae039 = $3047004939eff50c$var$PostCommentForm;
 
 
 
@@ -871,7 +986,7 @@ var $3c17312a40ebf1ed$export$2e2bcd8739ae039 = $3c17312a40ebf1ed$var$PostComment
 
 
 
-const $be88b298220210d1$var$useStyles = (0, $85cNH$muistylesmakeStyles)(()=>({
+const $74ea3002402ef672$var$useStyles = (0, $85cNH$makeStyles)()(()=>({
         container: {
             paddingLeft: 80,
             marginTop: 8,
@@ -915,13 +1030,13 @@ const $be88b298220210d1$var$useStyles = (0, $85cNH$muistylesmakeStyles)(()=>({
             marginTop: 5
         }
     }));
-const $be88b298220210d1$var$CommentsList = ({ comments: comments, userResource: userResource, loading: loading })=>{
-    const classes = $be88b298220210d1$var$useStyles();
+const $74ea3002402ef672$var$CommentsList = ({ comments: comments, userResource: userResource, loading: loading })=>{
+    const { classes: classes } = $74ea3002402ef672$var$useStyles();
     const userDataModel = (0, $85cNH$useDataModel)(userResource);
     return /*#__PURE__*/ (0, $85cNH$jsxs)((0, $85cNH$Box), {
         position: "relative",
         children: [
-            comments && comments.sort((a, b)=>new Date(b.published) - new Date(a.published)).map((comment)=>/*#__PURE__*/ (0, $85cNH$jsxs)((0, $85cNH$Box), {
+            comments && comments.sort((a, b)=>new Date(b.published).getTime() - new Date(a.published).getTime()).map((comment)=>/*#__PURE__*/ (0, $85cNH$jsxs)((0, $85cNH$Box), {
                     className: classes.container,
                     children: [
                         /*#__PURE__*/ (0, $85cNH$jsx)((0, $85cNH$Box), {
@@ -949,7 +1064,7 @@ const $be88b298220210d1$var$CommentsList = ({ comments: comments, userResource: 
                                             linkType: "show",
                                             children: /*#__PURE__*/ (0, $85cNH$jsx)((0, $85cNH$TextField), {
                                                 variant: "body2",
-                                                source: userDataModel?.fieldsMapping?.title,
+                                                source: userDataModel?.fieldsMapping?.title || '',
                                                 className: classes.label
                                             })
                                         }),
@@ -986,17 +1101,19 @@ const $be88b298220210d1$var$CommentsList = ({ comments: comments, userResource: 
         ]
     });
 };
-var $be88b298220210d1$export$2e2bcd8739ae039 = $be88b298220210d1$var$CommentsList;
+var $74ea3002402ef672$export$2e2bcd8739ae039 = $74ea3002402ef672$var$CommentsList;
 
 
 
-const $7ce737d4a1c88e63$var$CommentsField = ({ source: source, context: context, helperText: helperText, placeholder: placeholder, userResource: userResource, mentions: mentions })=>{
+const $a8ae38fbe2f0ecc5$var$CommentsField = ({ source: source = 'id', context: context = 'id', helperText: helperText, placeholder: placeholder = "Commencez \xe0 taper votre commentaire...", userResource: userResource, mentions: mentions })=>{
     const record = (0, $85cNH$useRecordContext)();
-    const { items: comments, loading: loading, addItem: addItem, removeItem: removeItem } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(record.replies);
+    const { items: comments, isLoading: isLoading, addItem: addItem, removeItem: removeItem } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(record?.replies, {
+        liveUpdates: true
+    });
     if (!userResource) throw new Error('No userResource defined for CommentsField');
     return /*#__PURE__*/ (0, $85cNH$jsxs)((0, $85cNH$Fragment), {
         children: [
-            /*#__PURE__*/ (0, $85cNH$jsx)((0, $3c17312a40ebf1ed$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $85cNH$jsx)((0, $3047004939eff50c$export$2e2bcd8739ae039), {
                 context: context,
                 helperText: helperText,
                 userResource: userResource,
@@ -1005,28 +1122,22 @@ const $7ce737d4a1c88e63$var$CommentsField = ({ source: source, context: context,
                 addItem: addItem,
                 removeItem: removeItem
             }),
-            /*#__PURE__*/ (0, $85cNH$jsx)((0, $be88b298220210d1$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $85cNH$jsx)((0, $74ea3002402ef672$export$2e2bcd8739ae039), {
                 comments: comments,
-                loading: loading,
+                loading: isLoading,
                 userResource: userResource
             })
         ]
     });
 };
-$7ce737d4a1c88e63$var$CommentsField.defaultProps = {
-    label: 'Commentaires',
-    placeholder: "Commencez \xe0 taper votre commentaire...",
-    source: 'id',
-    context: 'id'
-};
-var $7ce737d4a1c88e63$export$2e2bcd8739ae039 = $7ce737d4a1c88e63$var$CommentsField;
+var $a8ae38fbe2f0ecc5$export$2e2bcd8739ae039 = $a8ae38fbe2f0ecc5$var$CommentsField;
 
 
 
 
 
 
-const $d3be168cd1e7aaae$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
+const $f2bfc37210e303cc$var$CollectionList = ({ collectionUrl: collectionUrl, resource: resource, children: children })=>{
     if ((0, $85cNH$react).Children.count(children) !== 1) throw new Error('<CollectionList> only accepts a single child');
     const { items: actorsUris } = (0, $8281f3ce3b9d6123$export$2e2bcd8739ae039)(collectionUrl);
     const { data: data, isLoading: isLoading, isFetching: isFetching } = (0, $85cNH$useGetMany)(resource, {
@@ -1046,26 +1157,297 @@ const $d3be168cd1e7aaae$var$CollectionList = ({ collectionUrl: collectionUrl, re
         children: children
     });
 };
-var $d3be168cd1e7aaae$export$2e2bcd8739ae039 = $d3be168cd1e7aaae$var$CollectionList;
+var $f2bfc37210e303cc$export$2e2bcd8739ae039 = $f2bfc37210e303cc$var$CollectionList;
 
 
 
 
 
 
-const $ea214512ab1a2e8f$var$ReferenceCollectionField = ({ source: source, reference: reference, children: children, ...rest })=>{
+const $4d1eaed181ef6aa8$var$ReferenceCollectionField = ({ source: source, reference: reference, children: children, ...rest })=>{
     const record = (0, $85cNH$useRecordContext)();
     if ((0, $85cNH$react).Children.count(children) !== 1) throw new Error('<ReferenceCollectionField> only accepts a single child');
     if (!record || !record[source]) return null;
-    return /*#__PURE__*/ (0, $85cNH$jsx)((0, $d3be168cd1e7aaae$export$2e2bcd8739ae039), {
+    return /*#__PURE__*/ (0, $85cNH$jsx)((0, $f2bfc37210e303cc$export$2e2bcd8739ae039), {
         resource: reference,
         collectionUrl: record[source],
         ...rest,
         children: children
     });
 };
-var $ea214512ab1a2e8f$export$2e2bcd8739ae039 = $ea214512ab1a2e8f$var$ReferenceCollectionField;
+var $4d1eaed181ef6aa8$export$2e2bcd8739ae039 = $4d1eaed181ef6aa8$var$ReferenceCollectionField;
 
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Subscribe to a collection. Supports pagination.
+ * @param collectionUri The collection URI or the predicate to get the collection URI from the identity (webId).
+ * @param {UseCollectionOptions & UseTypedCollectionOptions} options Defaults to `{ dereferenceItems: false, liveUpdates: false, pageSize: 10 }` and requires at least one ldo @see {ShapeType}.
+ */ const $75609b4dfb738328$var$useTypedCollection = (collectionUri, options)=>{
+    const { pageSize: pageSize = 10, liveUpdates: subscribeToUpdates = false, shapeTypes: shapeTypes } = options;
+    if (!shapeTypes.length) throw new Error('At least one ShapeType is required to filter the collection by.');
+    // 1. Fetch the collection
+    const collectionQuery = $75609b4dfb738328$var$useInfiniteCollectionQuery(collectionUri);
+    const { totalItems: totalItems, isPaginated: isPaginated } = $75609b4dfb738328$var$useTotalItemsFromPages(collectionQuery.data);
+    // 2. Filter items from the collection pages that match the given shape types.
+    const filteredItems = $75609b4dfb738328$var$useFilteredItemsFromPages(collectionQuery.data, shapeTypes);
+    // 3. Set up notifications for live updates, if enabled.
+    const liveUpdatesStatus = $75609b4dfb738328$var$useSubscribeToUpdates({
+        uri: collectionUri,
+        enabled: subscribeToUpdates,
+        onAddItem: (_item)=>{
+            // Since we don't know where the item was added, we refetch the whole collection ¯\_(ツ)_/¯.
+            collectionQuery.refetch();
+        },
+        onRemoveItem: (uri)=>{
+            $75609b4dfb738328$var$removeItemFromQueryData(uri, collectionQuery);
+        }
+    });
+    // 4. Pagination logic.
+    const [requestedNextItems, setRequestedNextItems] = (0, $85cNH$useState)(pageSize);
+    const [requestedPrevItems, setRequestedPrevItems] = (0, $85cNH$useState)(0);
+    // Automatically fetch next page, if more items are requested.
+    (0, $85cNH$useEffect)(()=>{
+        if (requestedNextItems > filteredItems.length && collectionQuery.hasNextPage && !collectionQuery.isLoading) collectionQuery.fetchNextPage();
+    }, [
+        requestedNextItems,
+        filteredItems.length,
+        collectionQuery.hasNextPage,
+        collectionQuery.isLoading
+    ]);
+    // Automatically fetch previous page, if more items are requested.
+    (0, $85cNH$useEffect)(()=>{
+        if (requestedPrevItems > filteredItems.length && collectionQuery.hasPreviousPage && !collectionQuery.isLoading) collectionQuery.fetchPreviousPage();
+    }, [
+        requestedPrevItems,
+        filteredItems.length,
+        collectionQuery.hasPreviousPage,
+        collectionQuery.isLoading
+    ]);
+    /** Fetch next n (filtered) items. */ const fetchNext = (0, $85cNH$useCallback)((noItems = pageSize)=>{
+        setRequestedNextItems(filteredItems.length + noItems);
+    }, [
+        filteredItems.length,
+        pageSize
+    ]);
+    /** Fetch previous n (filtered) items. */ const fetchPrevious = (0, $85cNH$useCallback)((noItems = pageSize)=>{
+        setRequestedPrevItems(filteredItems.length + noItems);
+    }, [
+        filteredItems.length,
+        pageSize
+    ]);
+    return {
+        // TODO: Do we want to expose all properties from the collection query?
+        ...collectionQuery,
+        items: filteredItems,
+        liveUpdatesStatus: liveUpdatesStatus,
+        fetchNext: fetchNext,
+        fetchPrevious: fetchPrevious,
+        totalItems: totalItems,
+        isPaginated: isPaginated
+    };
+};
+var $75609b4dfb738328$export$2e2bcd8739ae039 = $75609b4dfb738328$var$useTypedCollection;
+const $75609b4dfb738328$var$useSubscribeToUpdates = ({ uri: uri, enabled: enabled = true, onAddItem: onAddItem, onRemoveItem: onRemoveItem })=>{
+    const { fetch: fetchFn } = (0, $85cNH$useDataProvider)();
+    const [status, setStatus] = (0, $85cNH$useState)({
+        status: enabled ? 'connecting' : 'disabled'
+    });
+    (0, $85cNH$useEffect)(()=>{
+        const webSocketRef = (0, $85cNH$useRef)(null);
+        // Nothing to do, return empty clean up function.
+        if (!enabled || !uri) return ()=>{};
+        // Create ws that listens to collectionUri changes
+        (0, $85cNH$getOrCreateWsChannel)(fetchFn, uri).then((ws)=>{
+            webSocketRef.current = ws; // Keep a ref to the webSocket so that it can be used elsewhere
+            webSocketRef.current.addEventListener('message', (event)=>{
+                // TODO: correct ldo type
+                const data = JSON.parse(event.data);
+                if (data.type === 'Add') onAddItem(data.object);
+                else if (data.type === 'Remove') onRemoveItem(data.object);
+            });
+            webSocketRef.current.addEventListener('error', (event)=>{
+                setStatus({
+                    error: event,
+                    status: 'error'
+                });
+            // TODO: Retry after a while (use react query?).
+            });
+            webSocketRef.current.addEventListener('close', (_event)=>{
+                if (!status.error) setStatus({
+                    status: 'closed'
+                });
+            });
+        }).catch((error)=>{
+            setStatus({
+                status: 'error',
+                error: error
+            });
+        });
+        // Clean up, i.e. close channel.
+        return ()=>{
+            webSocketRef.current?.close();
+        };
+    }, [
+        uri,
+        enabled,
+        onAddItem,
+        onRemoveItem
+    ]);
+    return status;
+};
+const $75609b4dfb738328$var$useInfiniteCollectionQuery = (collectionUri)=>{
+    const { data: identity } = (0, $85cNH$useGetIdentity)();
+    const dataProvider = (0, $85cNH$useDataProvider)();
+    const { fetch: fetchFn } = dataProvider;
+    const infiniteQueryData = (0, $85cNH$useInfiniteQuery)({
+        queryKey: [
+            'collection',
+            {
+                uri: collectionUri
+            }
+        ],
+        queryFn: $75609b4dfb738328$var$getFetchCollectionPage(fetchFn),
+        initialPageParam: collectionUri,
+        enabled: !!(collectionUri && identity?.id),
+        getNextPageParam: (current)=>current.data?.next,
+        getPreviousPageParam: (current)=>current.data?.prev
+    });
+    return infiniteQueryData;
+};
+const $75609b4dfb738328$var$getFetchCollectionPage = (fetchFn)=>async ({ pageParam: pageUri })=>{
+        // Note, page is not necessarily of type OrderedCollectionPage but it is a partial in any case.
+        const jsonPage = await (await fetchFn(pageUri)).json();
+        if (!jsonPage || typeof jsonPage !== 'object') throw new Error(`Could not fetch page ${pageUri}. Response is invalid.`);
+        const itemsKey = 'orderedItems' in jsonPage ? 'orderedItems' : 'items';
+        if ((0, $577f4953dfa5de4f$export$e57ff0f701c44363)(jsonPage[itemsKey]).length === 0) // No items in page.
+        return {
+            itemIds: [],
+            dataset: null,
+            data: null
+        };
+        // Keep track of item ids in this order (in the rdf dataset the order is lost).
+        const itemIds = (0, $577f4953dfa5de4f$export$e57ff0f701c44363)(jsonPage[itemsKey]).map((itemOrId)=>itemOrId?.['@id'] || itemOrId?.id || itemOrId).filter((item)=>item); // Ensure item is not undefined.
+        // Parse the page into a dataset.
+        // TODO: Move to data provider.
+        const dataset = (0, $85cNH$createConnectedLdoDataset)([
+            (0, $85cNH$solidConnectedPlugin)
+        ]);
+        dataset.setContext('solid', {
+            fetch: fetchFn
+        });
+        dataset.addAll(await (0, $577f4953dfa5de4f$export$7089f01fea2fc5c2)(jsonPage));
+        const resource = dataset.getResource(pageUri);
+        if (resource.type === 'InvalidIdentifierResource') return {
+            itemIds: itemIds,
+            dataset: null,
+            pageUri: pageUri,
+            data: null
+        };
+        const ldoBuilder = dataset.usingType((0, $85cNH$OrderedCollectionPageShapeType));
+        // Run a link query to ensure that all items are dereferenced (the results are kept in the dataset).
+        await ldoBuilder.startLinkQuery(resource, pageUri, {
+            items: true,
+            orderedItems: true
+        }).run({
+            reload: false
+        });
+        return {
+            dataset: dataset,
+            itemIds: itemIds,
+            pageUri: pageUri,
+            data: ldoBuilder.fromSubject(pageUri)
+        };
+    };
+const $75609b4dfb738328$var$useTotalItemsFromPages = (queryData)=>{
+    if (!queryData?.pages.length) return {
+        isPaginated: undefined,
+        totalItems: undefined
+    };
+    const { pages: pages } = queryData;
+    // Check if collection is paginated. We assume that the collection is paginated if there are pages with first, last, prev or next.
+    const isPaginated = pages.length === 0 ? undefined : !!pages.find((page)=>page.data && ('first' in page.data || 'next' in page.data || 'last' in page.data || 'prev' in page.data));
+    // Approach 1: Get total items info by checking if the page has a totalItems property.
+    const totalItemsByCollectionInfo = pages.find((page)=>'totalItems' in page)?.data?.totalItems;
+    if (totalItemsByCollectionInfo) return {
+        totalItems: totalItemsByCollectionInfo,
+        isPaginated: isPaginated
+    };
+    // Approach 2: If collection is not paginated, we count the number of items in the collection.
+    if (!isPaginated) return {
+        totalItems: pages[0].itemIds.length,
+        isPaginated: isPaginated
+    };
+    // Approach 3: If we have the whole collection loaded, we can count the items.
+    const firstPage = pages.find((page)=>page.data?.first)?.data?.first;
+    const lastPage = pages.find((page)=>page.data?.last)?.data?.last;
+    // We assume that all pages are loaded if the first and last page is available.
+    // In that case, count all pages' items.
+    if (firstPage && lastPage) return {
+        isPaginated: isPaginated,
+        totalItems: pages// Get length of page
+        .map((page)=>page.data?.orderedItems?.size || page.data?.items?.size || 0)// Sum all page length counts.
+        .reduce((prev, current)=>prev + current)
+    };
+    // If no approach succeeded, we return undefined.
+    return {
+        totalItems: undefined,
+        isPaginated: isPaginated
+    };
+};
+const $75609b4dfb738328$var$useFilteredItemsFromPages = (queryData, shapeTypes)=>{
+    const [filteredItems, setFilteredItems] = (0, $85cNH$useState)([]);
+    const filterItems = (0, $85cNH$useCallback)(async ()=>{
+        // We need to load the shacl resources and match them to the shape types.
+        const validator = await (0, $25cb6caf33e2f460$export$8b707c2a07270e94)();
+        const pages = queryData?.pages;
+        if (!pages || pages.length === 0) {
+            setFilteredItems([]);
+            return;
+        }
+        const validatedItems = await Promise.all(// For every page, ...
+        queryData.pages.map(async (page)=>{
+            const items = await Promise.all(// For every item in the page, ...
+            page.itemIds.map(async (itemId)=>// Validate item against the shape types and return the ldo object of the correct type, if it is valid.
+                page.dataset && (0, $25cb6caf33e2f460$export$c4cb1062f0ffb837)(itemId, page.dataset, shapeTypes, validator))).then((results)=>results.filter((item)=>!!item)); // Filter out null items.
+            return items;
+        })).then((results)=>results.flat());
+        // TODO: Order items by ids.
+        setFilteredItems(validatedItems);
+    // TODO: Cache filtered items by page, so that we don't have to re-filter them every time?
+    }, [
+        queryData?.pages,
+        shapeTypes
+    ]);
+    (0, $85cNH$useEffect)(()=>{
+        filterItems();
+    }, [
+        filterItems
+    ]);
+    return filteredItems;
+};
+/** A somewhat hacky way to remove an item from the useInfiniteCollectionQuery. */ const $75609b4dfb738328$var$removeItemFromQueryData = (itemUri, collectionQuery)=>{
+    // Manipulate data about total items. Sorry, a bit hacky...
+    collectionQuery.data?.pages.forEach((page)=>{
+        if (!page.dataset) return;
+        page.dataset.deleteMatches((0, $85cNH$rdfext).namedNode(itemUri));
+        // There might be a totalItems property in the page, so we need to update it.
+        if (page.data.totalItems && Number.isInteger(page.data.totalItems)) // eslint-disable-next-line no-param-reassign
+        page.data.totalItems -= 1;
+    });
+}; // Open Question:
+ // - Use one dataset? It has the benefit of only having to define a single solid connected dataset and makes ng switching easier -> no need to create a connected dataset.
+ // - On the other hand (the only downside I can think of rn): Either you have to remove expired items from the dataset or you don't care about old data that is not used by react admin anymore. At a refetch all old data would have to be removed though.
 
 
 
@@ -1129,7 +1511,7 @@ var $6a227ddc2fd92a7a$export$2e2bcd8739ae039 = $6a227ddc2fd92a7a$var$useNodeinfo
 
 
 
-const $2514c63dc8f4867c$var$useWebfinger = ()=>{
+const $d33ef82068985aa5$var$useWebfinger = ()=>{
     // Post an activity to the logged user's outbox and return its URI
     const fetch = (0, $85cNH$useCallback)(async (id)=>{
         // eslint-disable-next-line
@@ -1150,7 +1532,7 @@ const $2514c63dc8f4867c$var$useWebfinger = ()=>{
         fetch: fetch
     };
 };
-var $2514c63dc8f4867c$export$2e2bcd8739ae039 = $2514c63dc8f4867c$var$useWebfinger;
+var $d33ef82068985aa5$export$2e2bcd8739ae039 = $d33ef82068985aa5$var$useWebfinger;
 
 
 
@@ -1161,7 +1543,7 @@ var $2514c63dc8f4867c$export$2e2bcd8739ae039 = $2514c63dc8f4867c$var$useWebfinge
 
 
 
-const $cebd295d444aa91c$var$useStyles = (0, $85cNH$muistylesmakeStyles)((theme)=>({
+const $2d6cf763aa4118ce$var$useStyles = (0, $85cNH$makeStyles)()((theme)=>({
         items: {
             background: '#fff',
             borderRadius: '0.5rem',
@@ -1186,24 +1568,29 @@ const $cebd295d444aa91c$var$useStyles = (0, $85cNH$muistylesmakeStyles)((theme)=
             }
         }
     }));
-var $cebd295d444aa91c$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $85cNH$forwardRef)((props, ref)=>{
+var $2d6cf763aa4118ce$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $85cNH$forwardRef)((props, ref)=>{
     const [selectedIndex, setSelectedIndex] = (0, $85cNH$useState)(0);
-    const classes = $cebd295d444aa91c$var$useStyles();
+    const { classes: classes } = $2d6cf763aa4118ce$var$useStyles();
     const selectItem = (index)=>{
+        // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
         const item = props.items[index];
-        if (item) props.command({
+        if (item) // @ts-expect-error TS(2339): Property 'command' does not exist on type '{}'.
+        props.command({
             id: item
         });
     };
     const upHandler = ()=>{
+        // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
         setSelectedIndex((selectedIndex + props.items.length - 1) % props.items.length);
     };
     const downHandler = ()=>{
+        // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
         setSelectedIndex((selectedIndex + 1) % props.items.length);
     };
     const enterHandler = ()=>{
         selectItem(selectedIndex);
     };
+    // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
     (0, $85cNH$useEffect)(()=>setSelectedIndex(0), [
         props.items
     ]);
@@ -1226,7 +1613,8 @@ var $cebd295d444aa91c$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $85cNH$forwardR
         }));
     return /*#__PURE__*/ (0, $85cNH$jsx)("div", {
         className: classes.items,
-        children: props.items.length ? props.items.map((item, index)=>/*#__PURE__*/ (0, $85cNH$jsx)("button", {
+        children: props.items.length ? // @ts-expect-error TS(2339): Property 'items' does not exist on type '{}'.
+        props.items.map((item, index)=>/*#__PURE__*/ (0, $85cNH$jsx)("button", {
                 className: classes.item + (index === selectedIndex ? ' selected' : ''),
                 onClick: ()=>selectItem(index),
                 children: item.label
@@ -1238,12 +1626,12 @@ var $cebd295d444aa91c$export$2e2bcd8739ae039 = /*#__PURE__*/ (0, $85cNH$forwardR
 });
 
 
-const $a2389704c0801b9a$var$renderMentions = ()=>{
+const $81b58d0f1db1e46b$var$renderMentions = ()=>{
     let component;
     let popup;
     return {
         onStart: (props)=>{
-            component = new (0, $85cNH$ReactRenderer)((0, $cebd295d444aa91c$export$2e2bcd8739ae039), {
+            component = new (0, $85cNH$ReactRenderer)((0, $2d6cf763aa4118ce$export$2e2bcd8739ae039), {
                 props: props,
                 editor: props.editor
             });
@@ -1276,10 +1664,10 @@ const $a2389704c0801b9a$var$renderMentions = ()=>{
         }
     };
 };
-var $a2389704c0801b9a$export$2e2bcd8739ae039 = $a2389704c0801b9a$var$renderMentions;
+var $81b58d0f1db1e46b$export$2e2bcd8739ae039 = $81b58d0f1db1e46b$var$renderMentions;
 
 
-const $51cccd331ea8b13d$var$useMentions = (userResource)=>{
+const $2444c190214b72ec$var$useMentions = (userResource)=>{
     const userDataModel = (0, $85cNH$useDataModel)(userResource);
     const { data: data } = (0, $85cNH$useGetList)(userResource, {
         filter: {
@@ -1294,7 +1682,7 @@ const $51cccd331ea8b13d$var$useMentions = (userResource)=>{
     const availableMentions = (0, $85cNH$useMemo)(()=>{
         if (data) return data.map((item)=>({
                 id: item.id,
-                label: item[userDataModel?.fieldsMapping?.title]
+                label: item[userDataModel?.fieldsMapping?.title || '']
             }));
     }, [
         data
@@ -1308,14 +1696,14 @@ const $51cccd331ea8b13d$var$useMentions = (userResource)=>{
     ]);
     return {
         items: items,
-        render: (0, $a2389704c0801b9a$export$2e2bcd8739ae039)
+        render: (0, $81b58d0f1db1e46b$export$2e2bcd8739ae039)
     };
 };
-var $51cccd331ea8b13d$export$2e2bcd8739ae039 = $51cccd331ea8b13d$var$useMentions;
+var $2444c190214b72ec$export$2e2bcd8739ae039 = $2444c190214b72ec$var$useMentions;
 
 
 
 
 
-export {$7ce737d4a1c88e63$export$2e2bcd8739ae039 as CommentsField, $d3be168cd1e7aaae$export$2e2bcd8739ae039 as CollectionList, $ea214512ab1a2e8f$export$2e2bcd8739ae039 as ReferenceCollectionField, $8281f3ce3b9d6123$export$2e2bcd8739ae039 as useCollection, $cc1d1cd0e97c63a2$export$2e2bcd8739ae039 as useInbox, $6a227ddc2fd92a7a$export$2e2bcd8739ae039 as useNodeinfo, $4d1d40fdbcd30589$export$2e2bcd8739ae039 as useOutbox, $2514c63dc8f4867c$export$2e2bcd8739ae039 as useWebfinger, $51cccd331ea8b13d$export$2e2bcd8739ae039 as useMentions, $338f387df48a40d7$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $338f387df48a40d7$export$9649665d7ccb0dc2 as ACTOR_TYPES, $338f387df48a40d7$export$c49cfb2681596b20 as OBJECT_TYPES, $338f387df48a40d7$export$4d8d554031975581 as PUBLIC_URI};
+export {$a8ae38fbe2f0ecc5$export$2e2bcd8739ae039 as CommentsField, $f2bfc37210e303cc$export$2e2bcd8739ae039 as CollectionList, $4d1eaed181ef6aa8$export$2e2bcd8739ae039 as ReferenceCollectionField, $8281f3ce3b9d6123$export$2e2bcd8739ae039 as useCollection, $75609b4dfb738328$export$2e2bcd8739ae039 as useTypedCollection, $cc1d1cd0e97c63a2$export$2e2bcd8739ae039 as useInbox, $6a227ddc2fd92a7a$export$2e2bcd8739ae039 as useNodeinfo, $4d1d40fdbcd30589$export$2e2bcd8739ae039 as useOutbox, $d33ef82068985aa5$export$2e2bcd8739ae039 as useWebfinger, $2444c190214b72ec$export$2e2bcd8739ae039 as useMentions, $cb5f912aee8137fc$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $cb5f912aee8137fc$export$9649665d7ccb0dc2 as ACTOR_TYPES, $cb5f912aee8137fc$export$c49cfb2681596b20 as OBJECT_TYPES, $cb5f912aee8137fc$export$4d8d554031975581 as PUBLIC_URI};
 //# sourceMappingURL=index.es.js.map

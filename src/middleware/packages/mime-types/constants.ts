@@ -2,6 +2,7 @@ const MIME_TYPES = {
   JSON: 'application/ld+json',
   TURTLE: 'text/turtle',
   TRIPLE: 'application/n-triples',
+  SPARQL_QUERY: 'application/sparql-query',
   SPARQL_UPDATE: 'application/sparql-update',
   // Not supported
   SPARQL_JSON: 'application/sparql-results+json',
