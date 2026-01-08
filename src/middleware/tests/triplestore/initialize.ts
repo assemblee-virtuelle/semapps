@@ -5,7 +5,7 @@ import { OntologiesService } from '@semapps/ontologies';
 import ApiGatewayService from 'moleculer-web';
 import * as CONFIG from '../config.ts';
 
-export default async triplestore => {
+export default async (triplestore: string) => {
   const broker = new ServiceBroker({
     logger: {
       type: 'Console',
@@ -37,12 +37,12 @@ export default async triplestore => {
   if (triplestore === 'ng') {
     // TODO : Environmentalize the nextgraph settings.
     adapter = new NextGraphAdapter({
-      adminUserId: 'XOct97tUc-ccyFUGe5sDUkHyXdTQ7LtGW1RVyYZzIYgA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      adminUserId: '-n1RqVQA0k2sqm-51CbIYnoS4Zhh89IRH1cxnLKnVlYA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
       mappingsNuri:
-        'did:ng:o:5ZwPgEib6okmEbVlWRJVfGUNnbdtmQpC_x1uTy9wjcoA:v:asrmmGCr1WTq3oAGkgtVwUxsJgA5MIsV2FIYhDRyPagA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
-      serverPeerId: 'zT_iEzpHeO5znVU9ZYcvenJjb8pWrRWFzEO6eUE_SrAA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
-      adminUserKey: 'dwtQ9wWEovJwv6_3VArHKHRyr_zLAuR2_bFB1LiLfqEA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
-      clientPeerKey: 'ryv9v1Y3jJqdQYH-_rMxGTGyDtC_eOaA0a4ibRLhmX4A', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+        'did:ng:o:7PeIu8q34t7h6XLqZIDt7dbuGjGruBz3ZWeQ7QOc2EoA:v:UmGokb5dUKofXw_IXFRl5xmb3Pbo5S2KWK6ShU01GkcA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      serverPeerId: 'QlJkY0KELV4W1aVZehn6Qvx5eauRkICSJbdYqIbFHPEA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      adminUserKey: 'bE0rIy0V8YQAEfXhqYas-erDrddazpTjhsoJHVqvSDIA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      clientPeerKey: 'HV_9Rh-yDpEqsvtwYUjcxqIARUnuP8g2JA4hEH1Nh7QA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
       serverAddr: '127.0.0.1:14400' // TODO : Environmentalize the nextgraph settings. Even though this value is the genric one for the nextgraph broker
     });
   } else if (triplestore === 'fuseki') {

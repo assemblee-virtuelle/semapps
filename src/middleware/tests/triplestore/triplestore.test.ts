@@ -16,7 +16,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
 
   afterAll(async () => {
     // Clean up test dataset
-    await broker.call('triplestore.dataset.delete', { dataset: testDataset, iKnowWhatImDoing: true });
+    await broker.call('triplestore.dataset.delete', { dataset: testDataset });
     if (broker) await broker.stop();
   });
 
@@ -31,10 +31,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
     test('Create a new dataset', async () => {
       // Delete if exists
       try {
-        await broker.call('triplestore.dataset.delete', {
-          dataset: testDatasetForSubServiceTests,
-          iKnowWhatImDoing: true
-        });
+        await broker.call('triplestore.dataset.delete', { dataset: testDatasetForSubServiceTests });
       } catch (error) {
         // Intentionally ignore errors if dataset does not exist
       }
@@ -63,23 +60,10 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
       await expect(
         broker.call('triplestore.dataset.exist', { dataset: testDatasetForSubServiceTests })
       ).resolves.toBeTruthy();
-      await broker.call('triplestore.dataset.delete', {
-        dataset: testDatasetForSubServiceTests,
-        iKnowWhatImDoing: true
-      });
+      await broker.call('triplestore.dataset.delete', { dataset: testDatasetForSubServiceTests });
       await expect(
         broker.call('triplestore.dataset.exist', { dataset: testDatasetForSubServiceTests })
       ).resolves.toBeFalsy();
-    });
-
-    test('Delete dataset without confirmation should fail', async () => {
-      await broker.call('triplestore.dataset.create', { dataset: testDatasetForSubServiceTests });
-      await expect(
-        broker.call('triplestore.dataset.delete', {
-          dataset: testDatasetForSubServiceTests,
-          iKnowWhatImDoing: false
-        })
-      ).rejects.toThrow('Please confirm that you know what you are doing');
     });
   });
 
@@ -188,10 +172,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
       expect(result).toHaveLength(1);
 
       // Clean up
-      await broker.call('triplestore.dataset.delete', {
-        dataset: secondDataset,
-        iKnowWhatImDoing: true
-      });
+      await broker.call('triplestore.dataset.delete', { dataset: secondDataset });
     });
 
     test('Insert should fail with non-existent dataset', async () => {
@@ -388,7 +369,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
                   {
                     subject: { termType: 'NamedNode', value: 'http://example.org/person1' },
                     predicate: { termType: 'NamedNode', value: 'http://example.org/name' },
-                    object: { termType: 'Literal', value: 'John Updated' }
+                    object: { termType: 'Literal', value: 'John Updated Again' }
                   }
                 ]
               }
@@ -417,7 +398,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
         dataset: testDataset
       });
       expect(result).toHaveLength(1);
-      expect(result[0].name.value).toBe('John Updated');
+      expect(result[0].name.value).toBe('John Updated Again');
     });
 
     test('UPDATE with wildcard dataset updates all datasets', async () => {
@@ -471,10 +452,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
       expect(result[0].age.value).toBe('30');
 
       // Clean up
-      await broker.call('triplestore.dataset.delete', {
-        dataset: secondDataset,
-        iKnowWhatImDoing: true
-      });
+      await broker.call('triplestore.dataset.delete', { dataset: secondDataset });
     });
 
     test('UPDATE should fail with non-existent dataset', async () => {

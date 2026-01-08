@@ -55,23 +55,18 @@ const DatasetService = {
     },
 
     isSecure: {
-      async handler(ctx) {
+      async handler() {
         return false;
       }
     },
 
     delete: {
       params: {
-        dataset: { type: 'string' },
-        iKnowWhatImDoing: { type: 'boolean' }
+        dataset: { type: 'string' }
       },
       async handler(ctx) {
-        const { dataset, iKnowWhatImDoing } = ctx.params;
-        if (!iKnowWhatImDoing) {
-          throw new Error('Please confirm that you know what you are doing by setting `iKnowWhatImDoing` to `true`.');
-        }
+        const { dataset } = ctx.params;
 
-        if (!dataset) throw new Error('Unable to delete dataset. The parameter dataset is missing');
         await this.settings.adapter.deleteDataset(dataset);
       }
     }
