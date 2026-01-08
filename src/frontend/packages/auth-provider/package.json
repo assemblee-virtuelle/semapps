@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@semapps/semantic-data-provider": "1.2.0",
+    "@inrupt/solid-client-authn-browser": "^3.1.1",
     "classnames": "^2.3.2",
     "jwt-decode": "^3.0.0",
     "lodash": "^4.17.21",
