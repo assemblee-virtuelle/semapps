@@ -16,6 +16,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
 
   afterAll(async () => {
     // Clean up test dataset
+    await broker.call('triplestore.dataset.delete', { dataset: testDataset, iKnowWhatImDoing: true });
     if (broker) await broker.stop();
   });
 
@@ -100,11 +101,10 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
         query: 'SELECT * WHERE { ?s ?p ?o }',
         dataset: testDataset
       });
-      // includes the data inserted in the previous tests
-      expect(result).toHaveLength(3);
-      expect(result[2].s.value).toBe('http://example.org/subject');
-      expect(result[2].p.value).toBe('http://example.org/predicate');
-      expect(result[2].o.value).toBe('object');
+      expect(result).toHaveLength(1);
+      expect(result[0].s.value).toBe('http://example.org/subject');
+      expect(result[0].p.value).toBe('http://example.org/predicate');
+      expect(result[0].o.value).toBe('object');
     });
 
     test('Insert JSON-LD data with type', async () => {

@@ -5,7 +5,7 @@ import { BaseAdapter } from './base.ts';
 type NextGraphAdapterSettings = {
   serverPeerId: string; // The server peer id, is provided in the console of the NextGraph server
   adminUserKey: string; // The admin user key, can be retrieved using the GUI of the NextGraph server
-  clientPeerKey: string; // TODO : remember how to retrieve/generate/guess/invoke/create out of thin air the client peer key ^^
+  clientPeerKey: string; // The client peer key, can be generated usinf the CLI of the NextGraph server ex with cargo : cargo run --bin ngcli gen-key
   serverAddr: string; // The server address, can be retrieved using the console of the NextGraph server
   adminUserId: string; // The admin user id, must be saved when first creating the user
   mappingsNuri: string; // The mappings nuri, must be saved when first creating the document
