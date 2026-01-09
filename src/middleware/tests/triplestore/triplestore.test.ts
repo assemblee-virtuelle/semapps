@@ -1,29 +1,26 @@
-// @ts-nocheck
+import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
 
 jest.setTimeout(30000);
 
 describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestore: any) => {
-  let broker: any;
+  let broker: ServiceBroker;
   const testDataset = 'test_dataset';
 
   beforeAll(async () => {
     broker = await initialize(triplestore);
 
-    // Ensure the test dataset exists
-    await broker.call('triplestore.dataset.create', { dataset: testDataset });
-    await broker.call('triplestore.dropAll', { dataset: testDataset });
+    await broker.waitForServices(['triplestore']);
+
+    if (await broker.call('triplestore.dataset.exist', { dataset: testDataset })) {
+      await broker.call('triplestore.dropAll', { dataset: testDataset });
+    } else {
+      await broker.call('triplestore.dataset.create', { dataset: testDataset });
+    }
   });
 
   afterAll(async () => {
-    // Clean up test dataset
-    // await broker.call('triplestore.dataset.delete', { dataset: testDataset });
     if (broker) await broker.stop();
-  });
-
-  beforeEach(async () => {
-    // Clear the test dataset before each test
-    // await broker.call('triplestore.dropAll', { dataset: testDataset });
   });
 
   describe('Dataset subservice', () => {

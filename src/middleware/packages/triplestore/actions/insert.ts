@@ -1,4 +1,3 @@
-import urlJoin from 'url-join';
 import { ActionSchema } from 'moleculer';
 
 const Schema = {
@@ -36,8 +35,10 @@ const Schema = {
     const datasets: string[] = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
     for (dataset of datasets) {
-      //test if graphName exists in the dataset
       if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
+
+      // TODO Test if named graph exists in the dataset
+
       const query = graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`;
 
       await this.settings.adapter.update(dataset, query);

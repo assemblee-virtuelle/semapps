@@ -15,7 +15,7 @@ export default async (triplestore: string) => {
     }
   });
 
-  // @ts-ignore Argument of type '{ mixins: { name: "jsonld"; settings: ...
+  // @ts-ignore Argument of type '{ mixins: { name: ...
   broker.createService({
     mixins: [JsonLdService],
     settings: {
@@ -23,10 +23,10 @@ export default async (triplestore: string) => {
     }
   });
 
-  // @ts-ignore Argument of type '{ mixins: { name: "jsonld"; settings: ...
+  // @ts-ignore Argument of type '{ mixins: { name: ...
   broker.createService({ mixins: [ApiGatewayService] });
 
-  // @ts-ignore Argument of type '{ mixins: { name: "jsonld"; settings: ...
+  // @ts-ignore Argument of type '{ mixins: { name: ...
   broker.createService({
     mixins: [OntologiesService],
     settings: {
@@ -58,6 +58,7 @@ export default async (triplestore: string) => {
     throw new Error('Triplestore not supported');
   }
 
+  // @ts-ignore Argument of type '{ mixins: { name: ...
   broker.createService({
     mixins: [TripleStoreService],
     settings: {

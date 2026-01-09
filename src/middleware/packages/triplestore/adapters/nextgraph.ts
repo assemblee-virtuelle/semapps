@@ -107,8 +107,7 @@ export default class NextGraphAdapter extends BaseAdapter {
     let session: any;
     try {
       session = await this.openSession(dataset);
-      // TODO : Check if there is a drop statement in nextgraph to use instead of DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }
-      return await ng.sparql_update(session.session_id, 'DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }');
+      await ng.sparql_update(session.session_id, 'DELETE WHERE { GRAPH ?g { ?s ?p ?o } }');
     } catch (error) {
       throw new Error(`NextGraph dropAll failed: ${error}\nDataset: ${dataset}`);
     } finally {
@@ -275,9 +274,6 @@ export default class NextGraphAdapter extends BaseAdapter {
     } finally {
       this.closeSession(session);
     }
-    // await ng.sparql_update(session_id, "DELETE WHERE { ?s ?p ?o }", nuri);
-    // await this.update(dataset, `DELETE { ?s ?p ?o } WHERE { GRAPH <${graphUri}> { ?s ?p ?o } }`);
-    // throw new Error('Clear named graph not implemented for NextGraph');
   }
 
   async deleteNamedGraph(dataset: string, graphUri: string): Promise<void> {
