@@ -14,16 +14,10 @@ const NamedGraphService = {
   },
   actions: {
     create: {
-      params: {
-        dataset: { type: 'string', optional: true },
-        baseUrl: { type: 'string' },
-        slug: { type: 'string', optional: true }
-      },
       async handler(ctx) {
-        let { baseUrl, slug } = ctx.params;
         const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
-        return await this.settings.adapter.createNamedGraph(dataset, baseUrl, slug);
+        return await this.settings.adapter.createNamedGraph(dataset);
       }
     },
 

@@ -17,7 +17,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
 
   afterAll(async () => {
     // Clean up test dataset
-    await broker.call('triplestore.dataset.delete', { dataset: testDataset });
+    // await broker.call('triplestore.dataset.delete', { dataset: testDataset });
     if (broker) await broker.stop();
   });
 
@@ -521,14 +521,8 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
     let namedGraphUri: string;
     let secondNamedGraphUri: string;
     beforeAll(async () => {
-      namedGraphUri = await broker.call('triplestore.named-graph.create', {
-        dataset: testDataset,
-        baseUrl: 'https://semapps.org'
-      });
-      secondNamedGraphUri = await broker.call('triplestore.named-graph.create', {
-        dataset: testDataset,
-        baseUrl: 'https://semapps.org'
-      });
+      namedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
+      secondNamedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
 
       // Insert test data into the first named graph
       const jsonLdData = {
@@ -556,13 +550,9 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
     });
 
     test('Create a new named graph and verify it exists', async () => {
-      const localNamedGraphUri = await broker.call('triplestore.named-graph.create', {
-        dataset: testDataset,
-        baseUrl: 'https://semapps.org'
-      });
+      const localNamedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
 
       expect(localNamedGraphUri).toBeTruthy();
-      expect(localNamedGraphUri).toMatch(/^https:\/\/semapps\.org?/);
       expect(localNamedGraphUri).not.toBe('');
 
       // Fuseki considers a named graph exist only if it contains triples
@@ -605,13 +595,11 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
       // Assert the data is in both named graphs
       const resultFirstNamedGraph = await broker.call('triplestore.query', {
         query: `SELECT * FROM <${namedGraphUri}> { ?s ?p ?o }`,
-        // graphName: namedGraphUri,
         dataset: testDataset
       });
       expect(resultFirstNamedGraph).toHaveLength(2);
       const resultSecondNamedGraph = await broker.call('triplestore.query', {
         query: `SELECT * FROM <${secondNamedGraphUri}> { ?s ?p ?o }`,
-        // graphName: secondNamedGraphUri,
         dataset: testDataset
       });
       expect(resultSecondNamedGraph).toHaveLength(2);

@@ -239,20 +239,12 @@ export default class NextGraphAdapter extends BaseAdapter {
     throw new Error('Backup not implemented for NextGraph');
   }
 
-  async createNamedGraph(dataset: string, baseUrl: string) {
+  async createNamedGraph(dataset: string) {
     let session;
     try {
       session = await this.openSession(dataset);
       const protectedRepoId = session.protected_store_id.substring(2, 46);
-      const documentId = await ng.doc_create(
-        session.session_id,
-        'Graph',
-        'data:graph',
-        'store',
-        'protected',
-        protectedRepoId
-      );
-      return urlJoin(baseUrl, documentId);
+      return await ng.doc_create(session.session_id, 'Graph', 'data:graph', 'store', 'protected', protectedRepoId);
     } catch (error) {
       throw new Error(`NextGraph createNamedGraph failed: ${error}\nDataset: ${dataset}`);
     } finally {

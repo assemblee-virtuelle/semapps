@@ -175,28 +175,8 @@ export default class FusekiAdapter extends BaseAdapter {
   // No fuseki related operation here as empty named graphs are not maintained by fuseki
   // Inserting data into a non-existent named graph will create it
   // Simply return the graph URI
-  async createNamedGraph(dataset: string, baseUrl: string, slug?: string) {
-    let uri: string;
-
-    // Ensure the slug does not contain special characters
-    if (slug) slug = createSlug(slug, { lang: 'en', custom: { '.': '.', '/': '/' } });
-
-    // Find an URI that does not already exists
-    let counter = 0;
-    do {
-      if (slug) {
-        if (counter > 0) {
-          counter += 1;
-          uri = urlJoin(baseUrl, slug + counter);
-        } else {
-          uri = urlJoin(baseUrl, slug);
-        }
-      } else {
-        uri = urlJoin(baseUrl, uuidv4());
-      }
-    } while (await this.namedGraphExists(dataset, uri));
-
-    return uri;
+  async createNamedGraph(dataset: string) {
+    return `urn:${uuidv4()}`;
   }
 
   async namedGraphExists(dataset: string, graphUri: string) {
