@@ -12,6 +12,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
 
     // Ensure the test dataset exists
     await broker.call('triplestore.dataset.create', { dataset: testDataset });
+    await broker.call('triplestore.dropAll', { dataset: testDataset });
   });
 
   afterAll(async () => {
@@ -520,8 +521,14 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
     let namedGraphUri: string;
     let secondNamedGraphUri: string;
     beforeAll(async () => {
-      namedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
-      secondNamedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
+      namedGraphUri = await broker.call('triplestore.named-graph.create', {
+        dataset: testDataset,
+        baseUrl: 'https://semapps.org'
+      });
+      secondNamedGraphUri = await broker.call('triplestore.named-graph.create', {
+        dataset: testDataset,
+        baseUrl: 'https://semapps.org'
+      });
 
       // Insert test data into the first named graph
       const jsonLdData = {
@@ -549,11 +556,30 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
     });
 
     test('Create a new named graph and verify it exists', async () => {
-      const localNamedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
+      const localNamedGraphUri = await broker.call('triplestore.named-graph.create', {
+        dataset: testDataset,
+        baseUrl: 'https://semapps.org'
+      });
 
-      // Assert the uri is a non empty string
       expect(localNamedGraphUri).toBeTruthy();
+      expect(localNamedGraphUri).toMatch(/^https:\/\/semapps\.org?/);
       expect(localNamedGraphUri).not.toBe('');
+
+      // Fuseki considers a named graph exist only if it contains triples
+      if (triplestore === 'fuseki') {
+        await broker.call('triplestore.insert', {
+          resource: {
+            '@context': {
+              ex: 'http://example.org/'
+            },
+            '@id': 'http://example.org/person1',
+            '@type': 'http://example.org/Person',
+            'ex:name': 'John Doe'
+          },
+          dataset: testDataset,
+          graphName: localNamedGraphUri
+        });
+      }
 
       // Assert the named graph exists
       expect(
@@ -561,12 +587,11 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
       ).toBeTruthy();
     });
 
-    if (triplestore === 'ng')
-      test('Check named graph existence should return false with non-existent named graph', async () => {
-        await expect(
-          broker.call('triplestore.named-graph.exist', { uri: 'http://example.org/graph', dataset: testDataset })
-        ).resolves.toBeFalsy();
-      });
+    test('Check named graph existence should return false with non-existent named graph', async () => {
+      await expect(
+        broker.call('triplestore.named-graph.exist', { uri: 'http://example.org/graph', dataset: testDataset })
+      ).resolves.toBeFalsy();
+    });
 
     test('Clear named graph should clear the named graph, and only it', async () => {
       // Assert the the named graphs exist
@@ -611,19 +636,11 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
 
     if (triplestore === 'fuseki')
       test('Delete named graph', async () => {
-        await broker.call('triplestore.named-graph.delete', { uri: namedGraphUri, dataset: testDataset });
-        // Assert the named graph doesn't exist through a query
-        const result = await broker.call('triplestore.query', {
-          query: `SELECT * FROM <${namedGraphUri}> WHERE { ?s ?p ?o }`,
-          dataset: testDataset
-        });
-        expect(result).toHaveLength(0);
-        // Assert the second named graph still exists through a query
-        const resultSecondNamedGraph = await broker.call('triplestore.query', {
-          query: `SELECT * FROM <${secondNamedGraphUri}> WHERE { ?s ?p ?o }`,
-          dataset: testDataset
-        });
-        expect(resultSecondNamedGraph).toHaveLength(2);
+        await broker.call('triplestore.named-graph.delete', { uri: secondNamedGraphUri, dataset: testDataset });
+
+        expect(
+          await broker.call('triplestore.named-graph.exist', { uri: secondNamedGraphUri, dataset: testDataset })
+        ).toBeFalsy();
       });
   });
 

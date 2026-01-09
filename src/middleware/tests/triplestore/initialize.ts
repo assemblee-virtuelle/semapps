@@ -15,15 +15,18 @@ export default async (triplestore: string) => {
     }
   });
 
+  // @ts-ignore Argument of type '{ mixins: { name: "jsonld"; settings: ...
   broker.createService({
     mixins: [JsonLdService],
     settings: {
-      baseUri: CONFIG.HOME_URL
+      baseUrl: CONFIG.HOME_URL
     }
   });
 
+  // @ts-ignore Argument of type '{ mixins: { name: "jsonld"; settings: ...
   broker.createService({ mixins: [ApiGatewayService] });
 
+  // @ts-ignore Argument of type '{ mixins: { name: "jsonld"; settings: ...
   broker.createService({
     mixins: [OntologiesService],
     settings: {

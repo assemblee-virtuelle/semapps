@@ -12,7 +12,7 @@ export interface AdapterInterface {
   listDatasets(): Promise<string[]>;
   deleteDataset(dataset: string): Promise<void>;
   backupDataset(dataset: string): Promise<void>;
-  createNamedGraph(dataset: string, graphUri?: string): Promise<string>;
+  createNamedGraph(dataset: string, baseUrl: string, slug?: string): Promise<string>;
   namedGraphExists(dataset: string, graphUri: string): Promise<boolean>;
   clearNamedGraph(dataset: string, graphUri: string): Promise<void>;
   deleteNamedGraph(dataset: string, graphUri: string): Promise<void>;
@@ -56,7 +56,7 @@ export abstract class BaseAdapter implements AdapterInterface {
 
   abstract backupDataset(dataset: string): Promise<void>;
 
-  abstract createNamedGraph(dataset: string, graphUri?: string): Promise<string>;
+  abstract createNamedGraph(dataset: string, baseUrl: string, slug?: string): Promise<string>;
 
   abstract namedGraphExists(dataset: string, graphUri: string): Promise<boolean>;
 

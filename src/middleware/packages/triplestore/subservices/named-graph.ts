@@ -1,6 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-import createSlug from 'speakingurl';
-import urlJoin from 'url-join';
 import { ServiceSchema } from 'moleculer';
 import { AdapterInterface } from '../adapters/base.ts';
 
@@ -17,32 +14,16 @@ const NamedGraphService = {
   },
   actions: {
     create: {
+      params: {
+        dataset: { type: 'string', optional: true },
+        baseUrl: { type: 'string' },
+        slug: { type: 'string', optional: true }
+      },
       async handler(ctx) {
-        // TODO Do not allow to pass the named graph URI on creation
-        let { baseUrl, slug, uri } = ctx.params;
+        let { baseUrl, slug } = ctx.params;
         const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
-        if (!uri) {
-          // Ensure the slug does not contain special characters
-          if (slug) slug = createSlug(slug, { lang: 'en', custom: { '.': '.', '/': '/' } });
-
-          // Find an URI that does not already exists
-          let counter = 0;
-          do {
-            if (slug) {
-              if (counter > 0) {
-                counter += 1;
-                uri = urlJoin(baseUrl, slug + counter);
-              } else {
-                uri = urlJoin(baseUrl, slug);
-              }
-            } else {
-              uri = urlJoin(baseUrl, uuidv4());
-            }
-          } while (await this.actions.exist({ uri, dataset }, { parentCtx: ctx }));
-        }
-
-        return await this.settings.adapter.createNamedGraph(dataset, uri);
+        return await this.settings.adapter.createNamedGraph(dataset, baseUrl, slug);
       }
     },
 

@@ -1,4 +1,5 @@
 import ng from 'nextgraph';
+import urlJoin from 'url-join';
 import { SparqlJsonParser } from 'sparqljson-parse';
 import { BaseAdapter } from './base.ts';
 
@@ -102,7 +103,7 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async dropAll(dataset: string): Promise<void> {
+  async dropAll(dataset: string) {
     let session: any;
     try {
       session = await this.openSession(dataset);
@@ -143,7 +144,7 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async datasetExists(dataset: string): Promise<boolean> {
+  async datasetExists(dataset: string) {
     try {
       const response = await ng.sparql_query(
         this.adminSessionid,
@@ -164,7 +165,7 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async listDatasets(): Promise<string[]> {
+  async listDatasets() {
     try {
       const response = await ng.sparql_query(
         this.adminSessionid,
@@ -184,7 +185,7 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async deleteDataset(dataset: string): Promise<void> {
+  async deleteDataset(dataset: string) {
     try {
       // First, check if the mapping exists
       const checkResponse = await ng.sparql_query(
@@ -234,19 +235,24 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async backupDataset(dataset: string): Promise<void> {
+  async backupDataset(dataset: string) {
     throw new Error('Backup not implemented for NextGraph');
   }
 
-  async createNamedGraph(dataset: string, graphUri?: string): Promise<string> {
-    if (graphUri) {
-      throw new Error('Explicit graph URI is not supported for NextGraph');
-    }
+  async createNamedGraph(dataset: string, baseUrl: string) {
     let session;
     try {
       session = await this.openSession(dataset);
       const protectedRepoId = session.protected_store_id.substring(2, 46);
-      return await ng.doc_create(session.session_id, 'Graph', 'data:graph', 'store', 'protected', protectedRepoId);
+      const documentId = await ng.doc_create(
+        session.session_id,
+        'Graph',
+        'data:graph',
+        'store',
+        'protected',
+        protectedRepoId
+      );
+      return urlJoin(baseUrl, documentId);
     } catch (error) {
       throw new Error(`NextGraph createNamedGraph failed: ${error}\nDataset: ${dataset}`);
     } finally {
@@ -254,7 +260,7 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async namedGraphExists(dataset: string, graphUri: string): Promise<boolean> {
+  async namedGraphExists(dataset: string, graphUri: string) {
     try {
       await this.query(dataset, `ASK { GRAPH <${graphUri}> { ?s ?p ?o } }`);
       return true;
@@ -267,7 +273,7 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async clearNamedGraph(dataset: string, graphUri: string): Promise<void> {
+  async clearNamedGraph(dataset: string, graphUri: string) {
     let session;
     try {
       session = await this.openSession(dataset);

@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import urlJoin from 'url-join';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
+import createSlug from 'speakingurl';
 import { SparqlJsonParser } from 'sparqljson-parse';
 import { throw403, throw500, throw404 } from '@semapps/middlewares';
 import { Errors } from 'moleculer';
@@ -175,15 +175,32 @@ export default class FusekiAdapter extends BaseAdapter {
   // No fuseki related operation here as empty named graphs are not maintained by fuseki
   // Inserting data into a non-existent named graph will create it
   // Simply return the graph URI
-  async createNamedGraph(dataset: string, graphUri?: string) {
-    // TODO : use the base URI of the app for the graph URI
-    return graphUri || `http://semapps.org/graph/${uuidv4()}`;
+  async createNamedGraph(dataset: string, baseUrl: string, slug?: string) {
+    let uri: string;
+
+    // Ensure the slug does not contain special characters
+    if (slug) slug = createSlug(slug, { lang: 'en', custom: { '.': '.', '/': '/' } });
+
+    // Find an URI that does not already exists
+    let counter = 0;
+    do {
+      if (slug) {
+        if (counter > 0) {
+          counter += 1;
+          uri = urlJoin(baseUrl, slug + counter);
+        } else {
+          uri = urlJoin(baseUrl, slug);
+        }
+      } else {
+        uri = urlJoin(baseUrl, uuidv4());
+      }
+    } while (await this.namedGraphExists(dataset, uri));
+
+    return uri;
   }
 
-  // Always consider a named graph exists as fuseki does not maintain empty named graphs
-  // And inserting data into a non-existent named graph will create it
   async namedGraphExists(dataset: string, graphUri: string) {
-    return true;
+    return await this.query(dataset, `ASK { GRAPH <${graphUri}> {} }`);
   }
 
   async clearNamedGraph(dataset: string, graphUri: string) {
