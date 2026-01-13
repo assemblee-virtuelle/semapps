@@ -33,7 +33,7 @@ const openSessions: { [dataset: string]: Session } = {};
 export default class NextGraphAdapter extends BaseAdapter {
   name = 'nextgraph';
 
-  private settings: { adminUserId: string; mappingsNuri: string; backupsPath: string };
+  private settings: { adminUserId: string; mappingsNuri: string; backupsPath?: string };
 
   private adminSessionid: string = '';
 
@@ -87,9 +87,8 @@ export default class NextGraphAdapter extends BaseAdapter {
   }
 
   async query(dataset: string, query: string) {
-    let session;
     try {
-      session = await this.openSession(dataset);
+      const session = await this.openOrGetSession(dataset);
       const result = await ng.sparql_query(session.session_id, query);
 
       const regex = /(CONSTRUCT|SELECT|ASK).*/gm;
@@ -108,20 +107,15 @@ export default class NextGraphAdapter extends BaseAdapter {
       }
     } catch (error) {
       throw new Error(`NextGraph query failed: ${error}\nQuery: ${query}\nDataset: ${dataset}`);
-    } finally {
-      this.closeSession(session);
     }
   }
 
   async update(dataset: any, query: string) {
-    let session;
     try {
-      session = await this.openSession(dataset);
+      const session = await this.openOrGetSession(dataset);
       await ng.sparql_update(session.session_id, query);
     } catch (error) {
       throw new Error(`NextGraph update failed: ${error}\nQuery: ${query}\nDataset: ${dataset}`);
-    } finally {
-      this.closeSession(session);
     }
   }
 
@@ -235,28 +229,24 @@ export default class NextGraphAdapter extends BaseAdapter {
   }
 
   async clearDataset(dataset: string) {
-    let session: any;
     try {
-      session = await this.openSession(dataset);
+      const session = await this.openOrGetSession(dataset);
       // Delete all triples in all documents
       // TODO Delete also the documents when the method will be available
       await ng.sparql_update(session.session_id, 'DELETE WHERE { GRAPH ?g { ?s ?p ?o } }');
     } catch (error) {
       throw new Error(`NextGraph dropAll failed: ${error}\nDataset: ${dataset}`);
-    } finally {
-      this.closeSession(session);
     }
   }
 
   async backupDataset(dataset: string) {
-    let session;
     try {
       if (!this.settings.backupsPath)
         throw new Error('The backupsPath setting is required in the NextGraph adapter if you want to backup data');
 
       fs.mkdirSync(this.settings.backupsPath, { recursive: true, mode: 0o777 });
 
-      session = await this.openSession(dataset);
+      const session = await this.openOrGetSession(dataset);
 
       const dump = await ng.rdf_dump(session.session_id);
 
@@ -272,8 +262,6 @@ export default class NextGraphAdapter extends BaseAdapter {
       // fs.writeFileSync(pathJoin(this.settings.backupsPath, 'mappings.nq'), mappingsDump);
     } catch (error) {
       throw new Error(`NextGraph backupDataset failed: ${error}\nDataset: ${dataset}`);
-    } finally {
-      this.closeSession(session);
     }
   }
 
@@ -312,15 +300,12 @@ export default class NextGraphAdapter extends BaseAdapter {
   }
 
   async createNamedGraph(dataset: string) {
-    let session;
     try {
-      session = await this.openSession(dataset);
+      const session = await this.openOrGetSession(dataset);
       const protectedRepoId = session.protected_store_id.substring(2, 46);
       return await ng.doc_create(session.session_id, 'Graph', 'data:graph', 'store', 'protected', protectedRepoId);
     } catch (error) {
       throw new Error(`NextGraph createNamedGraph failed: ${error}\nDataset: ${dataset}`);
-    } finally {
-      this.closeSession(session);
     }
   }
 
@@ -338,30 +323,24 @@ export default class NextGraphAdapter extends BaseAdapter {
   }
 
   async clearNamedGraph(dataset: string, graphUri: string) {
-    let session;
     try {
-      session = await this.openSession(dataset);
+      const session = await this.openOrGetSession(dataset);
       await ng.sparql_update(session.session_id, 'DELETE WHERE { ?s ?p ?o }', graphUri);
     } catch (error) {
       throw new Error(`NextGraph clearNamedGraph failed: ${error}\nDataset: ${dataset}\nGraph URI: ${graphUri}`);
-    } finally {
-      this.closeSession(session);
     }
   }
 
   async deleteNamedGraph(dataset: string, graphUri: string): Promise<void> {
-    let session;
     try {
-      session = await this.openSession(dataset);
+      const session = await this.openOrGetSession(dataset);
       await ng.sparql_update(session.session_id, `DROP GRAPH <${graphUri}>`);
     } catch (error) {
       throw new Error(`NextGraph deleteNamedGraph failed: ${error}\nDataset: ${dataset}\nGraph URI: ${graphUri}`);
-    } finally {
-      this.closeSession(session);
     }
   }
 
-  async openSession(dataset: string): Promise<Session> {
+  async openOrGetSession(dataset: string): Promise<Session> {
     try {
       if (!openSessions[dataset]) {
         const userId = await this.getUserIdForDataset(dataset);
@@ -373,9 +352,9 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async closeSession(session?: Session) {
+  async closeSession(session: Session) {
     try {
-      // await ng.session_headless_stop(session.session_id, true);
+      await ng.session_headless_stop(session.session_id, true);
     } catch (error) {
       throw new Error(`NextGraph closeSession failed: ${error}`);
     }
@@ -406,14 +385,16 @@ export default class NextGraphAdapter extends BaseAdapter {
   }
 
   async cleanup() {
-    if (this.adminSessionid) {
-      try {
-        await ng.session_headless_stop(this.adminSessionid, false);
-        // TODO Close all sessions
-        this.getLogger().info('NextGraph adapter cleaned up');
-      } catch (error) {
-        throw new Error(`NextGraph cleanup failed: ${error}`);
+    try {
+      for (const session of Object.values(openSessions)) {
+        await this.closeSession(session);
       }
+
+      if (this.adminSessionid) await ng.session_headless_stop(this.adminSessionid, true);
+
+      this.getLogger().info('NextGraph adapter cleaned up');
+    } catch (error) {
+      throw new Error(`NextGraph cleanup failed: ${error}`);
     }
   }
 }
