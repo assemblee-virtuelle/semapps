@@ -13,7 +13,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
     await broker.waitForServices(['triplestore']);
 
     if (await broker.call('triplestore.dataset.exist', { dataset: testDataset })) {
-      await broker.call('triplestore.dropAll', { dataset: testDataset });
+      await broker.call('triplestore.dataset.clear', { dataset: testDataset });
     } else {
       await broker.call('triplestore.dataset.create', { dataset: testDataset });
     }
@@ -67,16 +67,15 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
 
   describe('Insert action', () => {
     test('Insert JSON-LD data', async () => {
-      const jsonLdData = {
-        '@context': {
-          ex: 'http://example.org/',
-          predicate: 'ex:predicate'
-        },
-        '@id': 'http://example.org/subject',
-        predicate: 'object'
-      };
       await broker.call('triplestore.insert', {
-        resource: jsonLdData,
+        resource: {
+          '@context': {
+            ex: 'http://example.org/',
+            predicate: 'ex:predicate'
+          },
+          '@id': 'http://example.org/subject',
+          predicate: 'object'
+        },
         dataset: testDataset
       });
       const result = await broker.call('triplestore.query', {
@@ -90,18 +89,17 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
     });
 
     test('Insert JSON-LD data with type', async () => {
-      const jsonLdData = {
-        '@context': {
-          ex: 'http://example.org/',
-          name: 'ex:name',
-          type: '@type'
-        },
-        '@id': 'http://example.org/person1',
-        type: 'http://example.org/Person',
-        name: 'John Doe'
-      };
       await broker.call('triplestore.insert', {
-        resource: jsonLdData,
+        resource: {
+          '@context': {
+            ex: 'http://example.org/',
+            name: 'ex:name',
+            type: '@type'
+          },
+          '@id': 'http://example.org/person1',
+          type: 'http://example.org/Person',
+          name: 'John Doe'
+        },
         dataset: testDataset
       });
       const result = await broker.call('triplestore.query', {
@@ -113,17 +111,16 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
 
     if (triplestore === 'fuseki') {
       test('Insert data with graph name', async () => {
-        const jsonLdData = {
-          '@context': {
-            ex: 'http://example.org/',
-            predicate: 'ex:predicate'
-          },
-          '@id': 'http://example.org/subject',
-          predicate: 'object'
-        };
         const graphName = 'http://example.org/graph';
         await broker.call('triplestore.insert', {
-          resource: jsonLdData,
+          resource: {
+            '@context': {
+              ex: 'http://example.org/',
+              predicate: 'ex:predicate'
+            },
+            '@id': 'http://example.org/subject',
+            predicate: 'object'
+          },
           graphName,
           dataset: testDataset
         });
@@ -135,56 +132,17 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
       });
     }
 
-    test('Insert data with wildcard dataset inserts into all datasets', async () => {
-      const secondDataset = 'test_dataset2';
-      // Create the second dataset
-      await broker.call('triplestore.dataset.create', { dataset: secondDataset });
-
-      const jsonLdData = {
-        '@context': {
-          ex: 'http://example.org/',
-          predicate: 'ex:predicate'
-        },
-        '@id': 'http://example.org/subject',
-        predicate: 'object'
-      };
-      await broker.call('triplestore.insert', {
-        resource: jsonLdData,
-        dataset: '*'
-      });
-
-      // Assert in first dataset
-      let result = await broker.call('triplestore.query', {
-        // modify the query to target the data inserted in this same test
-        query: 'SELECT * WHERE { ?s ?p ?o }',
-        dataset: testDataset
-      });
-      // includes the data inserted in the previous tests
-      expect(result).toHaveLength(3);
-
-      // Assert in second dataset
-      result = await broker.call('triplestore.query', {
-        query: 'SELECT * WHERE { ?s ?p ?o }',
-        dataset: secondDataset
-      });
-      expect(result).toHaveLength(1);
-
-      // Clean up
-      await broker.call('triplestore.dataset.delete', { dataset: secondDataset });
-    });
-
     test('Insert should fail with non-existent dataset', async () => {
-      const jsonLdData = {
-        '@context': {
-          ex: 'http://example.org/',
-          predicate: 'ex:predicate'
-        },
-        '@id': 'http://example.org/subject',
-        predicate: 'object'
-      };
       await expect(
         broker.call('triplestore.insert', {
-          resource: jsonLdData,
+          resource: {
+            '@context': {
+              ex: 'http://example.org/',
+              predicate: 'ex:predicate'
+            },
+            '@id': 'http://example.org/subject',
+            predicate: 'object'
+          },
           dataset: 'non_existent_dataset'
         })
       ).rejects.toThrow("The dataset non_existent_dataset doesn't exist");
@@ -227,18 +185,6 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
     test('SELECT query with JSON result', async () => {
       const result = await broker.call('triplestore.query', {
         query: 'SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 5',
-        // accept: 'application/json',
-        dataset: testDataset
-      });
-      expect(Array.isArray(result)).toBeTruthy();
-      // includes the data inserted in the previous tests
-      expect(result.length).toBe(5);
-    });
-
-    test('SELECT query with SPARQL JSON result', async () => {
-      const result = await broker.call('triplestore.query', {
-        query: 'SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 5',
-        // accept: 'application/sparql-results+json',
         dataset: testDataset
       });
       expect(Array.isArray(result)).toBeTruthy();
@@ -249,7 +195,6 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
     test('ASK query', async () => {
       const result = await broker.call('triplestore.query', {
         query: 'ASK WHERE { ?s a <http://example.org/Person> }',
-        // accept: 'application/json',
         dataset: testDataset
       });
       expect(typeof result).toBe('boolean');
@@ -259,7 +204,6 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
     test('CONSTRUCT query with JSON result', async () => {
       const result = await broker.call('triplestore.query', {
         query: 'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o } LIMIT 5',
-        // accept: 'application/json',
         dataset: testDataset
       });
       expect(typeof result).toBe('object');
@@ -399,60 +343,6 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
       expect(result[0].name.value).toBe('John Updated Again');
     });
 
-    test('UPDATE with wildcard dataset updates all datasets', async () => {
-      const secondDataset = 'test_dataset2';
-      // Create the second dataset
-      await broker.call('triplestore.dataset.create', { dataset: secondDataset });
-
-      // Insert the same data into both datasets
-      const initialData = {
-        '@context': {
-          ex: 'http://example.org/',
-          age: 'ex:age'
-        },
-        '@id': 'http://example.org/person1',
-        age: '29'
-      };
-      await broker.call('triplestore.insert', {
-        resource: initialData,
-        dataset: testDataset
-      });
-      await broker.call('triplestore.insert', {
-        resource: initialData,
-        dataset: secondDataset
-      });
-
-      // Perform the update with wildcard
-      const updateQuery = `
-        DELETE { <http://example.org/person1> <http://example.org/age> ?age }
-        INSERT { <http://example.org/person1> <http://example.org/age> "30" }
-        WHERE { <http://example.org/person1> <http://example.org/age> ?age }
-      `;
-      await broker.call('triplestore.update', {
-        query: updateQuery,
-        dataset: '*'
-      });
-
-      // Assert in first dataset
-      let result = await broker.call('triplestore.query', {
-        query: 'SELECT ?age WHERE { <http://example.org/person1> <http://example.org/age> ?age }',
-        dataset: testDataset
-      });
-      expect(result).toHaveLength(1);
-      expect(result[0].age.value).toBe('30');
-
-      // Assert in second dataset
-      result = await broker.call('triplestore.query', {
-        query: 'SELECT ?age WHERE { <http://example.org/person1> <http://example.org/age> ?age }',
-        dataset: secondDataset
-      });
-      expect(result).toHaveLength(1);
-      expect(result[0].age.value).toBe('30');
-
-      // Clean up
-      await broker.call('triplestore.dataset.delete', { dataset: secondDataset });
-    });
-
     test('UPDATE should fail with non-existent dataset', async () => {
       const updateQuery = `
         INSERT { <http://example.org/person1> <http://example.org/age> "30" }
@@ -467,7 +357,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
     });
   });
 
-  describe('DropAll action', () => {
+  describe('Dataset clear action', () => {
     beforeEach(async () => {
       // Insert test data
       const jsonLdData = {
@@ -494,7 +384,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
       });
       expect(result.length).toBeGreaterThan(0);
       // Drop all data
-      await broker.call('triplestore.dropAll', {
+      await broker.call('triplestore.dataset.clear', {
         dataset: testDataset
       });
       // Verify data is gone
@@ -507,7 +397,7 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
 
     test('DropAll should fail with non-existent dataset', async () => {
       await expect(
-        broker.call('triplestore.dropAll', {
+        broker.call('triplestore.dataset.clear', {
           dataset: 'non_existent_dataset'
         })
       ).rejects.toThrow("The dataset non_existent_dataset doesn't exist");
@@ -627,9 +517,5 @@ describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestor
           await broker.call('triplestore.named-graph.exist', { uri: secondNamedGraphUri, dataset: testDataset })
         ).toBeFalsy();
       });
-  });
-
-  describe('Error handling', () => {
-    // TODO: Add error handling tests
   });
 });

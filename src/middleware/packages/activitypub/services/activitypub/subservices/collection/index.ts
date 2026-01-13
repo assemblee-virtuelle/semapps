@@ -1,4 +1,4 @@
-import { ControlledContainerMixin, arrayOf, getDatasetFromUri } from '@semapps/ldp';
+import { ControlledContainerMixin, arrayOf, getDatasetFromUri, getSlugFromUri } from '@semapps/ldp';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
@@ -140,7 +140,7 @@ const CollectionService = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             SELECT ( Count(?items) as ?count )
             WHERE {
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> as:items ?items .
               }
             }
@@ -167,7 +167,7 @@ const CollectionService = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             ASK
             WHERE {
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> a as:Collection .
                 <${collectionUri}> as:items <${itemUri}> .
               }
@@ -203,7 +203,7 @@ const CollectionService = {
         await ctx.call('triplestore.update', {
           query: sanitizeSparqlQuery`
             INSERT DATA { 
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>
               }
             }
@@ -237,7 +237,7 @@ const CollectionService = {
           query: sanitizeSparqlQuery`
             DELETE
             WHERE { 
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> 
               }
             }
@@ -292,7 +292,7 @@ const CollectionService = {
               }
             }
             WHERE { 
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> as:items ?s1 .
               }
               GRAPH ?g1 {

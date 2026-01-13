@@ -1,5 +1,6 @@
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema, Errors } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -27,7 +28,7 @@ const Schema = {
       query: sanitizeSparqlQuery`
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         INSERT DATA { 
-          GRAPH <${containerUri}> {
+          GRAPH <${getSlugFromUri(containerUri)}> {
             <${containerUri}> ldp:contains <${resourceUri}> 
           }
         }

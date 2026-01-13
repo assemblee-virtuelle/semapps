@@ -1,7 +1,7 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema, Errors } from 'moleculer';
-import { isWebId } from '@semapps/ldp';
+import { getSlugFromUri, isWebId } from '@semapps/ldp';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
@@ -168,7 +168,7 @@ const InboxService = {
             PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
             SELECT DISTINCT ?activityUri 
             WHERE {
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> a as:Collection .
                 <${collectionUri}> as:items ?activityUri . 
               }

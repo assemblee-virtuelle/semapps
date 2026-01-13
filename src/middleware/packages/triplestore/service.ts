@@ -1,6 +1,5 @@
 import sparqljsModule from 'sparqljs';
 import { ServiceSchema, Errors } from 'moleculer';
-import dropAll from './actions/dropAll.ts';
 import insert from './actions/insert.ts';
 import query from './actions/query.ts';
 import update from './actions/update.ts';
@@ -62,8 +61,7 @@ const TripleStoreService = {
   actions: {
     insert,
     update,
-    query,
-    dropAll
+    query
   },
   methods: {
     generateSparqlQuery(query) {

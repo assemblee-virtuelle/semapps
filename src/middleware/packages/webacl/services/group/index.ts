@@ -13,7 +13,6 @@ const WebaclGroupSchema = {
   name: 'webacl.group' as const,
   settings: {
     baseUrl: null,
-    graphName: null,
     superAdmins: []
   },
   dependencies: ['triplestore', 'webacl.resource', 'ldp.container'],

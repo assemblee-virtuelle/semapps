@@ -12,17 +12,6 @@ const DatasetService = {
     }
   },
   actions: {
-    backup: {
-      async handler(ctx) {
-        const { dataset } = ctx.params;
-        if (!dataset) throw new Error('Unable to backup dataset. The parameter dataset is missing');
-
-        this.logger.info(`Backing up dataset ${dataset}...`);
-        await this.settings.adapter.backupDataset(dataset);
-        this.logger.info(`Dataset ${dataset} backed up`);
-      }
-    },
-
     create: {
       async handler(ctx) {
         const { dataset } = ctx.params;
@@ -48,6 +37,31 @@ const DatasetService = {
       }
     },
 
+    clear: {
+      params: {
+        dataset: { type: 'string' }
+      },
+      async handler(ctx) {
+        const { dataset } = ctx.params;
+
+        if (!(await ctx.call('triplestore.dataset.exist', { dataset })))
+          throw new Error(`The dataset ${dataset} doesn't exist`);
+
+        return await this.settings.adapter.clearDataset(dataset);
+      }
+    },
+
+    getWacGraph: {
+      params: {
+        dataset: { type: 'string', optional: true }
+      },
+      async handler(ctx) {
+        const dataset = ctx.params.dataset || ctx.meta.dataset;
+        if (!dataset) throw new Error('Unable to get WAC graph. The parameter dataset is missing');
+        return await this.settings.adapter.getWacGraph(dataset);
+      }
+    },
+
     list: {
       async handler() {
         return await this.settings.adapter.listDatasets();
@@ -68,6 +82,19 @@ const DatasetService = {
         const { dataset } = ctx.params;
 
         await this.settings.adapter.deleteDataset(dataset);
+      }
+    },
+
+    backup: {
+      params: {
+        dataset: { type: 'string' }
+      },
+      async handler(ctx) {
+        const { dataset } = ctx.params;
+
+        this.logger.info(`Backing up dataset ${dataset}...`);
+        await this.settings.adapter.backupDataset(dataset);
+        this.logger.info(`Dataset ${dataset} backed up`);
       }
     }
   }

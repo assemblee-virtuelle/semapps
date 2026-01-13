@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
 import { ActionSchema } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -26,7 +27,7 @@ const Schema = {
       query: `
         DELETE
         WHERE { 
-          GRAPH <${containerUri}> {
+          GRAPH <${getSlugFromUri(containerUri)}> {
             <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
           }
         }

@@ -10,19 +10,17 @@ const WebAclService = {
   name: 'webacl' as const,
   settings: {
     baseUrl: null,
-    graphName: 'http://semapps.org/webacl',
     superAdmins: []
   },
   dependencies: ['api', 'ontologies'],
   async created() {
-    const { baseUrl, graphName, superAdmins } = this.settings;
+    const { baseUrl, superAdmins } = this.settings;
 
     // @ts-expect-error TS(2322): Type '{ name: "webacl.resource"; settings: { baseUrl:... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [WebAclResourceService],
       settings: {
-        baseUrl,
-        graphName
+        baseUrl
       }
     });
 
@@ -31,7 +29,6 @@ const WebAclService = {
       mixins: [WebAclGroupService],
       settings: {
         baseUrl,
-        graphName,
         superAdmins
       }
     });

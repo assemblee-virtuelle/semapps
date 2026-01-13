@@ -52,7 +52,7 @@ const ControlledResourceMixin = {
             query: `
               SELECT ?resourceUri
               WHERE {
-                GRAPH ?resourceUri {
+                GRAPH ?g {
                   ?resourceUri a ${expandedTypes.map(t => `<${t}>`).join(', ')} .
                 }
               }

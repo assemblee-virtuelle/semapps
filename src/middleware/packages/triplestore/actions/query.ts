@@ -22,7 +22,6 @@ const Schema = {
 
     if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
-    // Use backend implementation
     return await this.settings.adapter.query(dataset, query);
   }
 } satisfies ActionSchema;

@@ -1,4 +1,5 @@
 import { ActionSchema } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -15,7 +16,7 @@ const Schema = {
       query: `
         SELECT ?type
         WHERE {
-          GRAPH <${resourceUri}> {
+          GRAPH <${getSlugFromUri(resourceUri)}> {
             <${resourceUri}> a ?type .
           }
         }

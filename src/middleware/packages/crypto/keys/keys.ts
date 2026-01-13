@@ -343,7 +343,7 @@ const KeysService = {
         await ctx.call('ldp.resource.patch', {
           resourceUri: webId,
           triplesToAdd: [rdf.quad(rdf.namedNode(webId), rdf.namedNode(keyPredicate), rdf.namedNode(publicKeyId))],
-          webId
+          webId: 'system'
         });
       }
     },

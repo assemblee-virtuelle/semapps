@@ -15,7 +15,7 @@ const Schema = {
         ASK
         WHERE {
           FILTER(?containerUri IN (<${containerUri}>, <${`${containerUri}/`}>)) .
-          GRAPH ?containerUri {
+          GRAPH ?g {
             ?containerUri a ldp:Container .
           }
         }

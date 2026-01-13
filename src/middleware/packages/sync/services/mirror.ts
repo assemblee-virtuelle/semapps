@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
-import { createFragmentURL, arrayOf, getId } from '@semapps/ldp';
+import { createFragmentURL, arrayOf, getId, getSlugFromUri } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import { ServiceSchema, Errors } from 'moleculer';
 import SynchronizerService from './synchronizer.ts';
@@ -125,7 +125,7 @@ const MirrorSchema = {
                 query: `
                   PREFIX ldp: <http://www.w3.org/ns/ldp#>
                   INSERT DATA {
-                    GRAPH <${containerUri}> {
+                    GRAPH <${getSlugFromUri(containerUri)}> {
                       <${containerUri}> a ldp:Container, ldp:BasicContainer .
                     }
                   }
@@ -144,7 +144,7 @@ const MirrorSchema = {
                   query: `
                     PREFIX ldp: <http://www.w3.org/ns/ldp#>
                     INSERT DATA {
-                      GRAPH <${containerUri}> {
+                      GRAPH <${getSlugFromUri(containerUri)}> {
                         <${containerUri}> ldp:contains <${resourceUri}> .
                       }
                     }

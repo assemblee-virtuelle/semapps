@@ -1,4 +1,5 @@
 import { ActionSchema } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -11,7 +12,7 @@ const Schema = {
     const { resourceUri, acceptTombstones } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri });
+    const exist = await ctx.call('triplestore.named-graph.exist', { uri: getSlugFromUri(resourceUri) });
 
     // If resource exists but we don't want tombstones, check the resource type
     if (exist && !acceptTombstones) {

@@ -5,7 +5,7 @@ import { JsonLdService } from '@semapps/jsonld';
 import { LdpService, DocumentTaggerMixin } from '@semapps/ldp';
 import { OntologiesService } from '@semapps/ontologies';
 import { SparqlEndpointService } from '@semapps/sparql-endpoint';
-import { TripleStoreService } from '@semapps/triplestore';
+import { AdapterInterface, TripleStoreService } from '@semapps/triplestore';
 import { TypeIndexService, StorageService } from '@semapps/solid';
 import { WebAclService } from '@semapps/webacl';
 import { WebfingerService } from '@semapps/webfinger';
@@ -19,10 +19,7 @@ const CoreService = {
   settings: {
     baseUrl: undefined,
     triplestore: {
-      url: undefined,
-      user: undefined,
-      password: undefined,
-      fusekiBase: undefined
+      adapter: null
     },
     // Optional
     containers: undefined,
@@ -109,6 +106,7 @@ const CoreService = {
       });
     }
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: ({ name: ... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [OntologiesService],
       settings: {
@@ -189,23 +187,11 @@ const CoreService = {
     }
 
     if (this.settings.triplestore !== false) {
-      // If WebACL service is disabled, don't create a secure dataset
-      // We define a constant here, because this.settings.webacl is not available inside the started method
-      const secure = this.settings.triplestore?.secure !== false && this.settings.webacl !== false;
-
       // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [TripleStoreService],
         settings: {
           ...triplestore
-        },
-        async started() {
-          if (triplestore.mainDataset) {
-            await this.broker.call('triplestore.dataset.create', {
-              dataset: triplestore.mainDataset,
-              secure
-            });
-          }
         }
       });
     }

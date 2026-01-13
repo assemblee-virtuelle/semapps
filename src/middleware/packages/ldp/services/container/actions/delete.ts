@@ -1,5 +1,6 @@
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -17,7 +18,7 @@ const Schema = {
       query: sanitizeSparqlQuery`
         DELETE
         WHERE {
-          GRAPH <${containerUri}> {
+          GRAPH <${getSlugFromUri(containerUri)}> {
             <${containerUri}> ?p1 ?o1 .
           }
         }

@@ -11,7 +11,12 @@ const modifyActions = [
   'ldp.resource.delete'
 ];
 
-const tripleStoreActions = ['triplestore.insert', 'triplestore.query', 'triplestore.update', 'triplestore.dropAll'];
+const tripleStoreActions = [
+  'triplestore.insert',
+  'triplestore.query',
+  'triplestore.update',
+  'triplestore.dataset.clear'
+];
 
 /**
  * Middleware that ensures that requests are conforming ACL records.

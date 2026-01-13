@@ -1,22 +1,20 @@
 import { ActionSchema } from 'moleculer';
+import urlJoin from 'url-join';
 
 const CreateAction = {
   visibility: 'public',
   params: {
-    path: { type: 'string', optional: true },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
     registration: { type: 'object', optional: true }
   },
   async handler(ctx) {
-    let { path, title, description, registration } = ctx.params;
+    let { title, description, registration } = ctx.params;
 
-    const baseUrl = await ctx.call('solid-storage.getBaseUrl');
+    const graphName: string = await ctx.call('triplestore.named-graph.create');
 
-    const containerUri = await ctx.call('triplestore.named-graph.create', {
-      baseUrl,
-      slug: this.settings.allowSlugs ? path || registration?.path : undefined
-    });
+    const baseUrl: string = await ctx.call('solid-storage.getBaseUrl');
+    const containerUri = urlJoin(baseUrl, graphName);
 
     await ctx.call('triplestore.insert', {
       resource: {
@@ -25,7 +23,7 @@ const CreateAction = {
         'http://purl.org/dc/terms/title': title,
         'http://purl.org/dc/terms/description': description
       },
-      graphName: containerUri,
+      graphName,
       webId: 'system'
     });
 

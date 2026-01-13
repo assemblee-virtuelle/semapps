@@ -5,6 +5,7 @@ import { arrayOf, getDatasetFromUri } from '@semapps/ldp';
 import { ServiceSchema, Context } from 'moleculer';
 import { AS_PREFIX } from '../../../constants.ts';
 import { CollectionRegistration } from '../../../types.ts';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const CollectionsRegistryService = {
   name: 'activitypub.collections-registry' as const,
@@ -132,7 +133,7 @@ const CollectionsRegistryService = {
           query: `
             SELECT ?collectionUri
             WHERE {
-              GRAPH <${objectUri}> {
+              GRAPH <${getSlugFromUri(objectUri)}> {
                 <${objectUri}> <${attachPredicate}> ?collectionUri
               }
             }
@@ -156,7 +157,7 @@ const CollectionsRegistryService = {
           query: `
             SELECT ?objectUri ?attachPredicate ?type
             WHERE {
-              GRAPH ?objectUri {
+              GRAPH ?g {
                 ?objectUri ?attachPredicate <${collectionUri}> .
                 FILTER ( ?attachPredicate != <http://www.w3.org/ns/ldp#contains> )
               }

@@ -111,16 +111,6 @@ export default class FusekiAdapter extends BaseAdapter {
     });
   }
 
-  async dropAll(dataset: string) {
-    await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-      operation: 'dropAll',
-      body: 'update=CLEAR+ALL',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    });
-  }
-
   async createDataset(dataset: string) {
     await this.fetch(urlJoin(this.settings.url, '$/datasets') + `?dbName=${dataset}&dbType=tdb2`, {
       operation: 'createDataset',
@@ -159,6 +149,16 @@ export default class FusekiAdapter extends BaseAdapter {
     this.getLogger().info(`Fuseki dataset deleted: ${dataset}`);
   }
 
+  async clearDataset(dataset: string) {
+    await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
+      operation: 'dropAll',
+      body: 'update=CLEAR+ALL',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+  }
+
   // TODO : see how we can test this
   async backupDataset(dataset: string) {
     // Ask Fuseki to backup the given dataset
@@ -175,7 +175,7 @@ export default class FusekiAdapter extends BaseAdapter {
   // No fuseki related operation here as empty named graphs are not maintained by fuseki
   // Inserting data into a non-existent named graph will create it
   // Simply return the graph URI
-  async createNamedGraph(dataset: string) {
+  async createNamedGraph() {
     return `urn:${uuidv4()}`;
   }
 
@@ -200,6 +200,10 @@ export default class FusekiAdapter extends BaseAdapter {
       }
     });
     this.getLogger().info(`Fuseki named graph deleted: ${graphUri}`);
+  }
+
+  async getWacGraph() {
+    return 'http://semapps.org/webacl';
   }
 
   async waitForDatasetCreation(dataset: string) {
