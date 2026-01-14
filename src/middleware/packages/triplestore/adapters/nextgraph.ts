@@ -274,7 +274,6 @@ export default class NextGraphAdapter extends BaseAdapter {
 
   private async getDatasetMetadata(dataset: string): Promise<DatasetMetadata | void> {
     try {
-      console.log('getDatasetMetadata', this.adminSessionid);
       const response = await ng.sparql_query(
         this.adminSessionid,
         `
