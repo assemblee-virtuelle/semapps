@@ -1,24 +1,28 @@
 import fetch from 'node-fetch';
 import { ServiceBroker } from 'moleculer';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { fetchServer, createAccount } from '../utils.ts';
+import { fetchServer, createAccount, clearAllDatasets, backupAllDatasets } from '../utils.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
 let broker: ServiceBroker;
 let alice: any;
 
-beforeAll(async () => {
-  broker = await initialize(false);
-  await broker.start();
-  alice = await createAccount(broker, 'alice');
-});
+describe.each(['ng' /*, 'fuseki'*/])('Content negotiation with triplestore %s', (triplestore: string) => {
+  beforeAll(async () => {
+    broker = await initialize(triplestore);
+    await broker.start();
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice7');
+  });
 
-afterAll(async () => {
-  await broker.stop();
-});
+  afterAll(async () => {
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
+  });
 
-describe('Content negotiation', () => {
   let containerUri: string;
   let projectUri: string;
   let project2Uri: string;

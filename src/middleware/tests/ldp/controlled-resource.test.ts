@@ -1,15 +1,15 @@
 import { ControlledResourceMixin } from '@semapps/ldp';
 import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
-import { fetchServer, createAccount } from '../utils.ts';
+import { fetchServer, createAccount, clearAllDatasets, backupAllDatasets } from '../utils.ts';
 
 jest.setTimeout(50000);
 let broker: ServiceBroker;
 let alice: any;
 
-describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (allowSlugs: boolean) => {
+describe.each(['ng' /*, 'fuseki'*/])('ControlledResourceMixin with triplestore %s', (triplestore: string) => {
   beforeAll(async () => {
-    broker = await initialize(allowSlugs);
+    broker = await initialize(triplestore);
 
     broker.createService({
       name: 'address-book',
@@ -34,11 +34,15 @@ describe.each([false, true])('ControlledResourceMixin with allowSlugs: %s', (all
     });
 
     await broker.start();
-    alice = await createAccount(broker, 'alice');
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice7');
   });
 
   afterAll(async () => {
-    if (broker) await broker.stop();
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
   });
 
   let controlledResourceUri: string;

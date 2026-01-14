@@ -1,6 +1,6 @@
 import { ActionSchema } from 'moleculer';
 
-const Schema = {
+const InsertAction = {
   visibility: 'public',
   params: {
     resource: {
@@ -46,4 +46,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default InsertAction;

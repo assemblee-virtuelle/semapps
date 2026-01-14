@@ -66,7 +66,7 @@ const MigrationService = {
         // Change all references in WebACL graph
         await ctx.call('triplestore.update', {
           query: `
-            WITH <http://semapps.org/webacl>
+            WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
             DELETE { ?s ?p <${oldUri}> }
             INSERT { ?s ?p <${newUri}> }
             WHERE { ?s ?p <${oldUri}> }
@@ -87,7 +87,7 @@ const MigrationService = {
 
         await ctx.call('triplestore.update', {
           query: `
-            WITH <http://semapps.org/webacl>
+            WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
             DELETE { <${oldGroupUri}> ?p ?o }
             INSERT { <${newGroupUri}> ?p ?o }
             WHERE { <${oldGroupUri}> ?p ?o }
@@ -98,7 +98,7 @@ const MigrationService = {
 
         await ctx.call('triplestore.update', {
           query: `
-            WITH <http://semapps.org/webacl>
+            WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
             DELETE { ?s ?p <${oldGroupUri}> }
             INSERT { ?s ?p <${newGroupUri}> }
             WHERE { ?s ?p <${oldGroupUri}> }
@@ -123,7 +123,7 @@ const MigrationService = {
 
           await ctx.call('triplestore.update', {
             query: `
-              WITH <http://semapps.org/webacl>
+              WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
               DELETE { <${oldAclUri}> ?p ?o }
               INSERT { <${newAclUri}> ?p ?o }
               WHERE { <${oldAclUri}> ?p ?o }
@@ -142,7 +142,7 @@ const MigrationService = {
         // Remove user from all WebACL groups he may be member of
         await ctx.call('triplestore.update', {
           query: `
-            WITH <http://semapps.org/webacl>
+            WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
             DELETE { ?groupUri <http://www.w3.org/2006/vcard/ns#hasMember> <${userUri}> }
             WHERE { ?groupUri <http://www.w3.org/2006/vcard/ns#hasMember> <${userUri}> }
           `,
@@ -153,7 +153,7 @@ const MigrationService = {
         // Remove all authorization given specifically to this user
         await ctx.call('triplestore.update', {
           query: `
-            WITH <http://semapps.org/webacl>
+            WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
             DELETE { ?authorizationUri <http://www.w3.org/ns/auth/acl#agent> <${userUri}> }
             WHERE { ?authorizationUri <http://www.w3.org/ns/auth/acl#agent> <${userUri}> }
           `,

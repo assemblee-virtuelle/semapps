@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { ActionSchema } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -32,12 +33,12 @@ const Schema = {
       }
     );
 
-    await ctx.call('triplestore.named-graph.clear', { uri: resourceUri });
+    await ctx.call('triplestore.named-graph.clear', { uri: getSlugFromUri(resourceUri) });
 
-    await ctx.call('triplestore.named-graph.delete', { uri: resourceUri });
+    await ctx.call('triplestore.named-graph.delete', { uri: getSlugFromUri(resourceUri) });
 
     // We must detach the resource from the containers after deletion, otherwise the permissions may fail
-    const containersUris = await ctx.call('ldp.resource.getContainers', { resourceUri });
+    const containersUris: string[] = await ctx.call('ldp.resource.getContainers', { resourceUri });
     for (const containerUri of containersUris) {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
     }
@@ -57,8 +58,6 @@ const Schema = {
       webId,
       dataset: ctx.meta.dataset
     };
-
-    ctx.call('triplestore.deleteOrphanBlankNodes');
 
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.resource.deleted', returnValues);

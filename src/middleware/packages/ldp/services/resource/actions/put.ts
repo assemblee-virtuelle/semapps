@@ -1,6 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema, Errors } from 'moleculer';
-import { cleanUndefined } from '../../../utils.ts';
+import { cleanUndefined, getSlugFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -100,7 +100,7 @@ const Schema = {
       );
 
       // Generate the query
-      let query = `WITH <${resourceUri}>\n`;
+      let query = `WITH <${getSlugFromUri(resourceUri)}>\n`;
       if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
       if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
       query += 'WHERE { ';
@@ -136,7 +136,6 @@ const Schema = {
             oldData,
             newData,
             webId,
-            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             dataset: ctx.meta.dataset
           },
           {

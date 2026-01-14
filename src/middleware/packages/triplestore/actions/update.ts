@@ -1,6 +1,6 @@
 import { ActionSchema } from 'moleculer';
 
-const Schema = {
+const UpdateAction = {
   visibility: 'public',
   params: {
     query: {
@@ -34,4 +34,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default UpdateAction;

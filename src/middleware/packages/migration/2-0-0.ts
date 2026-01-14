@@ -367,7 +367,7 @@ export default {
               PREFIX solid: <http://www.w3.org/ns/solid/terms#>
               SELECT ?typeRegistrationUri
               WHERE {
-                GRAPH ?typeIndexUri {
+                GRAPH ?g {
                   ?typeIndexUri a solid:TypeIndex, ${isPrivate ? 'solid:UnlistedDocument' : 'solid:ListedDocument'} .
                   ?typeIndexUri solid:hasTypeRegistration ?typeRegistrationUri .
                 }
@@ -399,7 +399,7 @@ export default {
                 PREFIX solid: <http://www.w3.org/ns/solid/terms#>
                 DELETE
                 WHERE {
-                  GRAPH ?typeIndexUri {
+                  GRAPH ?g {
                     ?typeIndexUri solid:hasTypeRegistration <${typeRegistrationUri}> .
                   }
                 }

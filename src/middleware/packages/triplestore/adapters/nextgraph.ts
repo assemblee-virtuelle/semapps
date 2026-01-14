@@ -231,9 +231,11 @@ export default class NextGraphAdapter extends BaseAdapter {
   async clearDataset(dataset: string) {
     try {
       const session = await this.openOrGetSession(dataset);
+
       // Delete all triples in all documents
-      // TODO Delete also the documents when the method will be available
       await ng.sparql_update(session.session_id, 'DELETE WHERE { GRAPH ?g { ?s ?p ?o } }');
+
+      // TODO Delete also the documents when the method will be available
     } catch (error) {
       throw new Error(`NextGraph dropAll failed: ${error}\nDataset: ${dataset}`);
     }
@@ -272,6 +274,7 @@ export default class NextGraphAdapter extends BaseAdapter {
 
   private async getDatasetMetadata(dataset: string): Promise<DatasetMetadata | void> {
     try {
+      console.log('getDatasetMetadata', this.adminSessionid);
       const response = await ng.sparql_query(
         this.adminSessionid,
         `
@@ -295,7 +298,7 @@ export default class NextGraphAdapter extends BaseAdapter {
         };
       }
     } catch (error) {
-      throw new Error(`NextGraph deleteDataset failed: ${error}\nDataset: ${dataset}`);
+      throw new Error(`NextGraph getDatasetMetadata failed: ${error}\nDataset: ${dataset}`);
     }
   }
 
@@ -332,12 +335,8 @@ export default class NextGraphAdapter extends BaseAdapter {
   }
 
   async deleteNamedGraph(dataset: string, graphUri: string): Promise<void> {
-    try {
-      const session = await this.openOrGetSession(dataset);
-      await ng.sparql_update(session.session_id, `DROP GRAPH <${graphUri}>`);
-    } catch (error) {
-      throw new Error(`NextGraph deleteNamedGraph failed: ${error}\nDataset: ${dataset}\nGraph URI: ${graphUri}`);
-    }
+    // TODO Delete document when the method will be available
+    await this.clearNamedGraph(dataset, graphUri);
   }
 
   async openOrGetSession(dataset: string): Promise<Session> {

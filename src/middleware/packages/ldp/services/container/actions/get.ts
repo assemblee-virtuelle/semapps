@@ -58,7 +58,7 @@ const Schema = {
         CONSTRUCT  {
           <${containerUri}> ?p ?o .
         }
-        FROM <${containerUri}>
+        FROM <${getSlugFromUri(containerUri)}>
         WHERE {
           <${containerUri}> ?p ?o .
           MINUS { <${containerUri}> ldp:contains ?o } .
