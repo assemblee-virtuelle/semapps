@@ -1,4 +1,5 @@
 import { MIME_TYPES } from '@semapps/mime-types';
+import { getSlugFromUri } from '@semapps/webacl';
 import { ActionSchema, Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
@@ -26,12 +27,12 @@ const Schema = {
       throw new Error(`The ldp.resource.create action now only support JSON-LD. Provided: ${contentType}`);
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
-      throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
+      throw new MoleculerError(`Remote resource cannot be created: ${resourceUri}`, 403, 'FORBIDDEN');
 
-    const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
-    if (resourceExist) {
-      throw new MoleculerError(`A resource already exist with URI ${resourceUri}`, 400, 'BAD_REQUEST');
-    }
+    // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
+    // if (resourceExist) {
+    //   throw new MoleculerError(`A resource already exist with URI ${resourceUri}`, 400, 'BAD_REQUEST');
+    // }
 
     // Adds the default context, if it is missing
     if (!resource['@context']) {
@@ -45,7 +46,7 @@ const Schema = {
       resource,
       contentType,
       webId,
-      graphName: resourceUri
+      graphName: getSlugFromUri(resourceUri)
     });
 
     const { controlledActions } = registration || (await ctx.call('ldp.registry.getByUri', { resourceUri }));

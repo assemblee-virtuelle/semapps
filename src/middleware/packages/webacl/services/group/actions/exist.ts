@@ -21,7 +21,7 @@ export const action = {
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         ASK WHERE { 
-          GRAPH <${this.settings.graphName}> {
+          GRAPH <${await ctx.call('triplestore.dataset.getWacGraph')}> {
             <${groupUri}> a vcard:Group .
           } 
         }

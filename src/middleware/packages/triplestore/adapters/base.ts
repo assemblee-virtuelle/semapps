@@ -6,12 +6,17 @@ export interface AdapterInterface {
   cleanup(): Promise<void>;
   query(query: string, dataset?: string): Promise<any>;
   update(query: string, dataset?: string): Promise<void>;
-  dropAll(dataset: string): Promise<void>;
   createDataset(dataset: string): Promise<void>;
   datasetExists(dataset: string): Promise<boolean>;
   listDatasets(): Promise<string[]>;
+  clearDataset(dataset: string): Promise<void>;
   deleteDataset(dataset: string): Promise<void>;
   backupDataset(dataset: string): Promise<void>;
+  createNamedGraph(dataset: string): Promise<string>;
+  namedGraphExists(dataset: string, graphUri: string): Promise<boolean>;
+  clearNamedGraph(dataset: string, graphUri: string): Promise<void>;
+  deleteNamedGraph(dataset: string, graphUri: string): Promise<void>;
+  getWacGraph(): string;
 }
 
 export abstract class BaseAdapter implements AdapterInterface {
@@ -40,8 +45,6 @@ export abstract class BaseAdapter implements AdapterInterface {
 
   abstract update(query: string, dataset?: string): Promise<void>;
 
-  abstract dropAll(dataset: string): Promise<void>;
-
   abstract createDataset(dataset: string): Promise<void>;
 
   abstract datasetExists(dataset: string): Promise<boolean>;
@@ -50,5 +53,15 @@ export abstract class BaseAdapter implements AdapterInterface {
 
   abstract deleteDataset(dataset: string): Promise<void>;
 
+  abstract clearDataset(dataset: string): Promise<void>;
+
   abstract backupDataset(dataset: string): Promise<void>;
+
+  abstract createNamedGraph(dataset: string): Promise<string>;
+
+  abstract namedGraphExists(dataset: string, graphUri: string): Promise<boolean>;
+
+  abstract clearNamedGraph(dataset: string, graphUri: string): Promise<void>;
+
+  abstract deleteNamedGraph(dataset: string, graphUri: string): Promise<void>;
 }

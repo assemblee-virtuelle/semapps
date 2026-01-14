@@ -1,4 +1,5 @@
 import { ActionSchema, Errors } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -17,7 +18,7 @@ const Schema = {
     const { resourceUri, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri });
+    const exist = await ctx.call('triplestore.named-graph.exist', { uri: getSlugFromUri(resourceUri) });
 
     if (!exist)
       throw new MoleculerError(`Resource Not found ${resourceUri} in dataset ${ctx.meta.dataset}`, 404, 'NOT_FOUND');
@@ -29,7 +30,7 @@ const Schema = {
           ?s ?p ?o 
         }
         WHERE {
-          GRAPH <${resourceUri}> {
+          GRAPH <${getSlugFromUri(resourceUri)}> {
             ?s ?p ?o .
           }
         }

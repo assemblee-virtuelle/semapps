@@ -1,5 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema, Errors } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -47,7 +48,7 @@ const Schema = {
           ?s ?p ?o 
         }
         WHERE {
-          GRAPH <${resourceUri}> {
+          GRAPH <${getSlugFromUri(resourceUri)}> {
             ?s ?p ?o
           }
         }

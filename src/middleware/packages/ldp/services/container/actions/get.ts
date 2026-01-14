@@ -1,6 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema, Errors } from 'moleculer';
-import { buildFiltersQuery, isContainer, cleanUndefined, arrayOf } from '../../../utils.ts';
+import { buildFiltersQuery, isContainer, cleanUndefined, arrayOf, getSlugFromUri } from '../../../utils.ts';
 import { Registration } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
@@ -13,13 +13,38 @@ const Schema = {
     accept: { type: 'string', optional: true },
     filters: { type: 'object', optional: true },
     doNotIncludeResources: { type: 'boolean', default: false },
+    maxPerPage: { type: 'number', optional: true },
+    page: { type: 'number', default: 1 },
+    sortOrder: { type: 'enum', values: ['ASC', 'DESC'], default: 'ASC' },
+    sortPredicate: { type: 'string', optional: true },
     jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
   },
   cache: {
-    keys: ['containerUri', 'filters', 'doNotIncludeResources', 'jsonContext', 'webId', '#webId']
+    keys: [
+      'containerUri',
+      'filters',
+      'doNotIncludeResources',
+      'maxPerPage',
+      'page',
+      'sortOrder',
+      'sortPredicate',
+      'jsonContext',
+      'webId',
+      '#webId'
+    ]
   },
   async handler(ctx) {
-    const { containerUri, accept, filters, doNotIncludeResources, jsonContext } = ctx.params;
+    const {
+      containerUri,
+      accept,
+      filters,
+      doNotIncludeResources,
+      maxPerPage,
+      page,
+      sortOrder,
+      sortPredicate,
+      jsonContext
+    } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Read', webId });
@@ -33,7 +58,7 @@ const Schema = {
         CONSTRUCT  {
           <${containerUri}> ?p ?o .
         }
-        FROM <${containerUri}>
+        FROM <${getSlugFromUri(containerUri)}>
         WHERE {
           <${containerUri}> ?p ?o .
           MINUS { <${containerUri}> ldp:contains ?o } .
@@ -50,16 +75,30 @@ const Schema = {
     if (!doNotIncludeResources) {
       const filtersQuery = buildFiltersQuery(filters);
 
+      const limitQuery = maxPerPage
+        ? `
+          LIMIT ${maxPerPage}
+          OFFSET ${(page - 1) * maxPerPage}
+        `
+        : '';
+
+      // Transform the prefixed predicate to a full URI if necessary
+      const expandedSortPredicate =
+        sortPredicate && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortPredicate }));
+
       const resourcesResults: any = await ctx.call('triplestore.query', {
         query: `
           ${await ctx.call('ontologies.getRdfPrefixes')}
           SELECT ?s1
           WHERE {
-            GRAPH <${containerUri}> {
+            GRAPH <${getSlugFromUri(containerUri)}> {
               <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
             }
             ${filtersQuery}
+            ${sortPredicate ? `GRAPH ?g1 { ?s1 <${expandedSortPredicate}> ?sortValue }` : ''}
           }
+          ${sortPredicate ? `ORDER BY ${sortOrder}(?sortValue)` : ''}
+          ${limitQuery}
         `,
         accept,
         webId

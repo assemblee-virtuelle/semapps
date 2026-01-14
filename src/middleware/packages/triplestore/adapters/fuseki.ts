@@ -1,5 +1,7 @@
 import fetch from 'node-fetch';
 import urlJoin from 'url-join';
+import { v4 as uuidv4 } from 'uuid';
+import createSlug from 'speakingurl';
 import { SparqlJsonParser } from 'sparqljson-parse';
 import { throw403, throw500, throw404 } from '@semapps/middlewares';
 import { Errors } from 'moleculer';
@@ -109,16 +111,6 @@ export default class FusekiAdapter extends BaseAdapter {
     });
   }
 
-  async dropAll(dataset: string) {
-    await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-      operation: 'dropAll',
-      body: 'update=CLEAR+ALL',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    });
-  }
-
   async createDataset(dataset: string) {
     await this.fetch(urlJoin(this.settings.url, '$/datasets') + `?dbName=${dataset}&dbType=tdb2`, {
       operation: 'createDataset',
@@ -157,6 +149,16 @@ export default class FusekiAdapter extends BaseAdapter {
     this.getLogger().info(`Fuseki dataset deleted: ${dataset}`);
   }
 
+  async clearDataset(dataset: string) {
+    await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
+      operation: 'dropAll',
+      body: 'update=CLEAR+ALL',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+  }
+
   // TODO : see how we can test this
   async backupDataset(dataset: string) {
     // Ask Fuseki to backup the given dataset
@@ -168,6 +170,40 @@ export default class FusekiAdapter extends BaseAdapter {
     const { taskId } = await response.json();
     await this.waitForTaskCompletion(taskId);
     this.getLogger().info(`Fuseki dataset backed up: ${dataset}`);
+  }
+
+  // No fuseki related operation here as empty named graphs are not maintained by fuseki
+  // Inserting data into a non-existent named graph will create it
+  // Simply return the graph URI
+  async createNamedGraph() {
+    return `urn:${uuidv4()}`;
+  }
+
+  async namedGraphExists(dataset: string, graphUri: string) {
+    return await this.query(dataset, `ASK { GRAPH <${graphUri}> {} }`);
+  }
+
+  async clearNamedGraph(dataset: string, graphUri: string) {
+    // Use deleteNamedGraph to clear the named graph, as fuseki does not maintain empty named graphs
+    this.getLogger().info(
+      `Clearing fuseki named graph: ${graphUri}, using deleteNamedGraph operation as fuseki wouldn't maintain an empty named graph...`
+    );
+    await this.deleteNamedGraph(dataset, graphUri);
+  }
+
+  async deleteNamedGraph(dataset: string, graphUri: string) {
+    await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
+      operation: 'deleteNamedGraph',
+      body: `DROP GRAPH <${graphUri}>`,
+      headers: {
+        'Content-Type': 'application/sparql-update'
+      }
+    });
+    this.getLogger().info(`Fuseki named graph deleted: ${graphUri}`);
+  }
+
+  async getWacGraph() {
+    return 'http://semapps.org/webacl';
   }
 
   async waitForDatasetCreation(dataset: string) {

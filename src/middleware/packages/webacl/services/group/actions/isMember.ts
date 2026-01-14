@@ -42,7 +42,7 @@ export const action = {
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         ASK
-        WHERE { GRAPH <${this.settings.graphName}> {
+        WHERE { GRAPH <${await ctx.call('triplestore.dataset.getWacGraph')}> {
           <${groupUri}> vcard:hasMember <${memberId}> .
         } }
         `,

@@ -7,7 +7,7 @@ const { MoleculerError } = Errors;
 
 export default async function get(this: any, ctx: any) {
   try {
-    const { username, slugParts } = ctx.params;
+    let { username, slugParts, page } = ctx.params;
 
     const uri = this.getUriFromSlugParts(slugParts, username);
     ctx.meta.dataset = getDatasetFromUri(uri);
@@ -15,6 +15,7 @@ export default async function get(this: any, ctx: any) {
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
     let res;
+    let links = [];
 
     if (types.includes('http://www.w3.org/ns/ldp#Container')) {
       /*
@@ -23,22 +24,65 @@ export default async function get(this: any, ctx: any) {
 
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri: uri });
 
+      let doNotIncludeResources = false;
+      let maxPerPage: number | undefined;
+      let sortPredicate: string | undefined;
+      let sortOrder: string | undefined;
+
       // See https://www.w3.org/TR/ldp/#prefer-parameters
-      const doNotIncludeResources =
-        ctx.meta.headers?.prefer === 'return=representation; include="http://www.w3.org/ns/ldp#PreferMinimalContainer"';
+      if (ctx.meta.headers?.prefer) {
+        doNotIncludeResources = ctx.meta.headers.prefer.includes(
+          'include="http://www.w3.org/ns/ldp#PreferMinimalContainer"'
+        );
+
+        let regexResults = /max-member-count="(\d+)"/.exec(ctx.meta.headers.prefer);
+        maxPerPage = regexResults?.[1] ? parseInt(regexResults[1]) : undefined;
+
+        if (maxPerPage) {
+          if (!page) {
+            // If a paging is requested, but the page number is not provided, redirect to first page
+            ctx.meta.$statusCode = 303;
+            ctx.meta.$location = `${uri}?page=1`;
+            ctx.meta.$responseHeaders = { 'Content-Length': 0 };
+            return;
+          } else {
+            page = parseInt(page, 10);
+
+            links.push({ uri: 'http://www.w3.org/ns/ldp#Page', rel: 'type' });
+            links.push({ uri: `${uri}?page=1`, rel: 'first' });
+
+            const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri: uri });
+            const numPages = Math.ceil(resourcesUris.length / maxPerPage);
+
+            if (numPages > page) links.push({ uri: `${uri}?page=${page + 1}`, rel: 'next' });
+            if (page > 1) links.push({ uri: `${uri}?page=${page - 1}`, rel: 'prev' });
+            if (numPages > 1) links.push({ uri: `${uri}?page=${numPages}`, rel: 'last' });
+          }
+        }
+
+        regexResults = /sort-predicate="([^"]+)"/.exec(ctx.meta.headers.prefer);
+        sortPredicate = regexResults?.[1];
+
+        regexResults = /sort-order="([ASC|asc|DESC|desc]+)"/.exec(ctx.meta.headers.prefer);
+        sortOrder = regexResults?.[1] ? regexResults?.[1].toUpperCase() : 'ASC';
+      }
 
       res = await ctx.call(
         controlledActions?.list || 'ldp.container.get',
         cleanUndefined({
           containerUri: uri,
           jsonContext: parseJson(ctx.meta.headers?.jsonldcontext),
-          doNotIncludeResources
+          doNotIncludeResources,
+          maxPerPage,
+          page: maxPerPage ? page : undefined,
+          sortPredicate,
+          sortOrder
         })
       );
 
-      if (doNotIncludeResources) {
+      if (doNotIncludeResources || maxPerPage || sortPredicate) {
         if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
-        ctx.meta.$responseHeaders['Preference-Applied'] = 'return=representation';
+        ctx.meta.$responseHeaders['Preference-Applied'] = ctx.meta.headers.prefer;
       }
     } else if (
       types.includes('https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource') &&
@@ -100,7 +144,7 @@ export default async function get(this: any, ctx: any) {
     }
 
     if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
-    ctx.meta.$responseHeaders.Link = await ctx.call('ldp.link-header.get', { uri });
+    ctx.meta.$responseHeaders.Link = await ctx.call('ldp.link-header.get', { uri, additionalLinks: links });
 
     // Hack to make our servers work with Mastodon servers, which expect a special profile
     if (ctx.meta.$responseType === 'application/ld+json')

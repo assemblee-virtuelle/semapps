@@ -43,11 +43,10 @@ const filterAclsOnlyAgent = (acl: any) => agentPredicates.includes(acl.p.value);
 const WebaclResourceService = {
   name: 'webacl.resource' as const,
   settings: {
-    baseUrl: null,
-    graphName: null
+    baseUrl: null
   },
   dependencies: ['triplestore', 'jsonld', 'ldp.link-header'],
-  started() {
+  async started() {
     // Register so that HEAD requests to LDP resources & containers may return links to ACL
     this.broker.call('ldp.link-header.register', { actionName: 'webacl.resource.getLink' });
   },
@@ -89,7 +88,7 @@ const WebaclResourceService = {
       await this.broker.waitForServices(['ldp.container', 'ldp.resource']);
 
       if (resourceUri.startsWith(urlJoin(this.settings.baseUrl, '_groups'))) {
-        const exists = await aclGroupExists(resourceUri, ctx, this.settings.graphName);
+        const exists = await aclGroupExists(resourceUri, ctx);
         if (!exists) throw new MoleculerError(`WAC group not found ${resourceUri}`, 404, 'NOT_FOUND');
         return false; // it is never a container
       }
@@ -105,21 +104,21 @@ const WebaclResourceService = {
       }
       return true;
     },
-    async getExistingPerms(ctx, resourceUri, baseUrl, graphName, isContainer) {
+    async getExistingPerms(ctx, resourceUri, baseUrl, isContainer) {
       const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
 
       const document = [];
 
-      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName)));
-      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName)));
-      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName)));
-      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName)));
+      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read')));
+      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write')));
+      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append')));
+      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control')));
 
       if (isContainer) {
-        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName, true)));
-        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName, true)));
-        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName, true)));
-        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName, true)));
+        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', true)));
+        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', true)));
+        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', true)));
+        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', true)));
       }
 
       return document

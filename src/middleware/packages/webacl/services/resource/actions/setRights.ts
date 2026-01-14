@@ -65,13 +65,7 @@ export const action = {
     if (newRights.length === 0)
       throw new MoleculerError('The rights cannot be changed because they are incorrect', 400, 'BAD_REQUEST');
 
-    const currentPerms = await this.getExistingPerms(
-      ctx,
-      resourceUri,
-      this.settings.baseUrl,
-      this.settings.graphName,
-      isContainer
-    );
+    const currentPerms = await this.getExistingPerms(ctx, resourceUri, this.settings.baseUrl, isContainer);
 
     // find the difference between newRights and currentPerms. add only what is not existent yet. and remove those that are not needed anymore
     const differenceAdd = newRights.filter(
@@ -111,8 +105,9 @@ export const action = {
     }
 
     // we do the 2 calls in one, so it is in the same transaction, and will rollback in case of failure.
+    const wacGraphName = await ctx.call('triplestore.dataset.getWacGraph');
     await ctx.call('triplestore.update', {
-      query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }; DELETE DATA { GRAPH <${this.settings.graphName}> { ${deleteRequest} } }`,
+      query: `INSERT DATA { GRAPH <${wacGraphName}> { ${addRequest} } }; DELETE DATA { GRAPH <${wacGraphName}> { ${deleteRequest} } }`,
       webId: 'system'
     });
 

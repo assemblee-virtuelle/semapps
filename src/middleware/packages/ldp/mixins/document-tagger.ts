@@ -1,6 +1,6 @@
 import { dc } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
-import { getDatasetFromUri } from '../utils.ts';
+import { getDatasetFromUri, getSlugFromUri } from '../utils.ts';
 
 const Schema = {
   settings: {
@@ -42,7 +42,7 @@ const Schema = {
 
         if (triples.length > 0) {
           await ctx.call('triplestore.update', {
-            query: `INSERT DATA { GRAPH <${resourceUri}> { ${triples.join('\n')} } }`,
+            query: `INSERT DATA { GRAPH <${getSlugFromUri(resourceUri)}> { ${triples.join('\n')} } }`,
             dataset: dataset || getDatasetFromUri(resourceUri),
             webId: 'system'
           });
@@ -56,7 +56,7 @@ const Schema = {
         const now = new Date();
         await ctx.call('triplestore.update', {
           query: `
-            WITH <${resourceUri}>
+            WITH <${getSlugFromUri(resourceUri)}>
             DELETE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
             INSERT { <${resourceUri}> <${
               this.settings.documentPredicates.updated

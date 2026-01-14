@@ -20,40 +20,31 @@ async function checkRights(
   askedRights: any,
   resultRights: any,
   ctx: any,
-  resourceUri: any,
-  resourceAclUri: any,
+  resourceUri: string,
+  resourceAclUri: string,
   uaSearchParam: any,
-  graphName: any,
-  isContainerDefault: any
+  isContainerDefault: boolean
 ) {
   for (const [p1, p2] of Object.entries(perms)) {
     if (askedRights[p1] && !resultRights[p1]) {
-      const permTuples = await getAuthorizationNode(
-        ctx,
-        resourceUri,
-        resourceAclUri,
-        p2,
-        graphName,
-        isContainerDefault
-      );
+      const permTuples = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, p2, isContainerDefault);
       const hasPerm = checkAgentPresent(permTuples, uaSearchParam);
       if (hasPerm) resultRights[p1] = hasPerm;
     }
   }
 }
 
-async function hasPermissions(ctx: any, resourceUri: any, askedRights: any, baseUrl: any, user: any, graphName: any) {
+async function hasPermissions(ctx: any, resourceUri: any, askedRights: any, baseUrl: any, user: any) {
   const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
   const resultRights = {};
   let groups;
   if (user !== 'anon') {
     // retrieve the groups of the user
-    groups = await getUserGroups(ctx, user, graphName);
+    groups = await getUserGroups(ctx, user);
   }
   const uaSearchParam = getUserAgentSearchParam(user, groups);
 
-  // @ts-expect-error TS(2554): Expected 8 arguments, but got 7.
-  await checkRights(askedRights, resultRights, ctx, resourceUri, resourceAclUri, uaSearchParam, graphName);
+  await checkRights(askedRights, resultRights, ctx, resourceUri, resourceAclUri, uaSearchParam, false);
 
   if (Object.keys(askedRights).length !== Object.keys(resultRights).length) {
     // we haven't found all the rights yet, we search in parent containers
@@ -63,7 +54,7 @@ async function hasPermissions(ctx: any, resourceUri: any, askedRights: any, base
       const container = parentContainers.shift();
       const containerUri = container.container.value;
       const aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
-      await checkRights(askedRights, resultRights, ctx, containerUri, aclUri, uaSearchParam, graphName, true);
+      await checkRights(askedRights, resultRights, ctx, containerUri, aclUri, uaSearchParam, true);
 
       // if we are done finding all the asked rights, we return here, saving some processing.
       if (Object.keys(askedRights).length === Object.keys(resultRights).length) return resultRights;
@@ -129,6 +120,6 @@ export const action = {
     if (Object.keys(rights).length === 0) rights = { read: true, write: true, append: true, control: true };
 
     await this.checkResourceOrContainerExists(ctx, resourceUri);
-    return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);
+    return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId);
   }
 } satisfies ActionSchema;

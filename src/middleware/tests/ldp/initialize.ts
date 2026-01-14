@@ -8,8 +8,7 @@ import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { listDatasets, dropDataset } from '../utils.ts';
-import { FusekiAdapter } from '@semapps/triplestore';
+import { getTripleStoreAdapter } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -44,12 +43,7 @@ const containers = [
   }
 ];
 
-const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
-  const datasets: string[] = await listDatasets();
-  for (let dataset of datasets) {
-    await dropDataset(dataset);
-  }
-
+const initialize = async (triplestore: string): Promise<ServiceBroker> => {
   const uploadsPath = pathJoin(__dirname, '../uploads');
   if (fs.existsSync(uploadsPath)) {
     fs.readdirSync(uploadsPath).forEach(f => fs.rmSync(`${uploadsPath}/${f}`, { recursive: true, force: true }));
@@ -66,12 +60,7 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
     }
   });
 
-  // Temporary solution until the TripleStoreService refactoring is finished
-  const fusekiAdapter = new FusekiAdapter({
-    url: CONFIG.SPARQL_ENDPOINT,
-    user: CONFIG.JENA_USER,
-    password: CONFIG.JENA_PASSWORD
-  });
+  const tripleStoreAdapter = getTripleStoreAdapter(triplestore);
 
   broker.createService({
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
@@ -80,10 +69,7 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
       baseUrl: CONFIG.HOME_URL,
       baseDir: path.resolve(__dirname, '..'),
       triplestore: {
-        url: CONFIG.SPARQL_ENDPOINT,
-        user: CONFIG.JENA_USER,
-        password: CONFIG.JENA_PASSWORD,
-        secure: false // TODO Remove when we move to Fuseki 5
+        adapter: tripleStoreAdapter
       },
       containers,
       ontologies: [as, pair, petr, solid, vcard, semapps],
@@ -91,12 +77,12 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
       webfinger: false,
       webid: false,
       ldp: {
-        allowSlugs,
+        allowSlugs: false,
         binaryAdapter: new FsBinaryAdapter({
           rootDir: uploadsPath,
           baseUrl: CONFIG.HOME_URL!,
           maxSize: '80Mb',
-          tripleStoreAdapter: fusekiAdapter
+          tripleStoreAdapter
         })
       }
     }

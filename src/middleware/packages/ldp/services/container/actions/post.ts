@@ -1,7 +1,8 @@
+import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema, Errors } from 'moleculer';
-import { cleanUndefined } from '../../../utils.ts';
+import { cleanUndefined, getSlugFromUri } from '../../../utils.ts';
 import { Registration } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
@@ -86,10 +87,9 @@ const PostAction = {
     if (file) {
       resourceUri = await ctx.call('ldp.binary.store', { stream: file.readableStream, mimeType: file.mimetype });
     } else {
-      resourceUri = await ctx.call('triplestore.named-graph.create', {
-        baseUrl: await ctx.call('solid-storage.getBaseUrl'),
-        slug: this.settings.allowSlugs ? slug : undefined
-      });
+      const graphName: string = await ctx.call('triplestore.named-graph.create');
+      const baseUrl: string = await ctx.call('solid-storage.getBaseUrl');
+      resourceUri = urlJoin(baseUrl, graphName);
     }
 
     // We must add this first, otherwise side effects will not find the container of the created resource
@@ -97,7 +97,7 @@ const PostAction = {
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
         INSERT DATA {
-          GRAPH <${containerUri}> {
+          GRAPH <${getSlugFromUri(containerUri)}> {
             <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>
           }
         }
@@ -137,7 +137,7 @@ const PostAction = {
       await ctx.call('triplestore.update', {
         query: `
           DELETE WHERE { 
-            GRAPH <${containerUri}> {  
+            GRAPH <${getSlugFromUri(containerUri)}> {  
               <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
             }
           }`,

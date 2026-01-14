@@ -1,45 +1,55 @@
-import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import Redis from 'ioredis';
 import { ActionParamSchema, CallingOptions, ServiceBroker, ServiceSchema } from 'moleculer';
+import { NextGraphAdapter, FusekiAdapter } from '@semapps/triplestore';
 import { Account } from '@semapps/auth';
-import * as CONFIG from './config.ts';
 import { delay } from '@semapps/ldp';
+import * as CONFIG from './config.ts';
 
 type FetchOptions = Omit<fetch.RequestInit, 'body'> & {
   body?: ArrayBuffer | ArrayBufferView | ReadableStream | string | URLSearchParams | FormData | object;
+  headers?: fetch.Headers;
 };
 
-export const listDatasets = async (): Promise<string[]> => {
-  const response = await fetch(`${CONFIG.SPARQL_ENDPOINT}$/datasets`, {
-    headers: {
-      Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`
-    }
-  });
-
-  if (response.ok) {
-    const json = await response.json();
-    return json.datasets.map((dataset: any) => dataset['ds.name'].substring(1));
+export const getTripleStoreAdapter = (triplestore: string) => {
+  if (triplestore === 'ng') {
+    // TODO : Environmentalize the nextgraph settings.
+    return new NextGraphAdapter({
+      adminUserId: '-n1RqVQA0k2sqm-51CbIYnoS4Zhh89IRH1cxnLKnVlYA',
+      mappingsNuri:
+        'did:ng:o:7PeIu8q34t7h6XLqZIDt7dbuGjGruBz3ZWeQ7QOc2EoA:v:UmGokb5dUKofXw_IXFRl5xmb3Pbo5S2KWK6ShU01GkcA',
+      serverPeerId: 'QlJkY0KELV4W1aVZehn6Qvx5eauRkICSJbdYqIbFHPEA',
+      adminUserKey: 'bE0rIy0V8YQAEfXhqYas-erDrddazpTjhsoJHVqvSDIA',
+      clientPeerKey: 'HV_9Rh-yDpEqsvtwYUjcxqIARUnuP8g2JA4hEH1Nh7QA',
+      serverAddr: '127.0.0.1:14400',
+      backupsPath: './data/nextgraph'
+    });
+  } else if (triplestore === 'fuseki') {
+    return new FusekiAdapter({
+      url: CONFIG.SPARQL_ENDPOINT,
+      user: CONFIG.JENA_USER,
+      password: CONFIG.JENA_PASSWORD
+    });
   } else {
-    return [];
+    throw new Error('Triplestore not supported');
   }
 };
 
-export const dropDataset = (dataset: string) =>
-  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-  fetch(urlJoin(CONFIG.SPARQL_ENDPOINT, dataset, 'update'), {
-    method: 'POST',
-    body: 'update=DROP+ALL',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`
+export const clearAllDatasets = async (broker: ServiceBroker) => {
+  const datasets: string[] = await broker.call('triplestore.dataset.list');
+  for (const dataset of datasets) {
+    if (await broker.call('triplestore.dataset.exist', { dataset })) {
+      await broker.call('triplestore.dataset.clear', { dataset });
     }
-  });
+  }
+};
 
-export const dropAllDatasets = async () => {
-  const datasets = await listDatasets();
-  for (let dataset of datasets) {
-    await dropDataset(dataset);
+export const backupAllDatasets = async (broker: ServiceBroker) => {
+  const datasets: string[] = await broker.call('triplestore.dataset.list');
+  for (const dataset of datasets) {
+    if (await broker.call('triplestore.dataset.exist', { dataset })) {
+      await broker.call('triplestore.dataset.backup', { dataset });
+    }
   }
 };
 
@@ -51,16 +61,13 @@ export const fetchServer = async (url: string, options: FetchOptions = {}) => {
     case 'POST':
     case 'PATCH':
     case 'PUT':
-      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
-      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Content-Type')) options.headers.set('Content-Type', 'application/ld+json');
       break;
     case 'DELETE':
       break;
     case 'GET':
     default:
-      // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
       if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
       break;
   }
@@ -71,6 +78,7 @@ export const fetchServer = async (url: string, options: FetchOptions = {}) => {
   }
 
   return fetch(url, {
+    ...options,
     method: options.method || 'GET',
     body: options.body as fetch.BodyInit,
     headers: options.headers

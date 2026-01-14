@@ -1,15 +1,10 @@
-import urlJoin from 'url-join';
 import { ActionSchema } from 'moleculer';
 
-const Schema = {
+const InsertAction = {
   visibility: 'public',
   params: {
     resource: {
       type: 'object'
-    },
-    webId: {
-      type: 'string',
-      optional: true
     },
     graphName: {
       type: 'string',
@@ -22,8 +17,7 @@ const Schema = {
   },
   async handler(ctx) {
     const { resource, graphName } = ctx.params;
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
+    let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
     // Convert JSON-LD to N-Quads
     const rdf = await ctx.call('jsonld.parser.toRDF', {
@@ -38,22 +32,18 @@ const Schema = {
       throw new Error(`The dataset ${dataset} doesn't exist`);
 
     // Handle wildcard
-    const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
+    const datasets: string[] = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
     for (dataset of datasets) {
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
-      // @ts-expect-error TS(2723): Cannot invoke an object which is possibly 'null' o... Remove this comment to see the full error message
-      await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-        body: graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
-        headers: {
-          'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': webId,
-          Authorization: this.Authorization
-        }
-      });
+
+      // TODO Test if named graph exists in the dataset
+
+      const query = graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`;
+
+      await this.settings.adapter.update(dataset, query);
     }
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default InsertAction;

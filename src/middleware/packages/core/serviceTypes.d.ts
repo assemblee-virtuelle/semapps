@@ -1,15 +1,11 @@
 import { Context, ServiceSettingSchema } from 'moleculer';
 import { Ontology } from '@semapps/ontologies';
+import { AdapterInterface } from '@semapps/triplestore';
 
 export interface CoreServiceSettings extends ServiceSettingSchema {
   baseUrl?: string;
   triplestore: {
-    url?: string;
-    user?: string;
-    password?: string;
-    mainDataset?: string;
-    fusekiBase?: string;
-    secure?: boolean;
+    adapter: AdapterInterface | null;
   };
   // Optional
   containers?: string;

@@ -11,7 +11,7 @@ const DeleteAllUserRightsAction = {
     await ctx.call('triplestore.update', {
       query: `
         PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-        WITH <${this.settings.graphName}>
+        WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
         DELETE { ?auth acl:agent <${webId}>  }
         WHERE { ?auth acl:agent <${webId}>  }
       `,

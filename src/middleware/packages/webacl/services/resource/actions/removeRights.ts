@@ -32,7 +32,7 @@ const RemoveRightsAction = {
       query: `
         PREFIX acl: <http://www.w3.org/ns/auth/acl#>
         DELETE DATA {
-          GRAPH <${this.settings.graphName}> {
+          GRAPH <${await ctx.call('triplestore.dataset.getWacGraph')}> {
             ${processedRights.map(right => `<${right.auth}> <${right.p}> <${right.o}> .`).join('\n')}
           }
         }
