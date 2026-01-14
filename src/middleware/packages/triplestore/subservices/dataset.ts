@@ -7,9 +7,7 @@ const DatasetService = {
     adapter: null as AdapterInterface | null
   },
   async created() {
-    if (!this.settings.adapter) {
-      throw new Error('Adapter is required');
-    }
+    if (!this.settings.adapter) throw new Error('Adapter is required');
   },
   actions: {
     create: {

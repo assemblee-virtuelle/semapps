@@ -324,13 +324,13 @@ describe.each(['ng', 'fuseki'])('Resource CRUD operations with triplestore %s', 
         {
           'pair:label': 'Paris',
           'pair:hasPostalAddress': {
-            'pair:addressCountry': 'France'
+            'pair:addressCountry': 'USA'
           }
         },
         {
           'pair:label': 'Paris',
           'pair:hasPostalAddress': {
-            'pair:addressCountry': 'USA'
+            'pair:addressCountry': 'France'
           }
         }
       ]

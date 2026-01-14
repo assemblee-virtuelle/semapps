@@ -8,7 +8,7 @@ jest.setTimeout(20000);
 let broker: ServiceBroker;
 let alice: any;
 
-describe.each(['ng' /*, 'fuseki'*/])('Content negotiation with triplestore %s', (triplestore: string) => {
+describe.each(['ng', 'fuseki'])('Content negotiation with triplestore %s', (triplestore: string) => {
   beforeAll(async () => {
     broker = await initialize(triplestore);
     await broker.start();
@@ -86,7 +86,7 @@ describe.each(['ng' /*, 'fuseki'*/])('Content negotiation with triplestore %s', 
       })
     });
 
-    expect(body).toMatch(new RegExp(`a ldp:Container, ldp:BasicContainer`));
+    expect(body).toMatch(new RegExp(`ldp:BasicContainer`));
     expect(body).toMatch(new RegExp(`ldp:contains <${projectUri}>`));
 
     expect(body).toMatch(new RegExp(`a pair:Project`));

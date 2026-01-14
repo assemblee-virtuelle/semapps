@@ -350,14 +350,6 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async closeSession(session: Session) {
-    try {
-      await ng.session_headless_stop(session.session_id, true);
-    } catch (error) {
-      throw new Error(`NextGraph closeSession failed: ${error}`);
-    }
-  }
-
   private async getUserIdForDataset(dataset: string): Promise<string> {
     try {
       const response = await ng.sparql_query(
@@ -384,11 +376,13 @@ export default class NextGraphAdapter extends BaseAdapter {
 
   async cleanup() {
     try {
-      for (const session of Object.values(openSessions)) {
-        await this.closeSession(session);
+      for (const [dataset, session] of Object.entries(openSessions)) {
+        await ng.session_headless_stop(session.session_id, true);
+        delete openSessions[dataset];
       }
 
-      if (this.adminSessionid) await ng.session_headless_stop(this.adminSessionid, true);
+      // We can't close the admin session because it is started in init, which is called only on creation
+      // if (this.adminSessionid) await ng.session_headless_stop(this.adminSessionid, true);
 
       this.getLogger().info('NextGraph adapter cleaned up');
     } catch (error) {

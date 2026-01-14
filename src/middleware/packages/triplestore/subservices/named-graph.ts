@@ -8,9 +8,7 @@ const NamedGraphService = {
     adapter: null as AdapterInterface | null
   },
   async created() {
-    if (!this.settings.adapter) {
-      throw new Error('Adapter is required');
-    }
+    if (!this.settings.adapter) throw new Error('Adapter is required');
   },
   actions: {
     create: {
@@ -39,9 +37,9 @@ const NamedGraphService = {
         if (!uri) throw new Error('Unable to clear named graph. The parameter uri is missing');
         if (!dataset) throw new Error('Unable to clear named graph. The parameter dataset is missing');
 
-        if (!(await this.actions.exist({ uri, dataset }, { parentCtx: ctx }))) {
-          throw new Error(`Cannot clear named graph as it doesn't exist`);
-        }
+        // if (!(await this.actions.exist({ uri, dataset }, { parentCtx: ctx }))) {
+        //   throw new Error(`Cannot clear named graph as it doesn't exist`);
+        // }
 
         await this.settings.adapter.clearNamedGraph(dataset, uri);
       }
@@ -55,9 +53,9 @@ const NamedGraphService = {
         if (!uri) throw new Error('Unable to delete named graph. The parameter uri is missing');
         if (!dataset) throw new Error('Unable to delete named graph. The parameter dataset is missing');
 
-        if (!(await this.actions.exist({ uri, dataset }, { parentCtx: ctx }))) {
-          throw new Error(`Cannot delete named graph as it doesn't exist`);
-        }
+        // if (!(await this.actions.exist({ uri, dataset }, { parentCtx: ctx }))) {
+        //   throw new Error(`Cannot delete named graph as it doesn't exist`);
+        // }
 
         await this.settings.adapter.deleteNamedGraph(dataset, uri);
       }

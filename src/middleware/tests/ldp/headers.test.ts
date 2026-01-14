@@ -10,7 +10,7 @@ jest.setTimeout(20000);
 let broker: ServiceBroker;
 let alice: any;
 
-describe.each(['ng' /*, 'fuseki'*/])('Headers handling of LDP server with triplestore %s', (triplestore: string) => {
+describe.each(['ng', 'fuseki'])('Headers handling of LDP server with triplestore %s', (triplestore: string) => {
   beforeAll(async () => {
     broker = await initialize(triplestore);
 

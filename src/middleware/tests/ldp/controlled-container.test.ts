@@ -1,4 +1,3 @@
-import urlJoin from 'url-join';
 import { Context, ServiceBroker } from 'moleculer';
 import { ControlledContainerMixin, delay, Registration } from '@semapps/ldp';
 import waitForExpect from 'wait-for-expect';
@@ -9,7 +8,7 @@ jest.setTimeout(50000);
 let broker: ServiceBroker;
 let alice: any;
 
-describe.each(['ng' /*, 'fuseki'*/])('ControlledContainerMixin with triplestore %s', (triplestore: string) => {
+describe.each(['ng', 'fuseki'])('ControlledContainerMixin with triplestore %s', (triplestore: string) => {
   beforeAll(async () => {
     broker = await initialize(triplestore);
 
