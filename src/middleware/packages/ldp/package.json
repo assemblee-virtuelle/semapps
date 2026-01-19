@@ -20,6 +20,7 @@
     "mime-types": "^2.1.35",
     "moleculer-db": "^0.8.16",
     "moleculer-web": "^0.10.0-beta1",
+    "nextgraph": "file:/home/sebastien/Code/nextgraph-rs/ng-sdk-js/pkg-node",
     "node-fetch": "^2.6.6",
     "path-to-regexp": "^6.2.0",
     "rdf-parse": "^1.7.0",

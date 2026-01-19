@@ -1,4 +1,5 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
+import type { IBindings } from 'sparqljson-parse';
 import { getSlugFromUri } from '../../../utils.ts';
 
 const Schema = {
@@ -12,8 +13,13 @@ const Schema = {
   async handler(ctx) {
     const { resourceUri } = ctx.params;
 
-    const result = await ctx.call('triplestore.query', {
-      query: `
+    if (await ctx.call('ldp.binary.isBinary', { resourceUri })) {
+      const binaryRdf: any = await ctx.call('ldp.binary.getRdf', { resourceUri });
+
+      return binaryRdf.type;
+    } else {
+      const result: IBindings[] = await ctx.call('triplestore.query', {
+        query: `
         SELECT ?type
         WHERE {
           GRAPH <${getSlugFromUri(resourceUri)}> {
@@ -21,10 +27,11 @@ const Schema = {
           }
         }
       `,
-      webId: 'system'
-    });
+        webId: 'system'
+      });
 
-    return result.map((node: any) => node.type.value);
+      return result.map(node => node.type.value);
+    }
   }
 } satisfies ActionSchema;
 

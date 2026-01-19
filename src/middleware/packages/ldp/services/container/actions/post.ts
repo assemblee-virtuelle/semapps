@@ -13,10 +13,6 @@ const PostAction = {
     containerUri: {
       type: 'string'
     },
-    slug: {
-      type: 'string',
-      optional: true
-    },
     resource: {
       type: 'object',
       optional: true
@@ -35,7 +31,7 @@ const PostAction = {
     }
   },
   async handler(ctx) {
-    let { resource, containerUri, slug, contentType, file } = ctx.params;
+    let { resource, containerUri, contentType, file } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let isContainer = false;
     let expandedResource;
@@ -82,10 +78,15 @@ const PostAction = {
       );
     }
 
-    const graphName: string = await ctx.call('triplestore.named-graph.create');
+    let resourceUri: string;
 
-    const baseUrl: string = await ctx.call('solid-storage.getBaseUrl');
-    const resourceUri = urlJoin(baseUrl, graphName);
+    if (file) {
+      resourceUri = await ctx.call('ldp.binary.store', { stream: file.readableStream, mimeType: file.mimetype });
+    } else {
+      const graphName: string = await ctx.call('triplestore.named-graph.create');
+      const baseUrl: string = await ctx.call('solid-storage.getBaseUrl');
+      resourceUri = urlJoin(baseUrl, graphName);
+    }
 
     // We must add this first, otherwise side effects will not find the container of the created resource
     // But this create race conditions, especially when testing, since uncreated resources are linked to containers
@@ -102,10 +103,8 @@ const PostAction = {
 
     try {
       if (file) {
-        resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
-      }
-
-      if (isContainer) {
+        // Do nothing. The binary has already been uploaded.
+      } else if (isContainer) {
         await ctx.call('ldp.container.create', {
           containerUri: resourceUri,
           title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],

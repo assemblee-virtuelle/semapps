@@ -1,4 +1,3 @@
-import fs from 'fs';
 import { ActionSchema } from 'moleculer';
 import { getSlugFromUri } from '../../../utils.ts';
 
@@ -12,6 +11,10 @@ const Schema = {
     const { resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
+    if (await ctx.call('ldp.binary.isBinary', { resourceUri })) {
+      return await ctx.call('ldp.binary.delete', { resourceUri });
+    }
+
     if (await ctx.call('ldp.remote.isRemote', { resourceUri })) {
       return await ctx.call('ldp.remote.delete', { resourceUri, webId });
     }
@@ -20,7 +23,7 @@ const Schema = {
 
     // Save the current data, to be able to send it through the event
     // If the resource does not exist, it will throw a 404 error
-    const oldData = await ctx.call(
+    const oldData: any = await ctx.call(
       'ldp.resource.get',
       {
         resourceUri,
@@ -41,14 +44,6 @@ const Schema = {
     const containersUris: string[] = await ctx.call('ldp.resource.getContainers', { resourceUri });
     for (const containerUri of containersUris) {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
-    }
-
-    if (oldData.type === 'semapps:File') {
-      try {
-        fs.unlinkSync(oldData['semapps:localPath']);
-      } catch (e) {
-        // Ignore errors (file may have been deleted already)
-      }
     }
 
     const returnValues = {

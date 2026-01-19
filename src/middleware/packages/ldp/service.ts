@@ -1,6 +1,7 @@
-import { ldp, semapps } from '@semapps/ontologies';
+import { dc, ldp, semapps, stat } from '@semapps/ontologies';
 import { ServiceSchema } from 'moleculer';
 import LdpApiService from './services/api/index.ts';
+import LdpBinaryService from './services/binary/index.ts';
 import LdpContainerService from './services/container/index.ts';
 import LdpCacheService from './services/cache/index.ts';
 import LdpLinkHeaderService from './services/link-header/index.ts';
@@ -9,7 +10,7 @@ import LdpRemoteService from './services/remote/index.ts';
 import LdpResourceService from './services/resource/index.ts';
 import PermissionsService from './services/permissions/index.ts';
 
-const LdpSchema = {
+const LdpService = {
   name: 'ldp' as const,
   settings: {
     baseUrl: null,
@@ -17,13 +18,11 @@ const LdpSchema = {
     defaultContainerOptions: {},
     preferredViewForResource: null,
     allowSlugs: true,
-    binary: {
-      maxSize: '50Mb'
-    }
+    binaryAdapter: null
   },
   dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry', 'ontologies', 'jsonld'],
   async created() {
-    const { baseUrl, containers, defaultContainerOptions, preferredViewForResource, allowSlugs, binary } =
+    const { baseUrl, containers, defaultContainerOptions, preferredViewForResource, allowSlugs, binaryAdapter } =
       this.settings;
 
     // @ts-expect-error TS(2322): Type '{ name: "ldp.container"; settings: { baseUrl... Remove this comment to see the full error message
@@ -42,10 +41,17 @@ const LdpSchema = {
       settings: {
         baseUrl,
         preferredViewForResource,
-        allowSlugs,
-        binary
+        allowSlugs
       },
       hooks: this.schema.hooksResource || {}
+    });
+
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ldp.api"; set... Remove this comment to see the full error message
+    this.broker.createService({
+      mixins: [LdpBinaryService],
+      settings: {
+        adapter: binaryAdapter
+      }
     });
 
     // @ts-expect-error TS(2322): Type '{ name: "ldp.remote"; mixins: any[]; setting... Remove this comment to see the full error message
@@ -57,6 +63,7 @@ const LdpSchema = {
     });
 
     this.broker.createService({
+      // @ts-expect-error TS(2322): Type '{ name: "ldp.registry"; mixins: any[]; setting... Remove this comment to see the full error message
       mixins: [LdpRegistryService],
       settings: {
         baseUrl,
@@ -89,7 +96,8 @@ const LdpSchema = {
   async started() {
     await this.broker.call('ontologies.register', ldp);
     // Used by binaries
-    await this.broker.call('ontologies.register', semapps);
+    await this.broker.call('ontologies.register', dc);
+    await this.broker.call('ontologies.register', stat);
   },
   actions: {
     getBaseUrl: {
@@ -114,12 +122,12 @@ const LdpSchema = {
   }
 } satisfies ServiceSchema;
 
-export default LdpSchema;
+export default LdpService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [LdpSchema.name]: typeof LdpSchema;
+      [LdpService.name]: typeof LdpService;
     }
   }
 }

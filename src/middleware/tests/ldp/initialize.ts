@@ -2,8 +2,10 @@ import { ServiceBroker } from 'moleculer';
 import fs from 'fs';
 import path, { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
+import { FsBinaryAdapter, NgBinaryAdapter } from '@semapps/ldp';
 import { as, pair, petr, semapps, solid, vcard } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
+import { NextGraphAdapter } from '@semapps/triplestore';
 import { AuthLocalService } from '@semapps/auth';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
@@ -37,7 +39,7 @@ const containers = [
   },
   {
     path: '/files',
-    types: ['semapps:File'],
+    types: ['https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource'],
     permissions
   }
 ];
@@ -59,6 +61,23 @@ const initialize = async (triplestore: string): Promise<ServiceBroker> => {
     }
   });
 
+  const tripleStoreAdapter = getTripleStoreAdapter(triplestore);
+
+  const binaryAdapter =
+    triplestore === 'fuseki'
+      ? new FsBinaryAdapter({
+          rootDir: uploadsPath,
+          baseUrl: CONFIG.HOME_URL!,
+          maxSize: '80Mb',
+          tripleStoreAdapter
+        })
+      : new NgBinaryAdapter({
+          tmpDir: uploadsPath,
+          baseUrl: CONFIG.HOME_URL!,
+          maxSize: '80Mb',
+          ngAdapter: tripleStoreAdapter as NextGraphAdapter
+        });
+
   broker.createService({
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
     mixins: [CoreService],
@@ -66,7 +85,8 @@ const initialize = async (triplestore: string): Promise<ServiceBroker> => {
       baseUrl: CONFIG.HOME_URL,
       baseDir: path.resolve(__dirname, '..'),
       triplestore: {
-        adapter: getTripleStoreAdapter(triplestore)
+        defaultDataset: CONFIG.MAIN_DATASET,
+        adapter: tripleStoreAdapter
       },
       containers,
       ontologies: [as, pair, petr, solid, vcard, semapps],
@@ -74,7 +94,8 @@ const initialize = async (triplestore: string): Promise<ServiceBroker> => {
       webfinger: false,
       webid: false,
       ldp: {
-        allowSlugs: false
+        allowSlugs: false,
+        binaryAdapter
       }
     }
   });

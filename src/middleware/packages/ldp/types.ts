@@ -1,6 +1,7 @@
+import { Readable } from 'stream';
 import { WacPermissionObject, WacPermissionFunction } from '@semapps/webacl';
 
-interface ControlledActions {
+export interface ControlledActions {
   post: string;
   list: string;
   get: string;
@@ -31,4 +32,19 @@ export interface LdpRegistryServiceSettings {
   containers: Registration[];
   defaultOptions: Partial<Registration>;
   allowSlugs: boolean;
+}
+
+export interface Binary {
+  file: string;
+  mimeType: string;
+  size: number;
+  time?: Date;
+}
+
+export interface BinaryAdapterInterface {
+  name: string;
+  storeBinary(stream: Readable, mimeType: string, dataset: string): Promise<string>;
+  isBinary(uri: string): Promise<boolean>;
+  getBinary(uri: string): Promise<Binary>;
+  deleteBinary(dataset: string, uri: string): Promise<void>;
 }

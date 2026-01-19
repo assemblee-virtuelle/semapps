@@ -15,9 +15,9 @@ export const getTripleStoreAdapter = (triplestore: string) => {
   if (triplestore === 'ng') {
     // TODO : Environmentalize the nextgraph settings.
     return new NextGraphAdapter({
-      adminUserId: '-n1RqVQA0k2sqm-51CbIYnoS4Zhh89IRH1cxnLKnVlYA',
+      adminUserId: 'Ez4plcHN27PQneZoAitrS4gfkaq0-XNqGynvODTOOSoA',
       mappingsNuri:
-        'did:ng:o:7PeIu8q34t7h6XLqZIDt7dbuGjGruBz3ZWeQ7QOc2EoA:v:UmGokb5dUKofXw_IXFRl5xmb3Pbo5S2KWK6ShU01GkcA',
+        'did:ng:o:n2fJ7TM5CkpSxIQLZV57CFt3YrGBY9Y8hk8cAnZrIe0A:v:CT179cL3HgJg1OkYoE79iPNQ9vtcMcAZUHQq5RXUFeQA',
       serverPeerId: 'QlJkY0KELV4W1aVZehn6Qvx5eauRkICSJbdYqIbFHPEA',
       adminUserKey: 'bE0rIy0V8YQAEfXhqYas-erDrddazpTjhsoJHVqvSDIA',
       clientPeerKey: 'HV_9Rh-yDpEqsvtwYUjcxqIARUnuP8g2JA4hEH1Nh7QA',

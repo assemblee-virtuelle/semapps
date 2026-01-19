@@ -16,7 +16,7 @@ export interface AdapterInterface {
   namedGraphExists(dataset: string, graphUri: string): Promise<boolean>;
   clearNamedGraph(dataset: string, graphUri: string): Promise<void>;
   deleteNamedGraph(dataset: string, graphUri: string): Promise<void>;
-  getWacGraph(): string;
+  getWacGraph(dataset: string): Promise<string>;
 }
 
 export abstract class BaseAdapter implements AdapterInterface {
@@ -64,4 +64,6 @@ export abstract class BaseAdapter implements AdapterInterface {
   abstract clearNamedGraph(dataset: string, graphUri: string): Promise<void>;
 
   abstract deleteNamedGraph(dataset: string, graphUri: string): Promise<void>;
+
+  abstract getWacGraph(dataset: string): Promise<string>;
 }

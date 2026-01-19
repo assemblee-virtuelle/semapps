@@ -1,4 +1,5 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
+import type { Ontology } from '@semapps/ontologies';
 
 const Schema = {
   visibility: 'public',
@@ -6,7 +7,7 @@ const Schema = {
   async handler(ctx) {
     let context: any = [];
 
-    const ontologies = await ctx.call('ontologies.list');
+    const ontologies: Ontology[] = await ctx.call('ontologies.list');
 
     for (const ontology of ontologies) {
       if (ontology.preserveContextUri === true) {
@@ -18,7 +19,6 @@ const Schema = {
     const localContext = await this.actions.getLocal({}, { parentCtx: ctx });
     // Include the local context only if it is not empty
     if (Object.keys(localContext['@context']).length > 0) {
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       context = context.concat(this.settings.localContextUri);
     }
 
