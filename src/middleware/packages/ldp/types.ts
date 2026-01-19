@@ -35,7 +35,7 @@ export interface LdpRegistryServiceSettings {
 }
 
 export interface Binary {
-  file: Buffer;
+  file: string;
   mimeType: string;
   size: number;
   time?: Date;
@@ -46,5 +46,5 @@ export interface BinaryAdapterInterface {
   storeBinary(stream: Readable, mimeType: string, dataset: string): Promise<string>;
   isBinary(uri: string): Promise<boolean>;
   getBinary(uri: string): Promise<Binary>;
-  deleteBinary(uri: string): Promise<void>;
+  deleteBinary(dataset: string, uri: string): Promise<void>;
 }

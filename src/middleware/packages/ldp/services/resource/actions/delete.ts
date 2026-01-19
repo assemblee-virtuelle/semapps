@@ -11,6 +11,10 @@ const Schema = {
     const { resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
+    if (await ctx.call('ldp.binary.isBinary', { resourceUri })) {
+      return await ctx.call('ldp.binary.delete', { resourceUri });
+    }
+
     if (await ctx.call('ldp.remote.isRemote', { resourceUri })) {
       return await ctx.call('ldp.remote.delete', { resourceUri, webId });
     }
@@ -40,14 +44,6 @@ const Schema = {
     const containersUris: string[] = await ctx.call('ldp.resource.getContainers', { resourceUri });
     for (const containerUri of containersUris) {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
-    }
-
-    if (await ctx.call('ldp.binary.isBinary', { resourceUri })) {
-      try {
-        await ctx.call('ldp.binary.delete', { resourceUri });
-      } catch (e) {
-        // Ignore errors (file may have been deleted already)
-      }
     }
 
     const returnValues = {

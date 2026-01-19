@@ -84,10 +84,7 @@ export default async function get(this: any, ctx: any) {
         if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
         ctx.meta.$responseHeaders['Preference-Applied'] = ctx.meta.headers.prefer;
       }
-    } else if (
-      types.includes('https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource') &&
-      ![MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE].includes(ctx.meta.originalHeaders?.accept)
-    ) {
+    } else if (types.includes('https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource')) {
       /*
        * LDP BINARY
        */
@@ -95,15 +92,20 @@ export default async function get(this: any, ctx: any) {
       try {
         const binary: Binary = await ctx.call('ldp.binary.get', { resourceUri: uri });
 
-        ctx.meta.$responseType = binary.mimeType;
-        // Since files are currently immutable, we set a maximum browser cache age
-        // We do that after the file is read, otherwise the error 404 will be cached by the browser
-        ctx.meta.$responseHeaders = {
-          'Cache-Control': 'public, max-age=31536000',
-          Vary: 'Accept'
-        };
+        if ([MIME_TYPES.JSON, MIME_TYPES.TURTLE, MIME_TYPES.TRIPLE].includes(ctx.meta.originalHeaders?.accept)) {
+          res = await ctx.call('ldp.binary.getRdf', { resourceUri: uri });
+        } else {
+          ctx.meta.$responseType = binary.mimeType;
 
-        return binary.file;
+          // Since files are currently immutable, we set a maximum browser cache age
+          // We do that after the file is read, otherwise the error 404 will be cached by the browser
+          ctx.meta.$responseHeaders = {
+            'Cache-Control': 'public, max-age=31536000',
+            Vary: 'Accept'
+          };
+
+          return binary.file;
+        }
       } catch (e) {
         throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
       }

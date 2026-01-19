@@ -1,42 +1,11 @@
 import fs from 'fs';
-import bytes from 'bytes';
 import path from 'path';
 import { Readable } from 'stream';
 import { IBindings } from 'sparqljson-parse';
 import urlJoin from 'url-join';
-import { Errors, ServiceBroker } from 'moleculer';
-import { v4 as uuidv4 } from 'uuid';
-import { AdapterInterface } from '@semapps/triplestore/adapters/base.ts';
-import { getDatasetFromUri, getSlugFromUri } from '../utils.ts';
+import { FusekiAdapter, NextGraphAdapter } from '@semapps/triplestore';
+import { getDatasetFromUri, getSlugFromUri, createDirectoryIfNotExist, streamToFile } from '../utils.ts';
 import { Binary, BinaryAdapterInterface } from '../types.ts';
-
-const { MoleculerError } = Errors;
-
-const streamToFile = (inputStream: Readable, filePath: string, maxSize: string | number): Promise<number> => {
-  return new Promise((resolve, reject) => {
-    const fileWriteStream = fs.createWriteStream(filePath);
-    const maxSizeInBytes = maxSize && bytes.parse(maxSize);
-    let fileSize = 0;
-    inputStream
-      .on('data', (chunk: Buffer) => {
-        fileSize += chunk.length;
-        if (maxSizeInBytes && fileSize > maxSizeInBytes) {
-          fileWriteStream.destroy(); // Stop persisting the file
-          reject(new MoleculerError(`The file size is limited to ${maxSize}`, 413, 'CONTENT TOO LARGE'));
-        }
-      })
-      .pipe(fileWriteStream)
-      .on('finish', () => resolve(fileSize))
-      .on('error', reject);
-  });
-};
-
-const createDirectoryIfNotExist = (dirPath: string): void => {
-  if (!fs.existsSync(dirPath)) {
-    process.umask(0);
-    fs.mkdirSync(dirPath, { recursive: true, mode: 0o0777 });
-  }
-};
 
 class FsBinaryAdapter implements BinaryAdapterInterface {
   name: 'filesystem';
@@ -46,24 +15,18 @@ class FsBinaryAdapter implements BinaryAdapterInterface {
   constructor(settings: FsBinaryAdapterSettings) {
     this.name = 'filesystem';
     this.settings = settings;
-  }
 
-  async init({ broker } = { broker: ServiceBroker }) {
     createDirectoryIfNotExist(this.settings.rootDir);
-
-    // Temporary solution. The adapter should be initialized through the TripleStoreService
-    await this.settings.tripleStoreAdapter.init({ broker });
   }
 
   async storeBinary(stream: Readable, mimeType: string, dataset: string): Promise<string> {
     const dirPath = path.join(this.settings.rootDir, dataset);
     createDirectoryIfNotExist(dirPath);
 
-    // Replace with this.createNamedGraph() ?
-    const uuid = uuidv4();
-    const fileUri = urlJoin(this.settings.baseUrl, dataset, uuid);
+    const graphName = await this.settings.tripleStoreAdapter.createNamedGraph(dataset);
+    const fileUri = urlJoin(this.settings.baseUrl, dataset, graphName);
 
-    const filePath = path.join(dirPath, uuid);
+    const filePath = path.join(dirPath, graphName);
 
     const fileSize = await streamToFile(stream, filePath, this.settings.maxSize);
 
@@ -73,7 +36,7 @@ class FsBinaryAdapter implements BinaryAdapterInterface {
       dataset,
       `
         INSERT DATA {
-          GRAPH <${fileUri}> {
+          GRAPH <${graphName}> {
             <${fileUri}> a <https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource>, <https://www.w3.org/ns/iana/media-types/${mimeType}#Resource>.
             <${fileUri}> <http://www.w3.org/ns/posix/stat#size> ${fileSize} .
             <${fileUri}> <http://www.w3.org/ns/posix/stat#mtime> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
@@ -89,8 +52,6 @@ class FsBinaryAdapter implements BinaryAdapterInterface {
 
   async isBinary(uri: string): Promise<boolean> {
     const dataset = getDatasetFromUri(uri)!;
-
-    // For NextGraph, we can look if the uri starts with "did:ng:j:"
 
     const result: boolean = await this.settings.tripleStoreAdapter.query(
       dataset,
@@ -113,10 +74,10 @@ class FsBinaryAdapter implements BinaryAdapterInterface {
     const result: IBindings[] = await this.settings.tripleStoreAdapter.query(
       dataset,
       `
-        SELECT ?ianaMimeType ?size ?time
+        SELECT ?type ?size ?time
         WHERE {
-          GRAPH <${uri}> {
-            <${uri}> a <https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource>, ?ianaMimeType .
+          GRAPH ?g {
+            <${uri}> a ?type .
             <${uri}> <http://www.w3.org/ns/posix/stat#size> ?size .
             <${uri}> <http://www.w3.org/ns/posix/stat#mtime> ?time .
           }
@@ -126,9 +87,11 @@ class FsBinaryAdapter implements BinaryAdapterInterface {
 
     if (result.length === 0) throw new Error(`Binary not found ${uri}`);
 
-    const regexResults = /^https:\/\/www\.w3\.org\/ns\/iana\/media-types\/(.*)#Resource$/.exec(
-      result[0].ianaMimeType.value
-    );
+    const ianaMimeType = result.find(
+      node => node.type.value !== 'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource'
+    )!.type.value;
+
+    const regexResults = /^https:\/\/www\.w3\.org\/ns\/iana\/media-types\/(.*)#Resource$/.exec(ianaMimeType);
 
     return {
       file: fs.readFileSync(this.getPathFromUri(uri)),
@@ -138,9 +101,7 @@ class FsBinaryAdapter implements BinaryAdapterInterface {
     };
   }
 
-  async deleteBinary(uri: string): Promise<void> {
-    const dataset = getDatasetFromUri(uri)!;
-
+  async deleteBinary(dataset: string, uri: string): Promise<void> {
     // Replace with this.deleteNamedGraph(uri) ?
     await this.settings.tripleStoreAdapter.query(
       dataset,
@@ -170,7 +131,7 @@ interface FsBinaryAdapterSettings {
   rootDir: string;
   baseUrl: string;
   maxSize: string | number;
-  tripleStoreAdapter: AdapterInterface;
+  tripleStoreAdapter: FusekiAdapter | NextGraphAdapter;
 }
 
 export default FsBinaryAdapter;

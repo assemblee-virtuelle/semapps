@@ -4,7 +4,7 @@ import { ServiceBroker } from 'moleculer';
 import path, { join as pathJoin } from 'path';
 import { Binary } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
-import { createAccount } from '../utils.ts';
+import { createAccount, clearAllDatasets, backupAllDatasets } from '../utils.ts';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
 
@@ -14,17 +14,21 @@ jest.setTimeout(20000);
 let broker: ServiceBroker;
 let alice: any;
 
-beforeAll(async () => {
-  broker = await initialize(false);
-  await broker.start();
-  alice = await createAccount(broker, 'alice');
-});
+describe.each(['ng', 'fuseki'])('Binary handling with triplestore %s', (triplestore: string) => {
+  beforeAll(async () => {
+    broker = await initialize(triplestore);
+    await broker.start();
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice7');
+  });
 
-afterAll(async () => {
-  if (broker) await broker.stop();
-});
+  afterAll(async () => {
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
+  });
 
-describe('Binary handling of LDP server', () => {
   let fileUri: string;
   let filePath: string | null;
   let binary: Binary;
@@ -48,7 +52,9 @@ describe('Binary handling of LDP server', () => {
 
     filePath = fileUri!.replace(CONFIG.HOME_URL!, '');
 
-    expect(fs.existsSync(pathJoin(__dirname, '../uploads', filePath))).toBeTruthy();
+    if (triplestore === 'fuseki') {
+      expect(fs.existsSync(pathJoin(__dirname, '../uploads', filePath))).toBeTruthy();
+    }
   });
 
   test('Get binary (via Moleculer action)', async () => {
@@ -58,27 +64,30 @@ describe('Binary handling of LDP server', () => {
       file: expect.anything(),
       mimeType: 'image/png',
       size: 3181,
-      time: expect.anything()
+      time: triplestore === 'fuseki' ? expect.anything() : undefined
     });
   });
 
   test('Get container (via API)', async () => {
-    await expect(alice.fetch(containerUri)).resolves.toMatchObject({
-      json: {
-        type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
-        'ldp:contains': [
-          {
-            id: fileUri,
-            type: expect.arrayContaining([
-              'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource',
-              'https://www.w3.org/ns/iana/media-types/image/png#Resource'
-            ]),
-            'stat:size': '3181',
-            'stat:mtime': binary.time.toISOString()
-          }
-        ]
-      }
+    const { json } = await alice.fetch(containerUri);
+
+    expect(json).toMatchObject({
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      'ldp:contains': [
+        {
+          id: fileUri,
+          type: expect.arrayContaining([
+            'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource',
+            'https://www.w3.org/ns/iana/media-types/image/png#Resource'
+          ]),
+          'stat:size': '3181'
+        }
+      ]
     });
+
+    if (triplestore === 'fuseki') {
+      expect(json['ldp:contains'][0]['stat:mtime']).toBe(binary.time?.toISOString());
+    }
   });
 
   test('Get image as binary (via API)', async () => {
@@ -104,41 +113,51 @@ describe('Binary handling of LDP server', () => {
         'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource',
         'https://www.w3.org/ns/iana/media-types/image/png#Resource'
       ]),
-      'stat:size': '3181',
-      'stat:mtime': binary.time.toISOString()
+      'stat:size': '3181'
     });
+
+    if (triplestore === 'fuseki') {
+      expect(json['stat:mtime']).toBe(binary.time?.toISOString());
+    }
   });
 
   test('Get image as resource (via Moleculer action)', async () => {
-    await expect(alice.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
+    const resource = await alice.call('ldp.resource.get', { resourceUri: fileUri });
+
+    expect(resource).toMatchObject({
       id: fileUri,
       type: expect.arrayContaining([
         'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource',
         'https://www.w3.org/ns/iana/media-types/image/png#Resource'
       ]),
-      'stat:size': '3181',
-      'stat:mtime': binary.time.toISOString()
+      'stat:size': '3181'
     });
+
+    if (triplestore === 'fuseki') {
+      expect(resource['stat:mtime']).toBe(binary.time?.toISOString());
+    }
   });
 
-  test('Delete image (via API)', async () => {
-    await expect(
-      alice.fetch(fileUri, {
-        method: 'DELETE'
-      })
-    ).resolves.toMatchObject({
-      status: 204
+  if (triplestore === 'fuseki') {
+    test('Delete image (via API)', async () => {
+      await expect(
+        alice.fetch(fileUri, {
+          method: 'DELETE'
+        })
+      ).resolves.toMatchObject({
+        status: 204
+      });
+
+      expect(fs.existsSync(pathJoin(__dirname, '../uploads/files/av-icon.png'))).toBeFalsy();
+
+      await expect(alice.fetch(fileUri)).resolves.toMatchObject({ status: 404 });
+
+      await expect(alice.fetch(containerUri)).resolves.toMatchObject({
+        json: {
+          type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+          'ldp:contains': []
+        }
+      });
     });
-
-    expect(fs.existsSync(pathJoin(__dirname, '../uploads/files/av-icon.png'))).toBeFalsy();
-
-    await expect(alice.fetch(fileUri)).resolves.toMatchObject({ status: 404 });
-
-    await expect(alice.fetch(containerUri)).resolves.toMatchObject({
-      json: {
-        type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
-        'ldp:contains': []
-      }
-    });
-  });
+  }
 });

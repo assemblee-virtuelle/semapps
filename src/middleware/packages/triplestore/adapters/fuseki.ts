@@ -1,16 +1,15 @@
 import fetch from 'node-fetch';
 import urlJoin from 'url-join';
 import { v4 as uuidv4 } from 'uuid';
-import createSlug from 'speakingurl';
 import { SparqlJsonParser } from 'sparqljson-parse';
 import { throw403, throw500, throw404 } from '@semapps/middlewares';
 import { Errors } from 'moleculer';
-import { BaseAdapter } from './base.ts';
+import { AdapterInterface, BaseAdapter } from './base.ts';
 
 const delay = (t: any) => new Promise(resolve => setTimeout(resolve, t));
 const { MoleculerError } = Errors;
 
-export default class FusekiAdapter extends BaseAdapter {
+export default class FusekiAdapter extends BaseAdapter implements AdapterInterface {
   name = 'fuseki';
 
   private settings: {

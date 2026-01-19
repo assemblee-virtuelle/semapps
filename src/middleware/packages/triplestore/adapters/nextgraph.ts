@@ -2,7 +2,7 @@ import ng from 'nextgraph';
 import fs from 'fs';
 import { join as pathJoin } from 'path';
 import { SparqlJsonParser } from 'sparqljson-parse';
-import { BaseAdapter } from './base.ts';
+import { AdapterInterface, BaseAdapter } from './base.ts';
 
 type NextGraphAdapterSettings = {
   serverPeerId: string; // The server peer id, is provided in the console of the NextGraph server
@@ -30,7 +30,7 @@ type DatasetMetadata = {
 
 const openSessions: { [dataset: string]: Session } = {};
 
-export default class NextGraphAdapter extends BaseAdapter {
+export default class NextGraphAdapter extends BaseAdapter implements AdapterInterface {
   name = 'nextgraph';
 
   private settings: { adminUserId: string; mappingsNuri: string; backupsPath?: string };

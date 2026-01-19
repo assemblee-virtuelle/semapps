@@ -13,10 +13,6 @@ const PostAction = {
     containerUri: {
       type: 'string'
     },
-    slug: {
-      type: 'string',
-      optional: true
-    },
     resource: {
       type: 'object',
       optional: true
@@ -35,7 +31,7 @@ const PostAction = {
     }
   },
   async handler(ctx) {
-    let { resource, containerUri, slug, contentType, file } = ctx.params;
+    let { resource, containerUri, contentType, file } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let isContainer = false;
     let expandedResource;

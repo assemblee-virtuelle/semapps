@@ -2,6 +2,7 @@ import { ServiceSchema } from 'moleculer';
 import storeAction from './actions/store.ts';
 import deleteAction from './actions/delete.ts';
 import getAction from './actions/get.ts';
+import getRdfAction from './actions/getRdf.ts';
 import isBinaryAction from './actions/isBinary.ts';
 
 const LdpBinaryService = {
@@ -13,10 +14,8 @@ const LdpBinaryService = {
     store: storeAction,
     delete: deleteAction,
     get: getAction,
+    getRdf: getRdfAction,
     isBinary: isBinaryAction
-  },
-  async started() {
-    await this.settings.adapter.init({ broker: this.broker });
   }
 } satisfies ServiceSchema;
 

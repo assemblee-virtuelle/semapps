@@ -32,6 +32,10 @@ const Schema = {
     if (accept && accept !== MIME_TYPES.JSON)
       throw new Error(`The ldp.resource.get action now only support JSON-LD. Provided: ${accept}`);
 
+    if (await ctx.call('ldp.binary.isBinary', { resourceUri })) {
+      return await ctx.call('ldp.binary.getRdf', { resourceUri });
+    }
+
     if (await ctx.call('ldp.remote.isRemote', { resourceUri })) {
       return await ctx.call('ldp.remote.get', ctx.params);
     }
