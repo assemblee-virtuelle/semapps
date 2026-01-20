@@ -37,13 +37,19 @@ export default async triplestore => {
   if (triplestore === 'ng') {
     // TODO : Environmentalize the nextgraph settings.
     adapter = new NextGraphAdapter({
-      adminUserId: 'XOct97tUc-ccyFUGe5sDUkHyXdTQ7LtGW1RVyYZzIYgA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      adminUserId: 'bEr4dYFLtrsRUUvNEFN2RX0AhrKNSRYz0PS9NZY1lZQA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
       mappingsNuri:
-        'did:ng:o:5ZwPgEib6okmEbVlWRJVfGUNnbdtmQpC_x1uTy9wjcoA:v:asrmmGCr1WTq3oAGkgtVwUxsJgA5MIsV2FIYhDRyPagA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
-      serverPeerId: 'zT_iEzpHeO5znVU9ZYcvenJjb8pWrRWFzEO6eUE_SrAA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
-      adminUserKey: 'dwtQ9wWEovJwv6_3VArHKHRyr_zLAuR2_bFB1LiLfqEA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
-      clientPeerKey: 'ryv9v1Y3jJqdQYH-_rMxGTGyDtC_eOaA0a4ibRLhmX4A', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
-      serverAddr: '127.0.0.1:14400' // TODO : Environmentalize the nextgraph settings. Even though this value is the genric one for the nextgraph broker
+        'did:ng:o:8gyu054sT9gWjNLFEKU4qg8hwdqCzH4SSShKm5MBobYA:v:T2LzS8YAXq3YsER-B11J9SQ3CWXSVsXqORysd7_pVUkA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      serverPeerId: 'Xu4VrduboqBGtHVk4s7KvTLi9c0vnQOLgKH0LNrmNtYA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      adminUserKey: 'qC2IxeD86FrA6oB7Dy0Kt-mTtzhfs1J-f2qOdUy12vEA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      clientPeerKey: 'wfq6Rkt_6sWPLu7UWIjZM2iZn6VKgavy4x2i5ZAv2r8A', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      // adminUserId: '-tIS6TbpjR3JHlqwT8s5b4BlYI6n6YwVldf6RYLg9hwA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      // mappingsNuri:
+      //   'did:ng:o:4zWo1oSYoDLme9kfvft7Qfr5Tym0R8cYPMNz5KHY4B8A:v:LWpg1kzHdLZeqZK3TlU3wcqxLoZ7rloxFakIT0pB40wA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      // serverPeerId: 'edWkiejqaFuRnJmjreszhou7MdFBCBnEN4J3kdnl5iwA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      // adminUserKey: '4WzLq7Dg9-ImFATldkQeApMi_vUeh7rfVDC4EJ7YDVIA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      // clientPeerKey: '_NdCrMT9zLCC02WWdbbDZTG01W4os-9f9wZdv7W4iyMA', // TODO : Environmentalize the nextgraph settings. this value is specific to a local environment.
+      serverAddr: '172.21.0.3:1440' // TODO : Environmentalize the nextgraph settings. Even though this value is the genric one for the nextgraph broker
     });
   } else if (triplestore === 'fuseki') {
     adapter = new FusekiAdapter({

@@ -1,4 +1,23 @@
 services:
+  ng_tests:
+    image: nextgraph-rs:ubuntu
+    container_name: ng_tests
+    # command: ["/nextgraph-rs/target/release/ngd", "-v", "-p", "eth0:14400", "-l", "14400"]
+    #command: ["/bin/bash"]
+    stdin_open: true
+    tty: true
+    restart: always
+    volumes:
+      - ./data/ng:/nextgraph-rs/.ng:z
+      - ../../../..:/stack-root
+    # network_mode: "host"
+    ports:
+      - '14400:14400/tcp'
+    expose:
+      - '14400/tcp'
+    environment:
+      ENV_FILE_NAME: .env.test-ng
+      ENV_PATH: ngScripts
   fuseki_tests:
     image: stain/jena-fuseki:5.1.0
     container_name: fuseki_tests
@@ -21,7 +40,7 @@ services:
       - '6379:6379'
     volumes:
       - ./data/redis:/data:z
-    command: ['redis-server', '--appendonly', 'yes']
+    command: [ 'redis-server', '--appendonly', 'yes' ]
 
   arena:
     image: activitypods/arena
