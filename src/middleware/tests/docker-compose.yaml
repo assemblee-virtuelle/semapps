@@ -2,22 +2,17 @@ services:
   ng_tests:
     image: nextgraph-rs:ubuntu
     container_name: ng_tests
-    # command: ["/nextgraph-rs/target/release/ngd", "-v", "-p", "eth0:14400", "-l", "14400"]
-    #command: ["/bin/bash"]
-    stdin_open: true
-    tty: true
     restart: always
     volumes:
       - ./data/ng:/nextgraph-rs/.ng:z
-      - ../../../..:/stack-root
-    # network_mode: "host"
+      - .:/stack-root # In order to be able to access the .env file during the initialization of nextgraph
     ports:
-      - '14400:14400/tcp'
+      - '1440:1440/tcp'
     expose:
-      - '14400/tcp'
-    environment:
-      ENV_FILE_NAME: .env.test-ng
-      ENV_PATH: ngScripts
+      - '1440/tcp'
+      #environment:
+      #ENV_FILE_NAME: .env #The name of the .env file that will be filled during the initialization of nextgraph
+      #ENV_PATH:  #The path to the .env file relative to the stack-root mounted volume, if not set, the .env file will be looked for (or created) in the stack-root folder
   fuseki_tests:
     image: stain/jena-fuseki:5.1.0
     container_name: fuseki_tests
