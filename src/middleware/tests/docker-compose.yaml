@@ -5,14 +5,11 @@ services:
     restart: always
     volumes:
       - ./data/ng:/nextgraph-rs/.ng:z
-      - .:/stack-root # In order to be able to access the .env file during the initialization of nextgraph
+      - .env:/stack-root/.env:z # In order to be able to update the .env file during the initialization of nextgraph
     ports:
-      - '1440:1440/tcp'
+      - '1440:1440'
     expose:
-      - '1440/tcp'
-      #environment:
-      #ENV_FILE_NAME: .env #The name of the .env file that will be filled during the initialization of nextgraph
-      #ENV_PATH:  #The path to the .env file relative to the stack-root mounted volume, if not set, the .env file will be looked for (or created) in the stack-root folder
+      - '1440'
   fuseki_tests:
     image: stain/jena-fuseki:5.1.0
     container_name: fuseki_tests
@@ -35,7 +32,7 @@ services:
       - '6379:6379'
     volumes:
       - ./data/redis:/data:z
-    command: [ 'redis-server', '--appendonly', 'yes' ]
+    command: ['redis-server', '--appendonly', 'yes']
 
   arena:
     image: activitypods/arena
