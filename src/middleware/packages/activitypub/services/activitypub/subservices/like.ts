@@ -2,20 +2,19 @@ import { ServiceSchema } from 'moleculer';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 import { ACTIVITY_TYPES, ACTOR_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
+import { CollectionRegistration } from '../../../types.ts';
 
 const LikeService = {
   name: 'activitypub.like' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    baseUri: null,
-    podProvider: false,
     likesCollectionOptions: {
       path: '/likes',
       attachPredicate: 'https://www.w3.org/ns/activitystreams#likes',
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    },
+    } as CollectionRegistration,
     likedCollectionOptions: {
       path: '/liked',
       attachToTypes: Object.values(ACTOR_TYPES),
@@ -23,7 +22,7 @@ const LikeService = {
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    }
+    } as CollectionRegistration
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   async started() {
@@ -34,7 +33,7 @@ const LikeService = {
       async handler(ctx) {
         const { actorUri, objectUri } = ctx.params;
 
-        const actor = await ctx.call('activitypub.actor.get', { actorUri });
+        const actor: any = await ctx.call('activitypub.actor.get', { actorUri });
 
         // If a liked collection is attached to the actor, attach the object
         if (actor.liked) {
@@ -66,7 +65,7 @@ const LikeService = {
       async handler(ctx) {
         const { actorUri, objectUri } = ctx.params;
 
-        const actor = await ctx.call('activitypub.actor.get', { actorUri });
+        const actor: any = await ctx.call('activitypub.actor.get', { actorUri });
 
         // If a liked collection is attached to the actor, detach the object
         if (actor.liked) {
@@ -82,7 +81,7 @@ const LikeService = {
       async handler(ctx) {
         const { actorUri, objectUri } = ctx.params;
 
-        const object = await ctx.call('activitypub.object.get', { objectUri, actorUri });
+        const object: any = await ctx.call('activitypub.object.get', { objectUri, actorUri });
 
         // If a likes collection is attached to the object, detach the actor
         if (object.likes) {
@@ -113,16 +112,20 @@ const LikeService = {
       match: {
         type: ACTIVITY_TYPES.LIKE
       },
-      async onEmit(ctx: any, activity: any, emitterUri: any) {
+      async onEmit(ctx: any, activity: any) {
         if (!activity?.object) throw new Error(`No object in the Like activity`);
+
         // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.addObjectToActorLikedCollection(
           { actorUri: activity.actor, objectUri: activity.object },
           { parentCtx: ctx }
         );
-        // In case there is no recipient, add the actor immediately to the collection
-        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
-        if (this.isLocalObject(activity.object, emitterUri)) {
+
+        const recipientsUris = await ctx.call('activitypub.activity.getRecipients', { activity });
+        const isRemoteObject = await ctx.call('ldp.remote.isRemote', { resourceUri: activity.object });
+
+        // If the actor is liking their own object without recipients, add them immediately to the likes collection
+        if (recipientsUris.length === 0 && !isRemoteObject) {
           // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.addActorToObjectLikesCollection(
             { actorUri: activity.actor, objectUri: activity.object },
@@ -130,10 +133,10 @@ const LikeService = {
           );
         }
       },
-      async onReceive(ctx: any, activity: any, recipientUri: any) {
-        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
-        if (this.isLocalObject(activity.object, recipientUri)) {
-          if (!activity?.object) throw new Error(`No object in the Like activity`);
+      async onReceive(ctx: any, activity: any) {
+        if (!activity?.object) throw new Error(`No object in the Like activity`);
+
+        if (!(await ctx.call('ldp.remote.isRemote', { resourceUri: activity.object }))) {
           // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.addActorToObjectLikesCollection(
             { actorUri: activity.actor, objectUri: activity.object },
@@ -149,16 +152,20 @@ const LikeService = {
           type: ACTIVITY_TYPES.LIKE
         }
       },
-      async onEmit(ctx: any, activity: any, emitterUri: any) {
+      async onEmit(ctx: any, activity: any) {
         if (!activity.object?.object) throw new Error(`No object in the Like activity`);
+
         // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
         await this.actions.removeObjectFromActorLikedCollection(
           { actorUri: activity.actor, objectUri: activity.object.object },
           { parentCtx: ctx }
         );
-        // In case there is no recipient, remove the actor immediately from the collection
-        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
-        if (this.isLocalObject(activity.object.object, emitterUri)) {
+
+        const recipientsUris = await ctx.call('activitypub.activity.getRecipients', { activity });
+        const isRemoteObject = await ctx.call('ldp.remote.isRemote', { resourceUri: activity.object.object });
+
+        // If the actor is unliking their own object without recipients, remove them immediately from the likes collection
+        if (recipientsUris.length === 0 && !isRemoteObject) {
           // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.removeActorFromObjectLikesCollection(
             { actorUri: activity.actor, objectUri: activity.object.object },
@@ -166,35 +173,16 @@ const LikeService = {
           );
         }
       },
-      async onReceive(ctx: any, activity: any, recipientUri: any) {
-        // @ts-expect-error TS(2339): Property 'isLocalObject' does not exist on type '{... Remove this comment to see the full error message
-        if (this.isLocalObject(activity.object.object, recipientUri)) {
-          if (!activity.object?.object) throw new Error(`No object in the Like activity`);
+      async onReceive(ctx: any, activity: any) {
+        if (!activity.object?.object) throw new Error(`No object in the Like activity`);
+
+        if (!(await ctx.call('ldp.remote.isRemote', { resourceUri: activity.object.object }))) {
           // @ts-expect-error TS(2339): Property 'actions' does not exist on type '{ match... Remove this comment to see the full error message
           await this.actions.removeActorFromObjectLikesCollection(
             { actorUri: activity.actor, objectUri: activity.object.object },
             { parentCtx: ctx }
           );
         }
-      }
-    }
-  },
-  methods: {
-    isLocalObject(uri, actorUri) {
-      if (this.settings.podProvider) {
-        const { origin, pathname } = new URL(actorUri);
-        const aclBase = `${origin}/_acl${pathname}`; // URL of type http://localhost:3000/_acl/alice
-        const aclGroupBase = `${origin}/_groups${pathname}`; // URL of type http://localhost:3000/_groups/alice
-        return (
-          uri === actorUri ||
-          uri.startsWith(`${actorUri}/`) ||
-          uri === aclBase ||
-          uri.startsWith(`${aclBase}/`) ||
-          uri === aclGroupBase ||
-          uri.startsWith(`${aclGroupBase}/`)
-        );
-      } else {
-        return uri.startsWith(this.settings.baseUri);
       }
     }
   }

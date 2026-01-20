@@ -3,15 +3,15 @@ import createSlug from 'speakingurl';
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema, Errors } from 'moleculer';
+import { WacPermissionObject } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
 
-export const api = async function api(this: any, ctx: any) {
+export const api = async function api(ctx: any) {
   if (!ctx.meta.headers?.slug) throw new MoleculerError('needs a slug in your POST (json)', 400, 'BAD_REQUEST');
-  if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
 
   const { groupUri } = await ctx.call('webacl.group.create', {
-    groupSlug: this.settings.podProvider ? `${ctx.params.username}/${ctx.meta.headers.slug}` : ctx.meta.headers.slug
+    groupSlug: `${ctx.params.username}/${ctx.meta.headers.slug}`
   });
 
   ctx.meta.$responseHeaders = {
@@ -32,12 +32,10 @@ export const action = {
   },
   async handler(ctx) {
     let { groupUri, groupSlug } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri) {
       groupSlug = createSlug(groupSlug, { lang: 'fr', custom: { '.': '.', '/': '/' } });
-      // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
       groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
     }
 
@@ -45,20 +43,17 @@ export const action = {
       throw new MoleculerError('Group already exists', 400, 'BAD_REQUEST');
     }
 
-    const newRights = {};
+    const newRights: WacPermissionObject = {};
     if (webId === 'anon') {
-      // @ts-expect-error TS(2339): Property 'anon' does not exist on type '{}'.
       newRights.anon = {
         read: true,
         write: true
       };
     } else if (webId === 'system') {
-      // @ts-expect-error TS(2339): Property 'anon' does not exist on type '{}'.
       newRights.anon = {
         read: true
       };
     } else {
-      // @ts-expect-error TS(2339): Property 'user' does not exist on type '{}'.
       newRights.user = {
         uri: webId,
         read: true,
@@ -76,7 +71,7 @@ export const action = {
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         INSERT DATA { 
-          GRAPH <${this.settings.graphName}> { 
+          GRAPH <${await ctx.call('triplestore.dataset.getWacGraph')}> { 
             <${groupUri}> a vcard:Group 
           } 
         }

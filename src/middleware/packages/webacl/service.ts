@@ -6,35 +6,29 @@ import WebAclGroupService from './services/group/index.ts';
 import WebAclAuthorizerService from './services/authorizer/index.ts';
 import getRoutes from './routes/getRoutes.ts';
 
-const WebaclSchema = {
+const WebAclService = {
   name: 'webacl' as const,
   settings: {
     baseUrl: null,
-    graphName: 'http://semapps.org/webacl',
-    podProvider: false,
     superAdmins: []
   },
   dependencies: ['api', 'ontologies'],
   async created() {
-    const { baseUrl, graphName, podProvider, superAdmins } = this.settings;
+    const { baseUrl, superAdmins } = this.settings;
 
+    // @ts-expect-error TS(2322): Type '{ name: "webacl.resource"; settings: { baseUrl:... Remove this comment to see the full error message
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "webacl.resource"; settings: { baseU... Remove this comment to see the full error message
       mixins: [WebAclResourceService],
       settings: {
-        baseUrl,
-        graphName,
-        podProvider
+        baseUrl
       }
     });
 
+    // @ts-expect-error TS(2322): Type '{ name: "webacl.group"; settings: { baseUrl:... Remove this comment to see the full error message
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "webacl.group"; settings: { baseUrl:... Remove this comment to see the full error message
       mixins: [WebAclGroupService],
       settings: {
         baseUrl,
-        graphName,
-        podProvider,
         superAdmins
       }
     });
@@ -51,7 +45,7 @@ const WebaclSchema = {
   async started() {
     const { pathname: basePath } = new URL(this.settings.baseUrl);
 
-    for (const route of getRoutes(basePath, this.settings.podProvider)) {
+    for (const route of getRoutes(basePath)) {
       await this.broker.call('api.addRoute', { route });
     }
 
@@ -61,12 +55,12 @@ const WebaclSchema = {
   }
 } satisfies ServiceSchema;
 
-export default WebaclSchema;
+export default WebAclService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [WebaclSchema.name]: typeof WebaclSchema;
+      [WebAclService.name]: typeof WebAclService;
     }
   }
 }

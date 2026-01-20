@@ -1,113 +1,52 @@
 import waitForExpect from 'wait-for-expect';
+import { ServiceBroker } from 'moleculer';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
+import { createAccount } from '../utils.ts';
+import { clearAllDatasets, backupAllDatasets } from '../utils.ts';
 
-// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(20000);
-let broker: any;
+let broker: ServiceBroker;
+let alice: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
-beforeAll(async () => {
-  broker = await initialize();
-});
+describe.each(['ng', 'fuseki'])('LDP container tests with triplestore %s', (triplestore: string) => {
+  beforeAll(async () => {
+    broker = await initialize(triplestore);
+    await broker.start();
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice7');
+  });
 
-afterAll(async () => {
-  if (broker) await broker.stop();
-});
+  afterAll(async () => {
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
+  });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
-describe('LDP container tests', () => {
-  let resourceUri: any;
+  let resourceUri: string;
+  let containerUri: string;
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Ensure container created in LdpService settings exists', async () => {
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}resources` })).resolves.toBe(
-      true
-    );
+    containerUri = await alice.getContainerUri('pair:Project');
+
+    await expect(alice.call('ldp.container.exist', { containerUri })).resolves.toBe(true);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Create a new container', async () => {
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}objects` })).resolves.toBe(
-      false
-    );
+    const newContainerUri = await alice.call('ldp.container.create', { path: '/objects' });
 
-    await broker.call('ldp.container.create', { containerUri: `${CONFIG.HOME_URL}objects`, webId: 'system' });
+    await expect(alice.call('ldp.container.exist', { containerUri: newContainerUri })).resolves.toBe(true);
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}objects` })).resolves.toBe(true);
-
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(
-      broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}objects`
-      })
-    ).resolves.toMatchObject({
-      '@id': `${CONFIG.HOME_URL}objects`,
-      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer'])
+    await expect(alice.call('ldp.container.get', { containerUri: newContainerUri })).resolves.toMatchObject({
+      id: newContainerUri,
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer'])
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
-  test('Create a sub-container and attach it to the root container', async () => {
-    await broker.call('ldp.container.createAndAttach', {
-      containerUri: `${CONFIG.HOME_URL}parent/child`,
-      webId: 'system'
-    });
-
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(
-      broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent` })
-    ).resolves.toBeTruthy();
-
-    // Intermediate containers have no permissions
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(broker.call('ldp.container.get', { containerUri: `${CONFIG.HOME_URL}parent` })).rejects.toThrow();
-
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(
-      broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}parent/child` })
-    ).resolves.toBeTruthy();
-
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(
-      broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}`,
-        webId: 'system'
-      })
-    ).resolves.toMatchObject({
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
-      'ldp:contains': expect.arrayContaining([
-        {
-          '@id': `${CONFIG.HOME_URL}parent`,
-          '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'])
-        }
-      ])
-    });
-
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(
-      broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}parent`,
-        webId: 'system'
-      })
-    ).resolves.toMatchObject({
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
-      'ldp:contains': expect.arrayContaining([
-        {
-          '@id': `${CONFIG.HOME_URL}parent/child`,
-          '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'])
-        }
-      ])
-    });
-  });
-
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post a resource in a container', async () => {
-    resourceUri = await broker.call('ldp.container.post', {
-      containerUri: `${CONFIG.HOME_URL}resources`,
+    resourceUri = await alice.call('ldp.container.post', {
+      containerUri: containerUri,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -117,29 +56,26 @@ describe('LDP container tests', () => {
       }
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
-      broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`
+      alice.call('ldp.container.get', {
+        containerUri: containerUri
       })
     ).resolves.toMatchObject({
-      '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      id: containerUri,
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
       'ldp:contains': [
         {
-          '@id': resourceUri,
-          '@type': 'pair:Project',
+          id: resourceUri,
+          type: 'pair:Project',
           'pair:label': 'My project'
         }
       ]
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post a resource in a non-existing container', async () => {
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
-      broker.call('ldp.container.post', {
+      alice.call('ldp.container.post', {
         containerUri: `${CONFIG.HOME_URL}unknownContainer`,
         resource: {
           '@context': {
@@ -152,23 +88,19 @@ describe('LDP container tests', () => {
     ).rejects.toThrow();
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Attach a resource to a non-existing container', async () => {
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
-      broker.call('ldp.container.attach', {
+      alice.call('ldp.container.attach', {
         containerUri: `${CONFIG.HOME_URL}unknownContainer`,
         resourceUri
       })
     ).rejects.toThrow('Cannot attach to a non-existing container');
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get container with jsonContext param', async () => {
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
-      broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`,
+      alice.call('ldp.container.get', {
+        containerUri: containerUri,
         jsonContext: {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         }
@@ -177,7 +109,7 @@ describe('LDP container tests', () => {
       '@context': {
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
-      '@id': `${CONFIG.HOME_URL}resources`,
+      '@id': containerUri,
       '@type': expect.arrayContaining([
         'http://www.w3.org/ns/ldp#Container',
         'http://www.w3.org/ns/ldp#BasicContainer'
@@ -192,10 +124,9 @@ describe('LDP container tests', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get container with filters param', async () => {
-    await broker.call('ldp.container.post', {
-      containerUri: `${CONFIG.HOME_URL}resources`,
+    await alice.call('ldp.container.post', {
+      containerUri: containerUri,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -206,14 +137,13 @@ describe('LDP container tests', () => {
     });
 
     // Get without filters param
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
-      broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`
+      alice.call('ldp.container.get', {
+        containerUri: containerUri
       })
     ).resolves.toMatchObject({
-      '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      id: containerUri,
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
       'ldp:contains': expect.arrayContaining([
         expect.objectContaining({
           'pair:label': 'My project'
@@ -225,17 +155,16 @@ describe('LDP container tests', () => {
     });
 
     // Get with filters param
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
-      broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`,
+      alice.call('ldp.container.get', {
+        containerUri: containerUri,
         filters: {
           'pair:label': 'My project 2'
         }
       })
     ).resolves.toMatchObject({
-      '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      id: containerUri,
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
       'ldp:contains': [
         {
           'pair:label': 'My project 2'
@@ -244,33 +173,29 @@ describe('LDP container tests', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Get container without resources', async () => {
-    const container = await broker.call('ldp.container.get', {
-      containerUri: `${CONFIG.HOME_URL}resources`,
+    const container = await alice.call('ldp.container.get', {
+      containerUri: containerUri,
       doNotIncludeResources: true
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(container['ldp:contained']).toBeUndefined();
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Detach a resource from a container', async () => {
-    await broker.call('ldp.container.detach', {
-      containerUri: `${CONFIG.HOME_URL}resources`,
+    await alice.call('ldp.container.detach', {
+      containerUri: containerUri,
       resourceUri
     });
 
     // Project 1 should have disappeared from the container
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     await expect(
-      broker.call('ldp.container.get', {
-        containerUri: `${CONFIG.HOME_URL}resources`
+      alice.call('ldp.container.get', {
+        containerUri: containerUri
       })
     ).resolves.toMatchObject({
-      '@id': `${CONFIG.HOME_URL}resources`,
-      '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      id: containerUri,
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
       'ldp:contains': [
         {
           'pair:label': 'My project 2'
@@ -279,18 +204,15 @@ describe('LDP container tests', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Clear container', async () => {
-    await broker.call('ldp.container.clear', {
-      containerUri: `${CONFIG.HOME_URL}resources`
+    await alice.call('ldp.container.clear', {
+      containerUri: containerUri
     });
 
     // Container should now be empty
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      const container = await broker.call('ldp.container.get', { containerUri: `${CONFIG.HOME_URL}resources` });
-
-      // @ts-expect-error TS(2304): Cannot find name 'expect'.
+      const container = await alice.call('ldp.container.get', { containerUri: containerUri });
       expect(container['ldp:contains']).toHaveLength(0);
     });
   });

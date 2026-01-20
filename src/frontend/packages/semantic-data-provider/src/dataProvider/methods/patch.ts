@@ -1,10 +1,10 @@
 import { RaRecord } from 'react-admin';
 import { Generator as SparqlGenerator, Update } from 'sparqljs';
-import { Configuration, PatchParams } from '../types';
+import { PatchParams, RuntimeConfiguration } from '../types';
 
 const generator = new SparqlGenerator();
 
-const patchMethod = (config: Configuration) => async (resourceId: string, params: PatchParams<RaRecord>) => {
+const patchMethod = (config: RuntimeConfiguration) => async (resourceId: string, params: PatchParams<RaRecord>) => {
   const { httpClient } = config;
 
   const sparqlUpdate = {

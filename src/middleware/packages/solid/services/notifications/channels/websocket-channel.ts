@@ -3,6 +3,7 @@ import urlJoin from 'url-join';
 import { v4 as uuidV4 } from 'uuid';
 import { ServiceSchema } from 'moleculer';
 import NotificationChannelMixin from './notification-channel.mixin.ts';
+import { NotificationChannel } from '../../../types.ts';
 
 const WebSocketChannel2023Service = {
   name: 'solid-notifications.provider.websocket' as const,
@@ -31,7 +32,7 @@ const WebSocketChannel2023Service = {
         onConnection: (connection: any) => {
           this.logger.debug('onConnection', connection.requestUrl);
 
-          const channel = this.channels.find((c: any) => c.receiveFrom === connection.requestUrl);
+          const channel: NotificationChannel = this.channels.find((c: any) => c.receiveFrom === connection.requestUrl);
           // Check if the requested channel is registered.
           if (!channel) {
             connection.webSocket.close(404, 'Channel not found.');
@@ -55,13 +56,13 @@ const WebSocketChannel2023Service = {
     });
   },
   methods: {
-    onChannelDeleted(channel) {
+    onChannelDeleted(channel: NotificationChannel) {
       // Close open connections (is removed from array on close event).
       this.socketConnections
         .filter((socketConnection: any) => socketConnection.requestUrl === channel.receiveFrom)
         .forEach((connection: any) => connection.webSocket.close(1001, 'The channel was deleted.'));
     },
-    onEvent(channel, activity) {
+    onEvent(channel: NotificationChannel, activity: any) {
       const message = JSON.stringify({
         ...activity,
         published: new Date().toISOString()

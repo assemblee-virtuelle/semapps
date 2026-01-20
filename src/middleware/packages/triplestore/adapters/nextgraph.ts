@@ -1,6 +1,8 @@
 import ng from 'nextgraph';
+import fs from 'fs';
+import { join as pathJoin } from 'path';
 import { SparqlJsonParser } from 'sparqljson-parse';
-import { BaseAdapter } from './base.ts';
+import { AdapterInterface, BaseAdapter } from './base.ts';
 
 type NextGraphAdapterSettings = {
   serverPeerId: string; // The server peer id, is provided in the console of the NextGraph server
@@ -9,12 +11,29 @@ type NextGraphAdapterSettings = {
   serverAddr: string; // The server address, can be retrieved using the console of the NextGraph server
   adminUserId: string; // The admin user id, must be saved when first creating the user
   mappingsNuri: string; // The mappings nuri, must be saved when first creating the document
+  backupsPath?: string; // Path to store backups
 };
 
-export default class NextGraphAdapter extends BaseAdapter {
+type Session = {
+  session_id: number;
+  user: string;
+  private_store_id: string;
+  protected_store_id: string;
+  public_store_id: string;
+};
+
+type DatasetMetadata = {
+  mappingUri: string;
+  userId: string;
+  wacGraph: string;
+};
+
+const openSessions: { [dataset: string]: Session } = {};
+
+export default class NextGraphAdapter extends BaseAdapter implements AdapterInterface {
   name = 'nextgraph';
 
-  private settings: { adminUserId: string; mappingsNuri: string };
+  private settings: { adminUserId: string; mappingsNuri: string; backupsPath?: string };
 
   private adminSessionid: string = '';
 
@@ -41,8 +60,10 @@ export default class NextGraphAdapter extends BaseAdapter {
 
     this.settings = {
       adminUserId: settings.adminUserId,
-      mappingsNuri: settings.mappingsNuri
+      mappingsNuri: settings.mappingsNuri,
+      backupsPath: settings.backupsPath
     };
+
     this.sparqlJsonParser = new SparqlJsonParser();
   }
 
@@ -54,9 +75,11 @@ export default class NextGraphAdapter extends BaseAdapter {
     try {
       // Initialize the nextgraph backend in headless mode
       await ng.init_headless(this.sdkConfig);
+
       // Start a session for the admin user (used to manage datasets)
       const session = await ng.session_headless_start(this.settings.adminUserId);
       this.adminSessionid = session.session_id;
+
       this.getLogger().info(`NextGraph adapter initialized. Admin session started with id: ${this.adminSessionid}`);
     } catch (error) {
       throw new Error(`NextGraph adapter initialization failed: ${error}`);
@@ -64,9 +87,8 @@ export default class NextGraphAdapter extends BaseAdapter {
   }
 
   async query(dataset: string, query: string) {
-    let session;
     try {
-      session = await this.openSession(dataset);
+      const session = await this.openOrGetSession(dataset);
       const result = await ng.sparql_query(session.session_id, query);
 
       const regex = /(CONSTRUCT|SELECT|ASK).*/gm;
@@ -85,86 +107,79 @@ export default class NextGraphAdapter extends BaseAdapter {
       }
     } catch (error) {
       throw new Error(`NextGraph query failed: ${error}\nQuery: ${query}\nDataset: ${dataset}`);
-    } finally {
-      this.closeSession(session);
     }
   }
 
   async update(dataset: any, query: string) {
-    let session;
     try {
-      session = await this.openSession(dataset);
+      const session = await this.openOrGetSession(dataset);
       await ng.sparql_update(session.session_id, query);
     } catch (error) {
       throw new Error(`NextGraph update failed: ${error}\nQuery: ${query}\nDataset: ${dataset}`);
-    } finally {
-      this.closeSession(session);
-    }
-  }
-
-  async dropAll(dataset: string): Promise<void> {
-    let session: any;
-    try {
-      session = await this.openSession(dataset);
-      // TODO : Check if there is a drop statement in nextgraph to use instead of DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }
-      return await ng.sparql_update(session.session_id, 'DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }');
-    } catch (error) {
-      throw new Error(`NextGraph dropAll failed: ${error}\nDataset: ${dataset}`);
-    } finally {
-      this.closeSession(session);
     }
   }
 
   async createDataset(dataset: string) {
     try {
+      // Create user
+
       const userId = await ng.admin_create_user(this.sdkConfig);
-      // TODO: see about logger
+
       this.getLogger().info(`NextGraph user created for dataset ${dataset} with user id : ${userId}`);
+
+      // Create WAC document
+
+      const session: Session = await ng.session_headless_start(userId);
+
+      const protectedRepoId = session.protected_store_id.substring(2, 46);
+
+      const wacDocumentUri = await ng.doc_create(
+        session.session_id,
+        'Graph',
+        'data:graph',
+        'store',
+        'protected',
+        protectedRepoId
+      );
+
+      this.getLogger().info(`NextGraph user created for dataset ${dataset} with user id : ${userId}`);
+
+      // Store the user and WAC document IDs in mappings document
 
       const mappingUri = `http://semapps.org/mappings/${encodeURIComponent(dataset)}`;
 
       await ng.sparql_update(
         this.adminSessionid,
         `
-        PREFIX semapps: <http://semapps.org/ns/core#>
-        INSERT DATA { 
-          GRAPH <${this.settings.mappingsNuri}> { 
-            <${mappingUri}> 
-              a semapps:Dataset ;
-              semapps:name "${dataset}" ;
-              semapps:value "${userId}" .
-          } 
-        }
-      `
+          PREFIX semapps: <http://semapps.org/ns/core#>
+          INSERT DATA { 
+            GRAPH <${this.settings.mappingsNuri}> { 
+              <${mappingUri}> 
+                a semapps:Dataset ;
+                semapps:name "${dataset}" ;
+                semapps:userId "${userId}" ;
+                semapps:wacGraph "${wacDocumentUri}" .
+            } 
+          }
+        `
       );
+
       this.getLogger().info(`Mapping created for dataset ${dataset} with mapping uri : ${mappingUri}`);
     } catch (error) {
       throw new Error(`NextGraph createDataset failed: ${error}\nDataset: ${dataset}`);
     }
   }
 
-  async datasetExists(dataset: string): Promise<boolean> {
+  async datasetExists(dataset: string) {
     try {
-      const response = await ng.sparql_query(
-        this.adminSessionid,
-        `
-        PREFIX semapps: <http://semapps.org/ns/core#>
-        SELECT ?userId WHERE {
-          GRAPH <${this.settings.mappingsNuri}> {
-            ?mapping a semapps:Dataset ;
-              semapps:name "${dataset}" ;
-              semapps:value ?userId .
-          }
-        }
-      `
-      );
-      return response && response.results && response.results.bindings && response.results.bindings.length > 0;
+      const datasetMetadata = await this.getDatasetMetadata(dataset);
+      return !!datasetMetadata;
     } catch (error) {
       throw new Error(`NextGraph datasetExists failed: ${error}\nDataset: ${dataset}`);
     }
   }
 
-  async listDatasets(): Promise<string[]> {
+  async listDatasets() {
     try {
       const response = await ng.sparql_query(
         this.adminSessionid,
@@ -173,7 +188,7 @@ export default class NextGraphAdapter extends BaseAdapter {
         SELECT ?datasetName WHERE {
           GRAPH <${this.settings.mappingsNuri}> {
             ?mapping a semapps:Dataset ;
-              semapps:name ?datasetName .
+            semapps:name ?datasetName .
           }
         }
       `
@@ -184,49 +199,28 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async deleteDataset(dataset: string): Promise<void> {
+  async deleteDataset(dataset: string) {
     try {
-      // First, check if the mapping exists
-      const checkResponse = await ng.sparql_query(
-        this.adminSessionid,
-        `
-          PREFIX semapps: <http://semapps.org/ns/core#>
-          
-          SELECT ?mapping ?userId WHERE {
-            GRAPH <${this.settings.mappingsNuri}> {
-              ?mapping a semapps:Dataset ;
-                semapps:name "${dataset}" ;
-                semapps:value ?userId .
-            }
-          }
-        `
-      );
+      const datasetMetadata = await this.getDatasetMetadata(dataset);
 
-      if (!(checkResponse.results.bindings.length > 0)) {
+      if (!datasetMetadata) {
         this.getLogger().warn(`Nextgraph delete dataset : No nextgraph mapping found for dataset: ${dataset}`);
         return; // Nothing to delete
       }
-
-      const mappingUri = checkResponse.results.bindings[0].mapping.value;
-      const userId = checkResponse.results.bindings[0].userId.value;
 
       // Delete the mapping from the graph
       await ng.sparql_update(
         this.adminSessionid,
         `
-        PREFIX semapps: <http://semapps.org/ns/core#>
-        
-        DELETE DATA { 
-          GRAPH <${this.settings.mappingsNuri}> { 
-            <${mappingUri}> 
-              a semapps:Dataset ;
-              semapps:name "${dataset}" ;
-              semapps:value "${userId}" .
-          } 
-        }
-      `
+          PREFIX semapps: <http://semapps.org/ns/core#>
+          DELETE WHERE { 
+            GRAPH <${this.settings.mappingsNuri}> { 
+              <${datasetMetadata.mappingUri}> ?p ?o .
+            } 
+          }
+        `
       );
-      this.getLogger().info(`Successfully deleted mapping for dataset: ${dataset} (userId: ${userId})`);
+      this.getLogger().info(`Successfully deleted mapping for dataset: ${dataset} (userId: ${datasetMetadata.userId})`);
 
       // TODO : See with Niko about user deletion in nextgraph then if possible delete the actual user
     } catch (error) {
@@ -234,27 +228,90 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async backupDataset(dataset: string): Promise<void> {
-    throw new Error('Backup not implemented for NextGraph');
+  async clearDataset(dataset: string) {
+    try {
+      const session = await this.openOrGetSession(dataset);
+
+      // Delete all triples in all documents
+      await ng.sparql_update(session.session_id, 'DELETE WHERE { GRAPH ?g { ?s ?p ?o } }');
+
+      // TODO Delete also the documents when the method will be available
+    } catch (error) {
+      throw new Error(`NextGraph dropAll failed: ${error}\nDataset: ${dataset}`);
+    }
   }
 
-  async createNamedGraph(dataset: string, graphUri?: string): Promise<string> {
-    if (graphUri) {
-      throw new Error('Explicit graph URI is not supported for NextGraph');
-    }
-    let session;
+  async backupDataset(dataset: string) {
     try {
-      session = await this.openSession(dataset);
+      if (!this.settings.backupsPath)
+        throw new Error('The backupsPath setting is required in the NextGraph adapter if you want to backup data');
+
+      fs.mkdirSync(this.settings.backupsPath, { recursive: true, mode: 0o777 });
+
+      const session = await this.openOrGetSession(dataset);
+
+      const dump = await ng.rdf_dump(session.session_id);
+
+      // Add a dot at the end of each line, to have a valid N-Quads format
+      const dumpWithTrailingDots = dump
+        .split(/\n/)
+        .map(line => `${line} .`)
+        .join('\n');
+
+      fs.writeFileSync(pathJoin(this.settings.backupsPath, `${dataset}.nq`), dumpWithTrailingDots);
+
+      // const mappingsDump = await ng.rdf_dump(this.adminSessionid);
+      // fs.writeFileSync(pathJoin(this.settings.backupsPath, 'mappings.nq'), mappingsDump);
+    } catch (error) {
+      throw new Error(`NextGraph backupDataset failed: ${error}\nDataset: ${dataset}`);
+    }
+  }
+
+  async getWacGraph(dataset: string) {
+    const datasetMetadata = await this.getDatasetMetadata(dataset);
+    return datasetMetadata?.wacGraph;
+  }
+
+  private async getDatasetMetadata(dataset: string): Promise<DatasetMetadata | void> {
+    try {
+      const response = await ng.sparql_query(
+        this.adminSessionid,
+        `
+          PREFIX semapps: <http://semapps.org/ns/core#>
+          SELECT ?mappingUri ?userId ?wacGraph WHERE {
+            GRAPH <${this.settings.mappingsNuri}> {
+              ?mappingUri a semapps:Dataset ;
+                semapps:name "${dataset}" ;
+                semapps:userId ?userId ;
+                semapps:wacGraph ?wacGraph .
+            }
+          }
+        `
+      );
+
+      if (response.results.bindings.length > 0) {
+        return {
+          mappingUri: response.results.bindings[0].mappingUri.value,
+          userId: response.results.bindings[0].userId.value,
+          wacGraph: response.results.bindings[0].wacGraph.value
+        };
+      }
+    } catch (error) {
+      throw new Error(`NextGraph getDatasetMetadata failed: ${error}\nDataset: ${dataset}`);
+    }
+  }
+
+  async createNamedGraph(dataset: string) {
+    try {
+      const session = await this.openOrGetSession(dataset);
       const protectedRepoId = session.protected_store_id.substring(2, 46);
       return await ng.doc_create(session.session_id, 'Graph', 'data:graph', 'store', 'protected', protectedRepoId);
     } catch (error) {
       throw new Error(`NextGraph createNamedGraph failed: ${error}\nDataset: ${dataset}`);
-    } finally {
-      this.closeSession(session);
     }
   }
 
-  async namedGraphExists(dataset: string, graphUri: string): Promise<boolean> {
+  async namedGraphExists(dataset: string, graphUri: string) {
     try {
       await this.query(dataset, `ASK { GRAPH <${graphUri}> { ?s ?p ?o } }`);
       return true;
@@ -267,48 +324,29 @@ export default class NextGraphAdapter extends BaseAdapter {
     }
   }
 
-  async clearNamedGraph(dataset: string, graphUri: string): Promise<void> {
-    let session;
+  async clearNamedGraph(dataset: string, graphUri: string) {
     try {
-      session = await this.openSession(dataset);
+      const session = await this.openOrGetSession(dataset);
       await ng.sparql_update(session.session_id, 'DELETE WHERE { ?s ?p ?o }', graphUri);
     } catch (error) {
       throw new Error(`NextGraph clearNamedGraph failed: ${error}\nDataset: ${dataset}\nGraph URI: ${graphUri}`);
-    } finally {
-      this.closeSession(session);
     }
-    // await ng.sparql_update(session_id, "DELETE WHERE { ?s ?p ?o }", nuri);
-    // await this.update(dataset, `DELETE { ?s ?p ?o } WHERE { GRAPH <${graphUri}> { ?s ?p ?o } }`);
-    // throw new Error('Clear named graph not implemented for NextGraph');
   }
 
   async deleteNamedGraph(dataset: string, graphUri: string): Promise<void> {
-    let session;
-    try {
-      session = await this.openSession(dataset);
-      await ng.sparql_update(session.session_id, `DROP GRAPH <${graphUri}>`);
-    } catch (error) {
-      throw new Error(`NextGraph deleteNamedGraph failed: ${error}\nDataset: ${dataset}\nGraph URI: ${graphUri}`);
-    } finally {
-      this.closeSession(session);
-    }
+    // TODO Delete document when the method will be available
+    await this.clearNamedGraph(dataset, graphUri);
   }
 
-  async openSession(dataset: string) {
+  async openOrGetSession(dataset: string): Promise<Session> {
     try {
-      const userId = await this.getUserIdForDataset(dataset);
-      const session = await ng.session_headless_start(userId);
-      return session;
+      if (!openSessions[dataset]) {
+        const userId = await this.getUserIdForDataset(dataset);
+        openSessions[dataset] = await ng.session_headless_start(userId);
+      }
+      return openSessions[dataset];
     } catch (error) {
       throw new Error(`NextGraph openSession failed: ${error}`);
-    }
-  }
-
-  async closeSession(session: any) {
-    try {
-      await ng.session_headless_stop(session.session_id, true);
-    } catch (error) {
-      throw new Error(`NextGraph closeSession failed: ${error}`);
     }
   }
 
@@ -322,7 +360,7 @@ export default class NextGraphAdapter extends BaseAdapter {
           GRAPH <${this.settings.mappingsNuri}> {
             ?mapping a semapps:Dataset ;
               semapps:name "${dataset}" ;
-              semapps:value ?userId .
+              semapps:userId ?userId .
           }
         }
       `
@@ -337,13 +375,18 @@ export default class NextGraphAdapter extends BaseAdapter {
   }
 
   async cleanup() {
-    if (this.adminSessionid) {
-      try {
-        await ng.session_headless_stop(this.adminSessionid, true);
-        this.getLogger().info('NextGraph adapter cleaned up');
-      } catch (error) {
-        throw new Error(`NextGraph cleanup failed: ${error}`);
+    try {
+      for (const [dataset, session] of Object.entries(openSessions)) {
+        await ng.session_headless_stop(session.session_id, true);
+        delete openSessions[dataset];
       }
+
+      // We can't close the admin session because it is started in init, which is called only on creation
+      // if (this.adminSessionid) await ng.session_headless_stop(this.adminSessionid, true);
+
+      this.getLogger().info('NextGraph adapter cleaned up');
+    } catch (error) {
+      throw new Error(`NextGraph cleanup failed: ${error}`);
     }
   }
 }

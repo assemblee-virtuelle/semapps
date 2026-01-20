@@ -1,6 +1,5 @@
 import sparqljsModule from 'sparqljs';
 import { ServiceSchema, Errors } from 'moleculer';
-import dropAll from './actions/dropAll.ts';
 import insert from './actions/insert.ts';
 import query from './actions/query.ts';
 import update from './actions/update.ts';
@@ -21,14 +20,12 @@ const TripleStoreService = {
     namedGraph: {}
   },
   dependencies: ['jsonld.parser'],
-
   async created() {
     const { dataset, namedGraph, adapter, defaultDataset } = this.settings;
 
-    if (!adapter) {
-      throw new Error('Adapter is required');
-    }
-    // Initialize the adapter with
+    if (!adapter) throw new Error('Adapter is required');
+
+    // Initialize the adapter with the broker
     await adapter.init({ broker: this.broker });
 
     // Create subservices
@@ -55,22 +52,17 @@ const TripleStoreService = {
       });
     }
   },
-
   started() {
     this.sparqlGenerator = new SparqlGenerator({});
   },
-
   stopped() {
     this.settings.adapter.cleanup();
   },
-
   actions: {
     insert,
     update,
-    query,
-    dropAll
+    query
   },
-
   methods: {
     generateSparqlQuery(query) {
       try {

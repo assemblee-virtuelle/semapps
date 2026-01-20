@@ -33,7 +33,6 @@ const AuthorizerBotSchema = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         for (const rule of this.settings.rules) {
           if (this.matchRule(rule, newData)) {
@@ -64,7 +63,6 @@ const AuthorizerBotSchema = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData, oldData } = ctx.params;
 
         for (const rule of this.settings.rules) {

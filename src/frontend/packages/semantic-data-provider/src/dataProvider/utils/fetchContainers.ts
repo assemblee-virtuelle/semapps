@@ -1,7 +1,7 @@
 import jsonld, { ContextDefinition } from 'jsonld';
 import { GetListParams } from 'react-admin';
 import arrayOf from './arrayOf';
-import { Configuration, Container, DataServerKey } from '../types';
+import { Configuration, Container, DataServerKey, RuntimeConfiguration } from '../types';
 import fetchSelectedResources from './fetchSelectedResources';
 
 type LDPContainerType = 'ldp:Container' | 'ldp:BasicContainer';
@@ -44,7 +44,7 @@ const isObject = (val: any) => {
   return val != null && typeof val === 'object' && !Array.isArray(val);
 };
 
-const fetchContainers = async (containers: Container[], params: GetListParams, config: Configuration) => {
+const fetchContainers = async (containers: Container[], params: GetListParams, config: RuntimeConfiguration) => {
   const { httpClient, jsonContext } = config;
 
   // Fetch simultaneously all containers
@@ -65,7 +65,7 @@ const fetchContainers = async (containers: Container[], params: GetListParams, c
         }
 
         return arrayOf(json['ldp:contains']).map<LDPResource>(resource => ({
-          '@context': json['@context'],
+          '@context': json['@context'], // TODO: Can it be that resources have a @context set already or is this prohibited by the ldp spec?
           ...resource
         }));
       })
@@ -150,9 +150,12 @@ const fetchContainers = async (containers: Container[], params: GetListParams, c
   // Sorting
   if (params.sort) {
     resources = resources.sort((a, b) => {
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       if (params.sort.order === 'ASC') {
+        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
         return (a[params.sort.field] ?? '').localeCompare(b[params.sort.field] ?? '');
       }
+      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
       return (b[params.sort.field] ?? '').localeCompare(a[params.sort.field] ?? '');
     });
   }

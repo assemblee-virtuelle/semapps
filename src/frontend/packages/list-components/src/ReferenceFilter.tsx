@@ -36,6 +36,7 @@ type CounterProps = {
 
 const ReferenceFilterCounter: FunctionComponent<CounterProps> = ({ source, id }) => {
   const resourceContext = useResourceContext();
+  // @ts-expect-error TS(2345): Argument of type 'ResourceContextValue' is not ass... Remove this comment to see the full error message
   const { data } = useGetList<RaRecord>(resourceContext, { pagination: { page: 1, perPage: Infinity } });
 
   return (

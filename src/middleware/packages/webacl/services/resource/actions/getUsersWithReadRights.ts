@@ -1,7 +1,7 @@
 import { arrayOf } from '@semapps/ldp';
 import { ActionSchema } from 'moleculer';
 
-export const action = {
+const GetUsersWithReadRightsAction = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' }
@@ -10,8 +10,9 @@ export const action = {
     const { resourceUri } = ctx.params;
 
     const authorizations = await this.actions.getRights({ resourceUri, webId: 'system' }, { parentCtx: ctx });
+
     const readAuthorization =
-      authorizations['@graph'] && authorizations['@graph'].find((auth: any) => auth['@id'] === '#Read');
+      authorizations['@graph'] && authorizations['@graph'].find((auth: any) => auth['@id'].endsWith('#Read'));
 
     let usersWithReadRights = [];
 
@@ -20,7 +21,7 @@ export const action = {
       const groupsWithReadRights = arrayOf(readAuthorization['acl:agentGroup']);
 
       for (const groupUri of groupsWithReadRights) {
-        const members = await ctx.call('webacl.group.getMembers', { groupUri, webId: 'system' });
+        const members: string[] = await ctx.call('webacl.group.getMembers', { groupUri, webId: 'system' });
         if (members) usersWithReadRights.push(...members);
       }
     }
@@ -29,3 +30,5 @@ export const action = {
     return [...new Set(usersWithReadRights)];
   }
 } satisfies ActionSchema;
+
+export default GetUsersWithReadRightsAction;

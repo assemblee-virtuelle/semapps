@@ -1,9 +1,10 @@
 import { ActionSchema } from 'moleculer';
+import { TypeRegistration } from '@semapps/solid';
 
 /**
- * Find the container options for a container URI
+ * Find the registration for a container or resource URI
  */
-const Schema = {
+const GetByUriAction = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string', optional: true },
@@ -16,25 +17,31 @@ const Schema = {
       throw new Error('The param containerUri or resourceUri must be provided to ldp.registry.getByUri');
     }
 
-    if (!containerUri) {
-      const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
-      containerUri = containers[0];
+    let typeRegistration: TypeRegistration = await ctx.call('type-index.getByUri', {
+      uri: containerUri || resourceUri,
+      isContainer: !!containerUri
+    });
+
+    // If this a resource, check if its container is registered
+    if (!typeRegistration && resourceUri) {
+      [containerUri] = await ctx.call('ldp.resource.getContainers', { resourceUri });
+
+      if (containerUri) {
+        typeRegistration = await ctx.call('type-index.getByUri', { uri: containerUri, isContainer: true });
+      }
     }
 
-    if (containerUri) {
-      const basePath = await ctx.call('ldp.getBasePath');
-      const path = new URL(containerUri).pathname.replace(basePath, '/');
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-      const registeredContainers = await this.actions.list({}, { parentCtx: ctx });
-      const containerOptions =
-        // @ts-expect-error TS(18046): 'container' is of type 'unknown'.
-        Object.values(registeredContainers).find(container => container.pathRegex.test(path)) || {};
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-      return { ...this.settings.defaultOptions, ...containerOptions };
+    if (typeRegistration) {
+      const registration = await this.actions.getByTypes(
+        { types: typeRegistration.types, isPrivate: typeRegistration.isPrivate },
+        { parentCtx: ctx }
+      );
+
+      return { ...this.settings.defaultOptions, ...registration };
+    } else {
+      return this.settings.defaultOptions;
     }
-    // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
-    return this.settings.defaultOptions;
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default GetByUriAction;

@@ -1,55 +1,56 @@
-import urlJoin from 'url-join';
 import fetch from 'node-fetch';
-import { fetchServer } from '../utils.ts';
+import { ServiceBroker } from 'moleculer';
+import { createAccount, dropAllDatasets } from '../utils.ts';
 import initialize from './initialize.ts';
-import * as CONFIG from '../config.ts';
 
-// @ts-expect-error TS(2304): Cannot find name 'jest'.
-jest.setTimeout(50000);
-let broker: any;
+jest.setTimeout(70000);
+
+let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
-  broker = await initialize(3000, 'testData', 'settings');
+  await dropAllDatasets();
+  broker = await initialize(1);
+  await broker.start();
+  alice = await createAccount(broker, 'alice');
 });
 
 afterAll(async () => {
-  if (broker) await broker.stop();
+  await broker.stop();
 });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
 describe('Collections API', () => {
   const items: any = [];
-  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-  const collectionsContainersUri = urlJoin(CONFIG.HOME_URL, 'as/collection');
+  let collectionsContainersUri: string;
   let collectionUri: any;
   let localContext: any;
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
-  test('Create ressources', async () => {
+  test('Create resources', async () => {
+    const notesContainerUri = await alice.getContainerUri('as:Note');
+
     for (let i = 0; i < 10; i++) {
       items.push(
-        await broker.call('ldp.container.post', {
-          // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-          containerUri: urlJoin(CONFIG.HOME_URL, 'as/object'),
+        await alice.call('ldp.container.post', {
+          containerUri: notesContainerUri,
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
             '@type': 'Note',
             name: `Note #${i}`,
-            content: `Contenu de ma note #${i}`,
+            content: `Content of my note #${i}`,
             published: `2021-01-0${i}T00:00:00.000Z`
           }
         })
       );
     }
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(items).toHaveLength(10);
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Create collection', async () => {
-    localContext = await broker.call('jsonld.context.get');
+    localContext = await alice.call('jsonld.context.get');
 
-    const { headers } = await fetchServer(collectionsContainersUri, {
+    collectionsContainersUri = await alice.call('activitypub.collection.waitForContainerCreation');
+
+    const { headers } = await alice.fetch(collectionsContainersUri, {
       method: 'POST',
       body: {
         '@context': localContext,
@@ -60,11 +61,9 @@ describe('Collections API', () => {
 
     collectionUri = headers.get('Location');
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(collectionUri).not.toBeNull();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(fetchServer(collectionUri)).resolves.toMatchObject({
+    await expect(alice.fetch(collectionUri)).resolves.toMatchObject({
       json: {
         id: collectionUri,
         type: 'Collection',
@@ -74,9 +73,8 @@ describe('Collections API', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Add item to collection', async () => {
-    await fetchServer(collectionUri, {
+    const { status } = await alice.fetch(collectionUri, {
       method: 'PATCH',
       headers: new fetch.Headers({
         'Content-Type': 'application/sparql-update'
@@ -87,8 +85,9 @@ describe('Collections API', () => {
       `
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(fetchServer(collectionUri)).resolves.toMatchObject({
+    expect(status).toBe(204);
+
+    await expect(alice.fetch(collectionUri)).resolves.toMatchObject({
       json: {
         id: collectionUri,
         type: 'Collection',
@@ -99,9 +98,8 @@ describe('Collections API', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Remove item from collection', async () => {
-    await fetchServer(collectionUri, {
+    const { status } = await alice.fetch(collectionUri, {
       method: 'PATCH',
       headers: new fetch.Headers({
         'Content-Type': 'application/sparql-update'
@@ -112,8 +110,9 @@ describe('Collections API', () => {
       `
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(fetchServer(collectionUri)).resolves.toMatchObject({
+    expect(status).toBe(204);
+
+    await expect(alice.fetch(collectionUri)).resolves.toMatchObject({
       json: {
         id: collectionUri,
         type: 'Collection',
@@ -123,9 +122,8 @@ describe('Collections API', () => {
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Paginated collection', async () => {
-    const { headers } = await fetchServer(collectionsContainersUri, {
+    const { headers } = await alice.fetch(collectionsContainersUri, {
       method: 'POST',
       body: {
         '@context': localContext,
@@ -135,59 +133,68 @@ describe('Collections API', () => {
       }
     });
 
-    const paginatedCollectionUri = headers.get('Location');
+    const paginatedCollectionUri: string = headers.get('Location')!;
 
     // Add all items to the collection
-    await fetchServer(paginatedCollectionUri, {
+    const { status } = await alice.fetch(paginatedCollectionUri, {
       method: 'PATCH',
       headers: new fetch.Headers({
         'Content-Type': 'application/sparql-update'
       }),
       body: `
         PREFIX as: <https://www.w3.org/ns/activitystreams#>
-        INSERT DATA { <${paginatedCollectionUri}> as:items ${items.map((item: any) => `<${item}>`).join(', ')} . };
+        INSERT DATA { 
+          <${paginatedCollectionUri}> as:items ${items.map((item: string) => `<${item}>`).join(', ')}
+        };
       `
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(fetchServer(paginatedCollectionUri)).resolves.toMatchObject({
-      json: {
-        id: paginatedCollectionUri,
-        type: 'Collection',
-        summary: 'My paginated collection',
-        'semapps:dereferenceItems': false,
-        'semapps:itemsPerPage': 4,
-        first: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[9])}`,
-        last: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[0])}`
-      }
+    expect(status).toBe(204);
+
+    const { json: paginatedCollection } = await alice.fetch(paginatedCollectionUri);
+
+    expect(paginatedCollection).toMatchObject({
+      id: paginatedCollectionUri,
+      type: 'Collection',
+      summary: 'My paginated collection',
+      'semapps:dereferenceItems': false,
+      'semapps:itemsPerPage': 4,
+      first: expect.anything(),
+      last: expect.anything()
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(
-      fetchServer(`${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[9])}`)
-    ).resolves.toMatchObject({
-      json: {
-        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[9])}`,
-        type: 'CollectionPage',
-        partOf: paginatedCollectionUri,
-        next: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[5])}`,
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
-        items: expect.arrayContaining([items[9], items[8], items[7], items[6]])
-      }
+    const { json: firstPage } = await alice.fetch(paginatedCollection.first);
+
+    expect(firstPage).toMatchObject({
+      id: paginatedCollection.first,
+      type: 'CollectionPage',
+      partOf: paginatedCollectionUri,
+      next: expect.anything()
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(
-      fetchServer(`${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[1])}`)
-    ).resolves.toMatchObject({
-      json: {
-        id: `${paginatedCollectionUri}?afterEq=${encodeURIComponent(items[1])}`,
-        type: 'CollectionPage',
-        partOf: paginatedCollectionUri,
-        prev: `${paginatedCollectionUri}?beforeEq=${encodeURIComponent(items[2])}`,
-        // @ts-expect-error TS(2304): Cannot find name 'expect'.
-        items: expect.arrayContaining([items[1], items[0]])
-      }
+    expect(firstPage.items).toHaveLength(4);
+
+    const { json: secondPage } = await alice.fetch(firstPage.next);
+
+    expect(secondPage).toMatchObject({
+      type: 'CollectionPage',
+      partOf: paginatedCollectionUri,
+      next: expect.anything(),
+      prev: expect.anything()
     });
+
+    expect(secondPage.items).toHaveLength(4);
+
+    const { json: thirdPage } = await alice.fetch(secondPage.next);
+
+    expect(thirdPage).toMatchObject({
+      type: 'CollectionPage',
+      partOf: paginatedCollectionUri,
+      prev: expect.anything()
+    });
+
+    // Last page should contain only 2 items (4+4+2)
+    expect(thirdPage.next).toBeUndefined();
+    expect(thirdPage.items).toHaveLength(2);
   });
 });

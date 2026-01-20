@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import { ServiceSchema } from 'moleculer';
 import NotificationChannelMixin from './notification-channel.mixin.ts';
+import { NotificationChannel } from '../../../types.ts';
 
 const queueOptions =
   process.env.NODE_ENV === 'test'
@@ -38,14 +39,17 @@ const WebhookChannel2023Service = {
       async handler(ctx) {
         const { appUri, webId } = ctx.params;
         const { origin: appOrigin } = new URL(appUri);
-        return this.channels.filter((c: any) => c.webId === webId && c.sendTo.startsWith(appOrigin));
+        return this.channels.filter((c: NotificationChannel) => c.webId === webId && c.sendTo.startsWith(appOrigin));
       }
     },
 
     deleteAppChannels: {
       async handler(ctx) {
         const { appUri, webId } = ctx.params;
-        const appChannels = await this.actions.getAppChannels({ appUri, webId }, { parentCtx: ctx });
+        const appChannels: NotificationChannel[] = await this.actions.getAppChannels(
+          { appUri, webId },
+          { parentCtx: ctx }
+        );
         for (const appChannel of appChannels) {
           await this.actions.delete({ resourceUri: appChannel.id, webId: appChannel.webId });
         }
@@ -53,7 +57,7 @@ const WebhookChannel2023Service = {
     }
   },
   methods: {
-    onEvent(channel, activity) {
+    onEvent(channel: NotificationChannel, activity) {
       this.createJob('webhookPost', channel.sendTo, { channel, activity }, queueOptions);
     }
   },
@@ -61,7 +65,7 @@ const WebhookChannel2023Service = {
     webhookPost: {
       name: '*',
       async process(job: any) {
-        const { channel, activity } = job.data;
+        const { channel, activity }: { channel: NotificationChannel; activity: any } = job.data;
 
         try {
           const response = await fetch(channel.sendTo, {

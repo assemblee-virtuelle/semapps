@@ -10,11 +10,9 @@ FILES="$@"
 
 ROOT_DIR=$(git rev-parse --show-toplevel)
 
-MIDDLEWARE_FILES="$(echo "$FILES" | grep -E "src/middleware" | xargs -r realpath | sed 's/.*/"&"/')"
-FRONTEND_FILES="$(echo "$FILES" | grep -E "src/frontend" | xargs -r realpath | sed 's/.*/"&"/')"
+MIDDLEWARE_FILES="$(echo "$FILES" | grep -E "src/middleware" | grep -v '/dist/' | xargs -r realpath | sed 's/.*/"&"/')"
+FRONTEND_FILES="$(echo "$FILES" | grep -E "src/frontend" | grep -v '/dist/' | xargs -r realpath | sed 's/.*/"&"/')"
 
-
-# Run prettier on all given files.
 cd "$ROOT_DIR"/src/middleware
 echo "$MIDDLEWARE_FILES" | xargs npx prettier --write --ignore-unknown
 cd "$ROOT_DIR"/src/frontend

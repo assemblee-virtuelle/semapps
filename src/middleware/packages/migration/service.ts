@@ -1,8 +1,7 @@
 import { getAclUriFromResourceUri } from '@semapps/webacl';
-import { getContainerFromUri } from '@semapps/ldp';
 import { ServiceSchema } from 'moleculer';
 
-const MigrationSchema = {
+const MigrationService = {
   name: 'migration' as const,
   settings: {
     baseUrl: undefined
@@ -36,76 +35,47 @@ const MigrationSchema = {
       }
     },
 
-    moveResourcesToContainer: {
+    updateReferences: {
       async handler(ctx) {
-        const { oldContainerUri, newContainerUri, dataset } = ctx.params;
+        const { oldUri, newUri, dataset } = ctx.params;
 
-        const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri: oldContainerUri });
+        this.logger.info(`Updating references from ${oldUri} to ${newUri}...`);
 
-        for (let oldResourceUri of resourcesUris) {
-          const newResourceUri = oldResourceUri.replace(oldContainerUri, newContainerUri);
-
-          await this.actions.moveResource({ oldResourceUri, newResourceUri, dataset }, { parentCtx: ctx });
-
-          this.logger.info(
-            `All resources moved. You should consider deleting the old container with this command: call ldp.container.delete --containerUri ${oldContainerUri} --webId system`
-          );
-        }
-      }
-    },
-
-    moveResource: {
-      async handler(ctx) {
-        const { oldResourceUri, newResourceUri, dataset } = ctx.params;
-
-        this.logger.info(`Moving resource ${oldResourceUri} to ${newResourceUri}...`);
-
+        // Change all references in default graph
         await ctx.call('triplestore.update', {
           query: `
-            DELETE { <${oldResourceUri}> ?p ?o  }
-            INSERT { <${newResourceUri}> ?p ?o }
-            WHERE { <${oldResourceUri}> ?p ?o }
+            DELETE { ?s ?p <${oldUri}> }
+            INSERT { ?s ?p <${newUri}> }
+            WHERE { ?s ?p <${oldUri}> }
           `,
           dataset,
           webId: 'system'
         });
 
+        // Change all references in named graphs
         await ctx.call('triplestore.update', {
           query: `
-            DELETE { ?s ?p <${oldResourceUri}> }
-            INSERT { ?s ?p <${newResourceUri}> }
-            WHERE { ?s ?p <${oldResourceUri}> }
+            DELETE { GRAPH ?g { ?s ?p <${oldUri}> } }
+            INSERT { GRAPH ?g { ?s ?p <${newUri}> } }
+            WHERE { GRAPH ?g { ?s ?p <${oldUri}> } }
           `,
           dataset,
           webId: 'system'
         });
 
+        // Change all references in WebACL graph
         await ctx.call('triplestore.update', {
           query: `
-            WITH <http://semapps.org/webacl>
-            DELETE { ?s ?p <${oldResourceUri}> }
-            INSERT { ?s ?p <${newResourceUri}> }
-            WHERE { ?s ?p <${oldResourceUri}> }
+            WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
+            DELETE { ?s ?p <${oldUri}> }
+            INSERT { ?s ?p <${newUri}> }
+            WHERE { ?s ?p <${oldUri}> }
           `,
           dataset,
           webId: 'system'
         });
 
-        const oldContainerUri = getContainerFromUri(oldResourceUri);
-        const newContainerUri = getContainerFromUri(newResourceUri);
-
-        await ctx.call('triplestore.update', {
-          query: `
-            PREFIX ldp: <http://www.w3.org/ns/ldp#>
-            DELETE { <${oldContainerUri}> ldp:contains <${newResourceUri}> }
-            INSERT { <${newContainerUri}> ldp:contains <${newResourceUri}> }
-            WHERE { <${oldContainerUri}> ldp:contains <${newResourceUri}> }
-          `,
-          dataset,
-          webId: 'system'
-        });
-
-        await this.actions.moveAclRights({ newResourceUri, oldResourceUri, dataset }, { parentCtx: ctx });
+        await this.actions.moveAclRights({ newUri, oldUri }, { parentCtx: ctx });
       }
     },
 
@@ -117,7 +87,7 @@ const MigrationSchema = {
 
         await ctx.call('triplestore.update', {
           query: `
-            WITH <http://semapps.org/webacl>
+            WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
             DELETE { <${oldGroupUri}> ?p ?o }
             INSERT { <${newGroupUri}> ?p ?o }
             WHERE { <${oldGroupUri}> ?p ?o }
@@ -128,7 +98,7 @@ const MigrationSchema = {
 
         await ctx.call('triplestore.update', {
           query: `
-            WITH <http://semapps.org/webacl>
+            WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
             DELETE { ?s ?p <${oldGroupUri}> }
             INSERT { ?s ?p <${newGroupUri}> }
             WHERE { ?s ?p <${oldGroupUri}> }
@@ -137,29 +107,26 @@ const MigrationSchema = {
           webId: 'system'
         });
 
-        await this.actions.moveAclRights(
-          { newResourceUri: newGroupUri, oldResourceUri: oldGroupUri, dataset },
-          { parentCtx: ctx }
-        );
+        await this.actions.moveAclRights({ newUri: newGroupUri, oldUri: oldGroupUri, dataset }, { parentCtx: ctx });
       }
     },
 
     moveAclRights: {
       async handler(ctx) {
-        const { oldResourceUri, newResourceUri, dataset } = ctx.params;
+        const { oldUri, newUri, dataset } = ctx.params;
 
         for (const right of ['Read', 'Append', 'Write', 'Control']) {
-          const oldResourceAclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, oldResourceUri)}#${right}`;
-          const newResourceAclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, newResourceUri)}#${right}`;
+          const oldAclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, oldUri)}#${right}`;
+          const newAclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, newUri)}#${right}`;
 
-          this.logger.info(`Moving ACL rights ${oldResourceAclUri} to ${newResourceAclUri}...`);
+          this.logger.info(`Moving ACL rights ${oldAclUri} to ${newAclUri}...`);
 
           await ctx.call('triplestore.update', {
             query: `
-              WITH <http://semapps.org/webacl>
-              DELETE { <${oldResourceAclUri}> ?p ?o }
-              INSERT { <${newResourceAclUri}> ?p ?o }
-              WHERE { <${oldResourceAclUri}> ?p ?o }
+              WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
+              DELETE { <${oldAclUri}> ?p ?o }
+              INSERT { <${newAclUri}> ?p ?o }
+              WHERE { <${oldAclUri}> ?p ?o }
             `,
             dataset,
             webId: 'system'
@@ -175,7 +142,7 @@ const MigrationSchema = {
         // Remove user from all WebACL groups he may be member of
         await ctx.call('triplestore.update', {
           query: `
-            WITH <http://semapps.org/webacl>
+            WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
             DELETE { ?groupUri <http://www.w3.org/2006/vcard/ns#hasMember> <${userUri}> }
             WHERE { ?groupUri <http://www.w3.org/2006/vcard/ns#hasMember> <${userUri}> }
           `,
@@ -186,7 +153,7 @@ const MigrationSchema = {
         // Remove all authorization given specifically to this user
         await ctx.call('triplestore.update', {
           query: `
-            WITH <http://semapps.org/webacl>
+            WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
             DELETE { ?authorizationUri <http://www.w3.org/ns/auth/acl#agent> <${userUri}> }
             WHERE { ?authorizationUri <http://www.w3.org/ns/auth/acl#agent> <${userUri}> }
           `,
@@ -198,12 +165,12 @@ const MigrationSchema = {
   }
 } satisfies ServiceSchema;
 
-export default MigrationSchema;
+export default MigrationService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [MigrationSchema.name]: typeof MigrationSchema;
+      [MigrationService.name]: typeof MigrationService;
     }
   }
 }

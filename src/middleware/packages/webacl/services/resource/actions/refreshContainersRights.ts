@@ -1,30 +1,27 @@
 import urlJoin from 'url-join';
 import { ActionSchema } from 'moleculer';
+import { getDatasetFromUri, Registration } from '@semapps/ldp';
+import { WacPermission, WacPermissionObject } from '../../../types.ts';
 
-export const action = {
+const RefreshContainersRightsAction = {
   visibility: 'public',
   async handler(ctx) {
     const { webId } = ctx.params;
 
-    const containers = await ctx.call('ldp.registry.list');
+    const registrations: Registration[] = await ctx.call('ldp.registry.list');
 
-    // @ts-expect-error TS(2339): Property 'permissions' does not exist on type 'unk... Remove this comment to see the full error message
-    for (const { permissions, podsContainer, path } of Object.values(containers)) {
-      if (permissions && !podsContainer) {
-        const baseUrl = this.settings.podProvider
-          ? await ctx.call('solid-storage.getUrl', { webId })
-          : this.settings.baseUrl;
+    for (const { permissions, path } of registrations) {
+      if (permissions) {
+        const baseUrl: string = await ctx.call('solid-storage.getBaseUrl', { username: getDatasetFromUri(webId) });
 
-        const containerUri = urlJoin(baseUrl, path);
+        const containerUri = urlJoin(baseUrl, path!);
 
-        const containerRights =
-          typeof permissions === 'function'
-            ? permissions(this.settings.podProvider ? webId : 'system', ctx)
-            : permissions;
+        const containerRights: WacPermissionObject =
+          typeof permissions === 'function' ? permissions(webId) : permissions;
 
         this.logger.info(`Refreshing rights for container ${containerUri}...`);
 
-        const publicPermissions = await ctx.call('webacl.resource.hasRights', {
+        const publicPermissions: WacPermission = await ctx.call('webacl.resource.hasRights', {
           resourceUri: containerUri,
           rights: { read: true },
           webId: 'anon'
@@ -51,7 +48,6 @@ export const action = {
             isContainer: true,
             removePublicRead,
             removeDefaultPublicRead,
-            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             dataset: ctx.meta.dataset
           },
           { meta: { webId: null, dataset: null } }
@@ -60,3 +56,5 @@ export const action = {
     }
   }
 } satisfies ActionSchema;
+
+export default RefreshContainersRightsAction;

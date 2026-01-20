@@ -1,133 +1,163 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
+import { ServiceBroker } from 'moleculer';
 import path, { join as pathJoin } from 'path';
-import urlJoin from 'url-join';
-import { getSlugFromUri } from '@semapps/ldp';
+import { Binary } from '@semapps/ldp';
 import { fileURLToPath } from 'url';
-import { fetchServer } from '../utils.ts';
+import { createAccount, clearAllDatasets, backupAllDatasets } from '../utils.ts';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// @ts-expect-error TS(2304): Cannot find name 'jest'.
 jest.setTimeout(20000);
-let broker: any;
+let broker: ServiceBroker;
+let alice: any;
 
-// @ts-expect-error TS(2304): Cannot find name 'beforeAll'.
-beforeAll(async () => {
-  broker = await initialize();
-});
+describe.each(['ng', 'fuseki'])('Binary handling with triplestore %s', (triplestore: string) => {
+  beforeAll(async () => {
+    broker = await initialize(triplestore);
+    await broker.start();
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice7');
+  });
 
-afterAll(async () => {
-  if (broker) await broker.stop();
-});
+  afterAll(async () => {
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
+  });
 
-// @ts-expect-error TS(2582): Cannot find name 'describe'. Do you need to instal... Remove this comment to see the full error message
-describe('Binary handling of LDP server', () => {
-  let fileUri: any;
-  let filePath: any;
-  let fileName: any;
+  let fileUri: string;
+  let filePath: string | null;
+  let binary: Binary;
+  let containerUri: string;
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
   test('Post image to container', async () => {
+    containerUri = await alice.getContainerUri(
+      'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource'
+    );
+
     const readStream = fs.createReadStream(pathJoin(__dirname, 'av-icon.png'));
 
-    // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-    const { headers } = await fetchServer(urlJoin(CONFIG.HOME_URL, 'files'), {
+    const { headers } = await alice.fetch(containerUri, {
       method: 'POST',
       body: readStream,
-      headers: new fetch.Headers({
-        'Content-Type': 'image/png'
-      })
+      headers: new fetch.Headers({ 'Content-Type': 'image/png' })
     });
 
-    fileUri = headers.get('Location');
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
+    fileUri = headers.get('Location')!;
     expect(fileUri).not.toBeNull();
 
-    filePath = fileUri.replace(CONFIG.HOME_URL, '');
-    fileName = getSlugFromUri(fileUri);
+    filePath = fileUri!.replace(CONFIG.HOME_URL!, '');
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    expect(fs.existsSync(pathJoin(__dirname, '../uploads', filePath))).toBeTruthy();
+    if (triplestore === 'fuseki') {
+      expect(fs.existsSync(pathJoin(__dirname, '../uploads', filePath))).toBeTruthy();
+    }
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
-  test('Get container', async () => {
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
-      json: {
-        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
-        'ldp:contains': [
-          {
-            '@id': fileUri,
-            '@type': 'semapps:File',
-            'semapps:fileName': fileName,
-            'semapps:localPath': `uploads/${filePath}`,
-            'semapps:mimeType': 'image/png'
-          }
-        ]
-      }
+  test('Get binary (via Moleculer action)', async () => {
+    binary = await alice.call('ldp.binary.get', { resourceUri: fileUri });
+
+    expect(binary).toMatchObject({
+      file: expect.anything(),
+      mimeType: 'image/png',
+      size: 3181,
+      time: triplestore === 'fuseki' ? expect.anything() : undefined
     });
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
+  test('Get container (via API)', async () => {
+    const { json } = await alice.fetch(containerUri);
+
+    expect(json).toMatchObject({
+      type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+      'ldp:contains': [
+        {
+          id: fileUri,
+          type: expect.arrayContaining([
+            'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource',
+            'https://www.w3.org/ns/iana/media-types/image/png#Resource'
+          ]),
+          'stat:size': '3181'
+        }
+      ]
+    });
+
+    if (triplestore === 'fuseki') {
+      expect(json['ldp:contains'][0]['stat:mtime']).toBe(binary.time?.toISOString());
+    }
+  });
+
   test('Get image as binary (via API)', async () => {
-    const { headers, body } = await fetchServer(fileUri, {
-      headers: new fetch.Headers({
-        Accept: '*/*'
-      })
+    const { headers, body } = await alice.fetch(fileUri, {
+      headers: new fetch.Headers({ Accept: '*/*' })
     });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(headers.get('Content-Length')).toBe('3181');
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(headers.get('Cache-Control')).toBe('public, max-age=31536000');
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(headers.get('Content-Type')).toBe('image/png');
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
     expect(body).toContain('PNG');
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
+  test('Get image as resource (via API)', async () => {
+    const { json } = await alice.fetch(fileUri, {
+      headers: new fetch.Headers({ Accept: 'application/ld+json' })
+    });
+
+    expect(json).toMatchObject({
+      id: fileUri,
+      type: expect.arrayContaining([
+        'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource',
+        'https://www.w3.org/ns/iana/media-types/image/png#Resource'
+      ]),
+      'stat:size': '3181'
+    });
+
+    if (triplestore === 'fuseki') {
+      expect(json['stat:mtime']).toBe(binary.time?.toISOString());
+    }
+  });
+
   test('Get image as resource (via Moleculer action)', async () => {
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(broker.call('ldp.resource.get', { resourceUri: fileUri })).resolves.toMatchObject({
-      '@id': fileUri,
-      '@type': 'semapps:File',
-      'semapps:fileName': fileName,
-      'semapps:localPath': `uploads/${filePath}`,
-      'semapps:mimeType': 'image/png'
+    const resource = await alice.call('ldp.resource.get', { resourceUri: fileUri });
+
+    expect(resource).toMatchObject({
+      id: fileUri,
+      type: expect.arrayContaining([
+        'https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource',
+        'https://www.w3.org/ns/iana/media-types/image/png#Resource'
+      ]),
+      'stat:size': '3181'
     });
+
+    if (triplestore === 'fuseki') {
+      expect(resource['stat:mtime']).toBe(binary.time?.toISOString());
+    }
   });
 
-  // @ts-expect-error TS(2582): Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
-  test('Delete image', async () => {
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(
-      fetchServer(fileUri, {
-        method: 'DELETE'
-      })
-    ).resolves.toMatchObject({
-      status: 204
-    });
+  if (triplestore === 'fuseki') {
+    test('Delete image (via API)', async () => {
+      await expect(
+        alice.fetch(fileUri, {
+          method: 'DELETE'
+        })
+      ).resolves.toMatchObject({
+        status: 204
+      });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    expect(fs.existsSync(pathJoin(__dirname, '../uploads/files/av-icon.png'))).toBeFalsy();
+      expect(fs.existsSync(pathJoin(__dirname, '../uploads/files/av-icon.png'))).toBeFalsy();
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(fetchServer(fileUri)).resolves.toMatchObject({
-      status: 404
-    });
+      await expect(alice.fetch(fileUri)).resolves.toMatchObject({ status: 404 });
 
-    // @ts-expect-error TS(2304): Cannot find name 'expect'.
-    await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
-      json: {
-        '@type': expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
-        'ldp:contains': []
-      }
+      await expect(alice.fetch(containerUri)).resolves.toMatchObject({
+        json: {
+          type: expect.arrayContaining(['ldp:Container', 'ldp:BasicContainer']),
+          'ldp:contains': []
+        }
+      });
     });
-  });
+  }
 });

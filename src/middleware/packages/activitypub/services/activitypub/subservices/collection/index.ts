@@ -1,9 +1,10 @@
-import { ControlledContainerMixin, arrayOf, getDatasetFromUri } from '@semapps/ldp';
+import { ControlledContainerMixin, arrayOf, getDatasetFromUri, getSlugFromUri } from '@semapps/ldp';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ServiceSchema, Errors } from 'moleculer';
 import getAction from './actions/get.ts';
+import { CollectionRegistration } from '../../../../types.ts';
 
 const { MoleculerError } = Errors;
 
@@ -11,10 +12,9 @@ const CollectionService = {
   name: 'activitypub.collection' as const,
   mixins: [ControlledContainerMixin],
   settings: {
-    podProvider: false,
     // ControlledContainerMixin settings
     path: '/as/collection',
-    acceptedTypes: [
+    types: [
       'https://www.w3.org/ns/activitystreams#Collection',
       'https://www.w3.org/ns/activitystreams#OrderedCollection'
     ],
@@ -22,7 +22,7 @@ const CollectionService = {
     permissions: {},
     // These default permissions can be overridden by providing
     // a `permissions` param when calling activitypub.collection.post
-    newResourcesPermissions: (webId: any) => {
+    newResourcesPermissions: (webId: string) => {
       switch (webId) {
         case 'anon':
         case 'system':
@@ -60,7 +60,6 @@ const CollectionService = {
     patch: {
       async handler(ctx) {
         const { resourceUri: collectionUri, triplesToAdd, triplesToRemove } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
         const collectionExist = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri, webId });
@@ -104,7 +103,7 @@ const CollectionService = {
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
 
-        await this.actions.waitForContainerCreation({ containerUri: ctx.params.containerUri });
+        await this.actions.waitForContainerCreation({ containerUri: ctx.params.containerUri }, { parentCtx: ctx });
 
         const ordered = arrayOf(ctx.params.resource.type).includes('OrderedCollection');
 
@@ -141,12 +140,12 @@ const CollectionService = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             SELECT ( Count(?items) as ?count )
             WHERE {
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> as:items ?items .
               }
             }
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
         return Number(res[0].count.value) === 0;
@@ -168,13 +167,13 @@ const CollectionService = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             ASK
             WHERE {
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> a as:Collection .
                 <${collectionUri}> as:items <${itemUri}> .
               }
             }
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
       }
@@ -195,23 +194,21 @@ const CollectionService = {
         // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: itemUri });
         // if (!resourceExist) throw new Error('Cannot attach a non-existing resource !')
 
-        // TODO check why thrown error is lost and process is stopped
         const collectionExist = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
         if (!collectionExist)
           throw new Error(
-            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             `Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`
           );
 
         await ctx.call('triplestore.update', {
           query: sanitizeSparqlQuery`
             INSERT DATA { 
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>
               }
             }
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
 
@@ -240,12 +237,12 @@ const CollectionService = {
           query: sanitizeSparqlQuery`
             DELETE
             WHERE { 
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> 
               }
             }
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
 
@@ -256,8 +253,28 @@ const CollectionService = {
       }
     },
 
-    // @ts-expect-error TS(2322): Type '{ visibility: "public"; params: { resourceUr... Remove this comment to see the full error message
     get: getAction,
+
+    postOnResource: {
+      async handler(ctx) {
+        const { resourceUri: collectionUri, payload } = ctx.params;
+
+        const collectionRegistration: CollectionRegistration = await ctx.call(
+          'activitypub.collections-registry.getByUri',
+          { collectionUri }
+        );
+
+        // Check if the collection has a special handling for POST
+        if (collectionRegistration?.controlledActions?.post) {
+          await ctx.call(collectionRegistration.controlledActions.post, {
+            collectionUri,
+            payload
+          });
+        } else {
+          throw new E.ForbiddenError();
+        }
+      }
+    },
 
     clear: {
       /*
@@ -275,7 +292,7 @@ const CollectionService = {
               }
             }
             WHERE { 
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> as:items ?s1 .
               }
               GRAPH ?g1 {
@@ -283,7 +300,7 @@ const CollectionService = {
               }
             } 
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
       }
@@ -312,18 +329,12 @@ const CollectionService = {
               }
             }
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
 
         return results.length > 0 ? results[0].actorUri.value : null;
       }
-    }
-  },
-  methods: {
-    getCollectionDataset(collectionUri) {
-      if (!this.settings.podProvider) return undefined;
-      return getDatasetFromUri(collectionUri);
     }
   }
 } satisfies ServiceSchema;

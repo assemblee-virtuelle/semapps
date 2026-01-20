@@ -1,8 +1,7 @@
-import { JsonLdSerializer } from 'jsonld-streaming-serializer';
-import { DataFactory, Writer } from 'n3';
+import { Writer } from 'n3';
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema, Errors } from 'moleculer';
+import { ActionSchema, Context, Errors } from 'moleculer';
 import {
   getAuthorizationNode,
   findParentContainers,
@@ -11,7 +10,6 @@ import {
   getUserAgentSearchParam
 } from '../../../utils.ts';
 
-const { quad } = DataFactory;
 const { MoleculerError } = Errors;
 
 const prefixes = {
@@ -41,20 +39,11 @@ const webAclContext = {
   }
 };
 
-function streamToString(stream: any) {
-  let res = '';
-  return new Promise((resolve, reject) => {
-    stream.on('data', (chunk: any) => (res += chunk));
-    stream.on('error', (err: any) => reject(err));
-    stream.on('end', () => resolve(res));
-  });
-}
-
-async function formatOutput(ctx: any, output: any, resourceAclUri: any, jsonLD: any) {
-  const turtle = await new Promise((resolve, reject) => {
+async function formatOutput(ctx: Context, output: any, resourceAclUri: string, jsonLD: boolean) {
+  const rdf = await new Promise(resolve => {
     const writer = new Writer({
       prefixes: { ...prefixes, '': `${resourceAclUri}#` },
-      format: 'Turtle'
+      format: jsonLD ? 'N-Quad' : 'Turtle' // If we need to convert to JSON-LD, we generate N-Quads to increase performance
     });
     output.forEach((f: any) => writer.addQuad(f.auth, f.p, f.o));
     writer.end((error, res) => {
@@ -62,20 +51,12 @@ async function formatOutput(ctx: any, output: any, resourceAclUri: any, jsonLD: 
     });
   });
 
-  if (!jsonLD) return turtle;
+  if (!jsonLD) return rdf;
 
-  const mySerializer = new JsonLdSerializer({
-    context: webAclContext,
-    baseIRI: resourceAclUri
-  });
+  const jsonLd = await ctx.call('jsonld.parser.fromRDF', { input: rdf, options: { format: 'application/n-quads' } });
 
-  output.forEach((f: any) => mySerializer.write(quad(f.auth, f.p, f.o)));
-  mySerializer.end();
-
-  // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-  const jsonLd = JSON.parse(await streamToString(mySerializer));
-
-  const compactJsonLd = await ctx.call('jsonld.parser.frame', {
+  // Reframe the results with the WebACL JSON-LD context
+  const compactJsonLd: any = await ctx.call('jsonld.parser.frame', {
     input: jsonLd,
     frame: {
       '@context': webAclContext,
@@ -103,7 +84,7 @@ async function filterAcls(hasControl: any, uaSearchParam: any, acls: any) {
   return [];
 }
 
-async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: any, graphName: any, isContainer: any) {
+async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: any, isContainer: any) {
   const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
   // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
   const uaSearchParam = getUserAgentSearchParam(user);
@@ -122,14 +103,10 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
 
   // Get the ACL for the resource
 
-  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-  const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName);
-  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-  const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName);
-  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-  const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName);
-  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
+  const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read');
+  const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write');
+  const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append');
+  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control');
 
   document.push(...(await filterAcls(hasControl, uaSearchParam, reads)));
   document.push(...(await filterAcls(hasControl, uaSearchParam, writes)));
@@ -137,10 +114,10 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
   document.push(...(await filterAcls(hasControl, uaSearchParam, controls)));
 
   if (isContainer && hasControl) {
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName, true)));
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName, true)));
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName, true)));
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName, true)));
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', true)));
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', true)));
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', true)));
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', true)));
   }
 
   // Get the ACLs for all the parent containers
@@ -153,10 +130,10 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
     const containerUri = container.container.value;
     const aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
 
-    const reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', graphName, true);
-    const writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', graphName, true);
-    const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', graphName, true);
-    const controls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', graphName, true);
+    const reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', true);
+    const writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', true);
+    const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', true);
+    const controls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', true);
 
     // we keep all the authorization nodes we found
     // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
@@ -187,21 +164,23 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
   return await formatOutput(ctx, document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }
 
-export const api = async function api(this: any, ctx: any) {
-  const { accept } = ctx.meta.headers;
-  let { slugParts } = ctx.params;
+export const api = {
+  async handler(ctx) {
+    const { accept } = ctx.meta.headers;
+    let { username, slugParts } = ctx.params;
 
-  if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
-    throw new MoleculerError(`Accept not supported : ${accept}`, 400, 'ACCEPT_NOT_SUPPORTED');
+    if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
+      throw new MoleculerError(`Accept not supported : ${accept}`, 400, 'ACCEPT_NOT_SUPPORTED');
 
-  // This is the root container
-  if (!slugParts || slugParts.length === 0) slugParts = ['/'];
+    // This is the root container
+    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
-  return await ctx.call('webacl.resource.getRights', {
-    resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-    accept
-  });
-};
+    return await ctx.call('webacl.resource.getRights', {
+      resourceUri: urlJoin(this.settings.baseUrl, username, ...slugParts),
+      accept
+    });
+  }
+} satisfies ActionSchema;
 
 export const action = {
   visibility: 'public',
@@ -215,16 +194,14 @@ export const action = {
     keys: ['resourceUri', 'accept', 'webId', '#webId']
   },
   async handler(ctx) {
-    let { resourceUri, webId, accept, skipResourceCheck } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
-    webId = webId || ctx.meta.webId || 'anon';
+    let { resourceUri, accept, skipResourceCheck } = ctx.params;
+    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     accept = accept || MIME_TYPES.TURTLE;
-    // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
     ctx.meta.$responseType = accept;
 
     const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));
 
-    return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
+    return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, isContainer);
   }
 } satisfies ActionSchema;

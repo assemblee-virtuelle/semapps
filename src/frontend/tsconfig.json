@@ -11,7 +11,7 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "lib": ["ESNext", "dom"]
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "DOM.AsyncIterable"]
   },
   "exclude": ["node_modules", "*.es.js", "*.cjs", "*.cjs.js"]
 }

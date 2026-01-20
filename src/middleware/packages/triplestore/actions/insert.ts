@@ -1,10 +1,8 @@
-import urlJoin from 'url-join';
 import { ActionSchema } from 'moleculer';
 
-const Schema = {
+const InsertAction = {
   visibility: 'public',
   params: {
-    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     resource: {
       type: 'object'
     },
@@ -19,7 +17,6 @@ const Schema = {
   },
   async handler(ctx) {
     const { resource, graphName } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
     // Convert JSON-LD to N-Quads
@@ -35,11 +32,13 @@ const Schema = {
       throw new Error(`The dataset ${dataset} doesn't exist`);
 
     // Handle wildcard
-    const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
+    const datasets: string[] = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
     for (dataset of datasets) {
-      //test if graphName exists in the dataset
       if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
+
+      // TODO Test if named graph exists in the dataset
+
       const query = graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`;
 
       await this.settings.adapter.update(dataset, query);
@@ -47,4 +46,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default InsertAction;

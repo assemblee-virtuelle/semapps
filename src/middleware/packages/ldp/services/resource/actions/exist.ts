@@ -1,23 +1,36 @@
 import { ActionSchema } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: true; }' is not ... Remove this comment to see the full error message
     acceptTombstones: { type: 'boolean', default: true },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     const { resourceUri, acceptTombstones } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri });
+    let exist = await ctx.call('triplestore.named-graph.exist', { uri: getSlugFromUri(resourceUri) });
+
+    if (exist) {
+      // If the named graph exist, ensure it is not empty (otherwise consider the resource doesn't exist)
+      exist = await ctx.call('triplestore.query', {
+        query: `
+          ASK
+          WHERE {
+            GRAPH <${getSlugFromUri(resourceUri)}> {
+              ?s ?p ?o
+            }
+          }
+        `,
+        webId: 'system'
+      });
+    }
 
     // If resource exists but we don't want tombstones, check the resource type
     if (exist && !acceptTombstones) {
-      // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
       const types = await this.actions.getTypes({ resourceUri }, { parentCtx: ctx });
       if (types.includes('https://www.w3.org/ns/activitystreams#Tombstone')) return false;
     }

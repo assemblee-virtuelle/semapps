@@ -1,23 +1,8 @@
-import { namedNode } from '@rdfjs/data-model';
+import rdf from '@rdfjs/data-model';
 import { ActionSchema, Errors } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
-
-function checkTriplesSubjectIsResource(triples: any, resourceUri: any) {
-  for (const triple of triples) {
-    switch (triple.subject.termType) {
-      case 'NamedNode':
-        // Ensure the subject is the same as the patched resource
-        if (triple.subject.value !== resourceUri) {
-          throw new MoleculerError('The SPARQL request must modify only the patched resource', 400, 'BAD_REQUEST');
-        }
-        break;
-      case 'BlankNode':
-        // Accept blank nodes, as they are necessarily linked to the patched resource
-        break;
-    }
-  }
-}
 
 const Schema = {
   visibility: 'public',
@@ -25,12 +10,10 @@ const Schema = {
     resourceUri: {
       type: 'string'
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToAdd: {
       type: 'array',
       optional: true
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToRemove: {
       type: 'array',
       optional: true
@@ -46,7 +29,6 @@ const Schema = {
   },
   async handler(ctx) {
     let { resourceUri, triplesToAdd, triplesToRemove, skipInferenceCheck, webId } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
@@ -65,6 +47,8 @@ const Schema = {
       await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Append', webId });
     }
 
+    const namedGraphUri = getSlugFromUri(resourceUri);
+
     // Build the SPARQL update
     const sparqlUpdate = {
       type: 'update',
@@ -72,20 +56,18 @@ const Schema = {
     };
 
     if (triplesToRemove) {
-      checkTriplesSubjectIsResource(triplesToRemove, resourceUri);
       // @ts-expect-error TS(2345): Argument of type '{ updateType: string; delete: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'delete',
-        delete: [{ type: 'graph', triples: triplesToRemove, name: namedNode(resourceUri) }]
+        delete: [{ type: 'graph', triples: triplesToRemove, name: rdf.namedNode(namedGraphUri) }]
       });
     }
 
     if (triplesToAdd) {
-      checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
       // @ts-expect-error TS(2345): Argument of type '{ updateType: string; insert: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'insert',
-        insert: [{ type: 'graph', triples: triplesToAdd, name: namedNode(resourceUri) }]
+        insert: [{ type: 'graph', triples: triplesToAdd, name: rdf.namedNode(namedGraphUri) }]
       });
     }
 
@@ -100,13 +82,11 @@ const Schema = {
       triplesRemoved: triplesToRemove,
       skipInferenceCheck,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
-      ctx.emit('ldp.resource.patched', returnValues, { meta: { webId: null, dataset: null } });
+      ctx.emit('ldp.resource.patched', returnValues);
     }
 
     return returnValues;

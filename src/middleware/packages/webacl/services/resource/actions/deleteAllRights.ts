@@ -1,6 +1,6 @@
 import { ActionSchema } from 'moleculer';
 
-export const action = {
+const DeleteAllRightsAction = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: false }
@@ -13,7 +13,7 @@ export const action = {
     await ctx.call('triplestore.update', {
       query: `
         PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-        WITH <${this.settings.graphName}>
+        WITH <${await ctx.call('triplestore.dataset.getWacGraph')}>
         DELETE { ?auth ?p2 ?o }
         WHERE { ?auth ?p <${resourceUri}>.
           FILTER (?p IN (acl:accessTo, acl:default ) )
@@ -24,9 +24,10 @@ export const action = {
 
     ctx.emit(
       'webacl.resource.deleted',
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       { uri: resourceUri, dataset: ctx.meta.dataset, isContainer },
       { meta: { webId: null, dataset: null } }
     );
   }
 } satisfies ActionSchema;
+
+export default DeleteAllRightsAction;

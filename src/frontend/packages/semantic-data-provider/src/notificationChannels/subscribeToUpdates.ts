@@ -1,6 +1,5 @@
-import { fetchUtils } from 'react-admin';
 import arrayOf from '../dataProvider/utils/arrayOf';
-import { FetchFn } from '../dataProvider/types';
+import { FetchJsonFn } from '../dataProvider/types';
 
 interface CreateSolidChannelOptions {
   type: string;
@@ -14,7 +13,7 @@ interface CreateSolidChannelOptions {
 /**
  * Find the solid notification description resource for a given resource URI.
  */
-const findDescriptionResource = async (authenticatedFetch: FetchFn, resourceUri: string) => {
+const findDescriptionResource = async (authenticatedFetch: FetchJsonFn, resourceUri: string) => {
   const { headers } = await authenticatedFetch(resourceUri, { method: 'HEAD' });
   const linkHeader = headers.get('Link');
 
@@ -32,7 +31,7 @@ const findDescriptionResource = async (authenticatedFetch: FetchFn, resourceUri:
 };
 
 const createSolidNotificationChannel = async (
-  authenticatedFetch: FetchFn,
+  authenticatedFetch: FetchJsonFn,
   resourceUri: string,
   options: CreateSolidChannelOptions = { type: 'WebSocketChannel2023' }
 ) => {
@@ -89,7 +88,7 @@ const createSolidNotificationChannel = async (
 };
 
 const createWsChannel = async (
-  authenticatedFetch: FetchFn,
+  authenticatedFetch: FetchJsonFn,
   resourceUri: string,
   options: CreateSolidChannelOptions
 ) => {
@@ -108,7 +107,7 @@ const registeredWebSockets = new Map<string, WebSocket | Promise<WebSocket>>();
  * @returns {WebSocket} A new or existing web socket that subscribed to the given resource.
  */
 const getOrCreateWsChannel = async (
-  authenticatedFetch: FetchFn,
+  authenticatedFetch: FetchJsonFn,
   resourceUri: string,
   options: CreateSolidChannelOptions = { type: 'WebSocketChannel2023', closeAfter: 1000 * 60 * 60 }
 ) => {

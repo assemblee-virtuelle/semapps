@@ -1,17 +1,17 @@
 import path from 'path';
-import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import ApiGatewayService from 'moleculer-web';
 import { JsonLdService } from '@semapps/jsonld';
 import { OntologiesService } from '@semapps/ontologies';
 import { TripleStoreService } from '@semapps/triplestore';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { dropDataset } from '../utils.ts';
+import { dropAllDatasets } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default async (cacher: any) => {
-  await dropDataset(CONFIG.SETTINGS_DATASET);
+  await dropAllDatasets();
 
   const broker = new ServiceBroker({
     logger: {
@@ -27,7 +27,7 @@ export default async (cacher: any) => {
   broker.createService({
     mixins: [JsonLdService],
     settings: {
-      baseUri: CONFIG.HOME_URL,
+      baseUrl: CONFIG.HOME_URL,
       // Fake contexts to avoid validation errors
       cachedContextFiles: [
         {
@@ -42,8 +42,8 @@ export default async (cacher: any) => {
     }
   });
 
+  // @ts-expect-error TS(2345): Argument of type '{ mixins: (Moleculer.ServiceSche... Remove this comment to see the full error message
   broker.createService({
-    // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
     mixins: [TripleStoreService],
     settings: {
       url: CONFIG.SPARQL_ENDPOINT,
@@ -58,7 +58,6 @@ export default async (cacher: any) => {
 
   // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "ontologies"; ... Remove this comment to see the full error message
   broker.createService({
-    // @ts-expect-error TS(2322): Type '{ name: "ontologies"; settings: { ontologies... Remove this comment to see the full error message
     mixins: [OntologiesService],
     settings: {
       persistRegistry: true,

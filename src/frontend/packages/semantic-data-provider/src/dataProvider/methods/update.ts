@@ -1,9 +1,9 @@
 import { RaRecord, UpdateParams } from 'react-admin';
-import { Configuration } from '../types';
+import { RuntimeConfiguration } from '../types';
 import handleFiles from '../utils/handleFiles';
 import getServerKeyFromUri from '../utils/getServerKeyFromUri';
 
-const updateMethod = (config: Configuration) => async (resourceId: string, params: UpdateParams<RaRecord>) => {
+const updateMethod = (config: RuntimeConfiguration) => async (resourceId: string, params: UpdateParams<RaRecord>) => {
   const { httpClient, jsonContext, dataServers } = config;
 
   const serverKey = getServerKeyFromUri(params.id, dataServers);

@@ -1,8 +1,12 @@
+import { getDatasetFromUri } from '../../../utils.ts';
+
 export default async function patch(this: any, ctx: any) {
   try {
     const { username, slugParts } = ctx.params;
 
     const uri = this.getUriFromSlugParts(slugParts, username);
+    ctx.meta.dataset = getDatasetFromUri(uri);
+
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
     if (types.includes('http://www.w3.org/ns/ldp#Container')) {

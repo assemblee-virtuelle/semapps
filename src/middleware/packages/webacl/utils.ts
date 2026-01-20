@@ -4,6 +4,7 @@ import urlJoin from 'url-join';
 import { Parser } from 'n3';
 import streamifyString from 'streamify-string';
 import rdfParser from 'rdf-parse';
+import { throw400 } from '@semapps/middlewares';
 
 const getSlugFromUri = (str: any) => str.match(new RegExp(`.*/(.*)`))[1];
 
@@ -54,8 +55,8 @@ const PREFIXES =
   'PREFIX ldp: <http://www.w3.org/ns/ldp#>\n' +
   'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n';
 
-const getUserGroups = async (ctx: any, user: any, graphName: any) => {
-  const query = PREFIXES + USER_GROUPS_QUERY(user, graphName);
+const getUserGroups = async (ctx: any, user: any) => {
+  const query = PREFIXES + USER_GROUPS_QUERY(user, await ctx.call('triplestore.dataset.getWacGraph'));
 
   const groups = await ctx.call('triplestore.query', {
     query,
@@ -67,13 +68,13 @@ const getUserGroups = async (ctx: any, user: any, graphName: any) => {
 
 const AUTHORIZATION_NODE_QUERY = (
   mode: any,
-  accesToOrDefault: any,
+  accessToOrDefault: any,
   resource: any,
-  graphName: any
+  graphName: string
 ) => `SELECT ?auth ?p ?o
 WHERE { GRAPH <${graphName}> {
   ?auth
-    acl:${accesToOrDefault} <${resource}>;
+    acl:${accessToOrDefault} <${resource}>;
     acl:mode acl:${mode};
     a acl:Authorization ;
     ?p ?o.
@@ -81,17 +82,17 @@ WHERE { GRAPH <${graphName}> {
 
 const getAuthorizationNode = async (
   ctx: any,
-  resourceUri: any,
-  resourceAclUri: any,
+  resourceUri: string,
+  resourceAclUri: string,
   mode: any,
-  graphName: any,
-  searchForDefault: any
+  searchForDefault?: boolean
 ) => {
+  const wacGraphName = await ctx.call('triplestore.dataset.getWacGraph');
   const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX acl: <http://www.w3.org/ns/auth/acl#>\n${AUTHORIZATION_NODE_QUERY(
     mode,
     searchForDefault ? 'default' : 'accessTo',
     resourceUri,
-    graphName
+    wacGraphName
   )}`;
 
   const auths = await ctx.call('triplestore.query', {
@@ -174,12 +175,12 @@ const checkAgentPresent = (acls: any, agentSearchParam: any) => {
 
 const agentPredicates = [FULL_AGENTCLASS_URI, FULL_AGENT_URI, FULL_AGENT_GROUP];
 
-async function aclGroupExists(groupUri: any, ctx: any, graphName: any) {
+async function aclGroupExists(groupUri: any, ctx: any) {
   return await ctx.call('triplestore.query', {
     query: `
       PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
       ASK
-      WHERE { GRAPH <${graphName}> {
+      WHERE { GRAPH <${await ctx.call('triplestore.dataset.getWacGraph')}> {
         <${groupUri}> a vcard:Group .
       } }
     `,
@@ -215,12 +216,12 @@ function filterTriplesForResource(triple: any, resourceAclUri: any, allowDefault
   return false;
 }
 
-async function convertBodyToTriples(body: any, contentType: any) {
+async function convertBodyToTriples(body: any, contentType: string) {
   if (contentType === MIME_TYPES.TURTLE) {
     return new Promise((resolve, reject) => {
       const parser = new Parser({ format: 'turtle' });
       const res: any = [];
-      parser.parse(body, (error, quad, prefixes) => {
+      parser.parse(body, (error, quad) => {
         if (error) reject(error);
         else if (quad) {
           const q = filterAndConvertTriple(quad, 'id');
@@ -228,41 +229,46 @@ async function convertBodyToTriples(body: any, contentType: any) {
         } else resolve(res);
       });
     });
+  } else if (contentType === MIME_TYPES.JSON) {
+    // TODO use jsonld.toQuads actions ?
+    return new Promise((resolve, reject) => {
+      const textStream = streamifyString(body);
+      const res: any = [];
+      rdfParser
+        .parse(textStream, {
+          contentType: 'application/ld+json'
+        })
+        .on('data', (quad: any) => {
+          const q = filterAndConvertTriple(quad, 'value');
+          if (q) res.push(q);
+        })
+        .on('error', (error: any) => reject(error))
+        .on('end', () => {
+          resolve(res);
+        });
+    });
+  } else {
+    throw400(`Unknown content type ${contentType}`);
   }
-  // TODO use jsonld.toQuads actions ?
-  return new Promise((resolve, reject) => {
-    const textStream = streamifyString(body);
-    const res: any = [];
-    rdfParser
-      .parse(textStream, {
-        contentType: 'application/ld+json'
-      })
-      .on('data', (quad: any) => {
-        const q = filterAndConvertTriple(quad, 'value');
-        if (q) res.push(q);
-      })
-      .on('error', (error: any) => reject(error))
-      .on('end', () => {
-        resolve(res);
-      });
-  });
 }
 
 // TODO: if one day you code a delete Profile action (probably in webid service)
 // then you msut call the below method after deleting the user (and pass false to isGroup)
 
-async function removeAgentGroupOrAgentFromAuthorizations(uri: any, isGroup: any, graphName: any, ctx: any) {
+async function removeAgentGroupOrAgentFromAuthorizations(uri: any, isGroup: any, ctx: any) {
+  const wacGraphName = await ctx.call('triplestore.dataset.getWacGraph');
+
   // removing the acl:agentGroup relation to some Authorizations
   await ctx.call('triplestore.update', {
     query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-      DELETE WHERE { GRAPH <${graphName}> { ?auth ${isGroup ? 'acl:agentGroup' : 'acl:agent'} <${uri}> }}`,
+      DELETE WHERE { GRAPH <${wacGraphName}> { ?auth ${isGroup ? 'acl:agentGroup' : 'acl:agent'} <${uri}> }}`,
     webId: 'system'
   });
 
   // removing the Authorizations that are now empty
   await ctx.call('triplestore.update', {
     query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-      WITH <${graphName}>
+      WITH <${wacGraphName}>
       DELETE { ?auth ?p ?o }
       WHERE { ?auth a acl:Authorization; ?p ?o
         FILTER NOT EXISTS { ?auth acl:agent ?z }

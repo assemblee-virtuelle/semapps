@@ -37,7 +37,7 @@ const { JsonLdService } = require('@semapps/jsonld');
 module.exports = {
   mixins: [JsonLdService],
   settings: {
-    baseUri: 'http://localhost:3000',
+    baseUrl: 'http://localhost:3000',
     localContextPath: '/.well-known/context.jsonld',
     cachedContextFiles: [
       {
@@ -53,6 +53,6 @@ module.exports = {
 
 | Property             | Type       | Default                       | Description                                                    |
 | -------------------- | ---------- | ----------------------------- | -------------------------------------------------------------- |
-| `baseUri`            | `String`   | **required**                  | Base URL of the server.                                        |
+| `baseUrl`            | `String`   | **required**                  | Base URL of the server.                                        |
 | `localContextPath`   | `String`   | "/.well-known/context.jsonld" | Path of the automatically generated local JSON-LD context file |
 | `cachedContextFiles` | `[Object]` |                               | Context files to put in cache on start (see example above)     |

@@ -1,5 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { ActionSchema, Errors } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -31,6 +32,10 @@ const Schema = {
     if (accept && accept !== MIME_TYPES.JSON)
       throw new Error(`The ldp.resource.get action now only support JSON-LD. Provided: ${accept}`);
 
+    if (await ctx.call('ldp.binary.isBinary', { resourceUri })) {
+      return await ctx.call('ldp.binary.getRdf', { resourceUri });
+    }
+
     if (await ctx.call('ldp.remote.isRemote', { resourceUri })) {
       return await ctx.call('ldp.remote.get', ctx.params);
     }
@@ -47,7 +52,7 @@ const Schema = {
           ?s ?p ?o 
         }
         WHERE {
-          GRAPH <${resourceUri}> {
+          GRAPH <${getSlugFromUri(resourceUri)}> {
             ?s ?p ?o
           }
         }

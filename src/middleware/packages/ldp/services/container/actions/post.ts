@@ -1,26 +1,22 @@
+import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema, Errors } from 'moleculer';
-import { cleanUndefined } from '../../../utils.ts';
+import { cleanUndefined, getSlugFromUri } from '../../../utils.ts';
+import { Registration } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
 
-const Schema = {
+const PostAction = {
   visibility: 'public',
   params: {
     containerUri: {
       type: 'string'
     },
-    slug: {
-      type: 'string',
-      optional: true
-    },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     resource: {
       type: 'object',
       optional: true
     },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     file: {
       type: 'object',
       optional: true
@@ -32,15 +28,10 @@ const Schema = {
     webId: {
       type: 'string',
       optional: true
-    },
-    forcedResourceUri: {
-      type: 'string',
-      optional: true
     }
   },
   async handler(ctx) {
-    let { resource, containerUri, slug, contentType, file, forcedResourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
+    let { resource, containerUri, contentType, file } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let isContainer = false;
     let expandedResource;
@@ -81,26 +72,28 @@ const Schema = {
     const containerExist = await ctx.call('ldp.container.exist', { containerUri });
     if (!containerExist) {
       throw new MoleculerError(
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `Cannot create resource in non-existing container ${containerUri} (webId ${webId} / dataset ${ctx.meta.dataset})`,
         400,
         'BAD_REQUEST'
       );
     }
 
-    // The forcedResourceUri param allows Moleculer service to bypass URI generation
-    // It is used by ActivityStreams collections to provide URIs like {actorUri}/inbox
-    // TODO Use UUIDs for containers and collections https://github.com/assemblee-virtuelle/semapps/issues/1266
-    const resourceUri =
-      forcedResourceUri || (await ctx.call('ldp.resource.generateId', { containerUri, slug, isContainer }));
-    await ctx.call('triplestore.named-graph.create', { uri: resourceUri });
+    let resourceUri: string;
+
+    if (file) {
+      resourceUri = await ctx.call('ldp.binary.store', { stream: file.readableStream, mimeType: file.mimetype });
+    } else {
+      const graphName: string = await ctx.call('triplestore.named-graph.create');
+      const baseUrl: string = await ctx.call('solid-storage.getBaseUrl');
+      resourceUri = urlJoin(baseUrl, graphName);
+    }
 
     // We must add this first, otherwise side effects will not find the container of the created resource
     // But this create race conditions, especially when testing, since uncreated resources are linked to containers
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
         INSERT DATA {
-          GRAPH <${containerUri}> {
+          GRAPH <${getSlugFromUri(containerUri)}> {
             <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>
           }
         }
@@ -110,18 +103,15 @@ const Schema = {
 
     try {
       if (file) {
-        resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
-      }
-
-      if (isContainer) {
+        // Do nothing. The binary has already been uploaded.
+      } else if (isContainer) {
         await ctx.call('ldp.container.create', {
           containerUri: resourceUri,
           title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],
-          description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value'],
-          webId
+          description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value']
         });
       } else {
-        const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+        const registration: Registration = await ctx.call('ldp.registry.getByUri', { containerUri });
 
         // Change relative URIs to full URIs
         const resourceWithBase = resource['@graph']
@@ -131,9 +121,10 @@ const Schema = {
             })
           : { ...resource, '@id': resourceUri };
 
-        await ctx.call(controlledActions.create || 'ldp.resource.create', {
+        await ctx.call(registration?.controlledActions?.create || 'ldp.resource.create', {
           resource: resourceWithBase,
           resourceUri,
+          registration,
           webId
         });
       }
@@ -142,7 +133,7 @@ const Schema = {
       await ctx.call('triplestore.update', {
         query: `
           DELETE WHERE { 
-            GRAPH <${containerUri}> {  
+            GRAPH <${getSlugFromUri(containerUri)}> {  
               <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
             }
           }`,
@@ -152,7 +143,6 @@ const Schema = {
       throw e;
     }
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit(
         'ldp.container.attached',
@@ -169,4 +159,4 @@ const Schema = {
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default PostAction;

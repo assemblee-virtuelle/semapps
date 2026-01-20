@@ -1,17 +1,17 @@
 import urlJoin from 'url-join';
-import { ServiceSchema, defineAction, Errors } from 'moleculer';
+import { ServiceSchema, Errors } from 'moleculer';
 import * as addRights from './actions/addRights.ts';
-import * as awaitReadRight from './actions/awaitReadRight.ts';
-import * as deleteAllRights from './actions/deleteAllRights.ts';
-import * as deleteAllUserRights from './actions/deleteAllUserRights.ts';
-import * as getLink from './actions/getLink.ts';
 import * as getRights from './actions/getRights.ts';
-import * as getUsersWithReadRights from './actions/getUsersWithReadRights.ts';
 import * as hasRights from './actions/hasRights.ts';
-import * as isPublic from './actions/isPublic.ts';
-import * as refreshContainersRights from './actions/refreshContainersRights.ts';
-import * as removeRights from './actions/removeRights.ts';
 import * as setRights from './actions/setRights.ts';
+import awaitReadRight from './actions/awaitReadRight.ts';
+import deleteAllRights from './actions/deleteAllRights.ts';
+import deleteAllUserRights from './actions/deleteAllUserRights.ts';
+import getLink from './actions/getLink.ts';
+import getUsersWithReadRights from './actions/getUsersWithReadRights.ts';
+import isPublic from './actions/isPublic.ts';
+import refreshContainersRights from './actions/refreshContainersRights.ts';
+import removeRights from './actions/removeRights.ts';
 
 import {
   getAuthorizationNode,
@@ -40,43 +40,41 @@ const filterAclsOnlyAgent = (acl: any) => agentPredicates.includes(acl.p.value);
  * - The nested json format as used in "additionalRights" (https://semapps.org/docs/middleware/webacl/resource#addrights)
  *  - organized by user, group, anon, anyUser. See the documentation for the details.
  */
-const WebaclResourceSchema = {
+const WebaclResourceService = {
   name: 'webacl.resource' as const,
   settings: {
-    baseUrl: null,
-    graphName: null,
-    podProvider: false
+    baseUrl: null
   },
   dependencies: ['triplestore', 'jsonld', 'ldp.link-header'],
-  started() {
+  async started() {
     // Register so that HEAD requests to LDP resources & containers may return links to ACL
     this.broker.call('ldp.link-header.register', { actionName: 'webacl.resource.getLink' });
   },
   actions: {
     addRights: addRights.action,
-    awaitReadRight: awaitReadRight.action,
-    deleteAllRights: deleteAllRights.action,
-    deleteAllUserRights: deleteAllUserRights.action,
-    getLink: getLink.action,
     getRights: getRights.action,
     hasRights: hasRights.action,
-    isPublic: isPublic.action,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
-    getUsersWithReadRights: getUsersWithReadRights.action,
-    refreshContainersRights: refreshContainersRights.action,
-    removeRights: removeRights.action,
     setRights: setRights.action,
     // Actions accessible through the API
     api_addRights: addRights.api,
     api_hasRights: hasRights.api,
     api_getRights: getRights.api,
-    api_setRights: setRights.api
+    api_setRights: setRights.api,
+    // Other utils
+    awaitReadRight,
+    deleteAllRights,
+    deleteAllUserRights,
+    getLink,
+    isPublic,
+    getUsersWithReadRights,
+    refreshContainersRights,
+    removeRights
   },
   hooks: {
     before: {
-      '*'(ctx) {
-        // @ts-expect-error TS(2339): Property 'podProvider' does not exist on type 'str... Remove this comment to see the full error message
-        if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.resourceUri) {
+      '*'(ctx: any) {
+        if (!ctx.meta.dataset && ctx.params.resourceUri) {
+          this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${ctx.params.resourceUri}`);
           ctx.meta.dataset = getDatasetFromUri(ctx.params.resourceUri);
         }
       }
@@ -90,7 +88,7 @@ const WebaclResourceSchema = {
       await this.broker.waitForServices(['ldp.container', 'ldp.resource']);
 
       if (resourceUri.startsWith(urlJoin(this.settings.baseUrl, '_groups'))) {
-        const exists = await aclGroupExists(resourceUri, ctx, this.settings.graphName);
+        const exists = await aclGroupExists(resourceUri, ctx);
         if (!exists) throw new MoleculerError(`WAC group not found ${resourceUri}`, 404, 'NOT_FOUND');
         return false; // it is never a container
       }
@@ -106,25 +104,21 @@ const WebaclResourceSchema = {
       }
       return true;
     },
-    async getExistingPerms(ctx, resourceUri, baseUrl, graphName, isContainer) {
+    async getExistingPerms(ctx, resourceUri, baseUrl, isContainer) {
       const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
 
       const document = [];
 
-      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName)));
-      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName)));
-      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName)));
-      // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName)));
+      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read')));
+      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write')));
+      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append')));
+      document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control')));
 
       if (isContainer) {
-        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName, true)));
-        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName, true)));
-        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName, true)));
-        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName, true)));
+        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', true)));
+        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', true)));
+        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', true)));
+        document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', true)));
       }
 
       return document
@@ -154,12 +148,12 @@ const WebaclResourceSchema = {
   }
 } satisfies ServiceSchema;
 
-export default WebaclResourceSchema;
+export default WebaclResourceService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [WebaclResourceSchema.name]: typeof WebaclResourceSchema;
+      [WebaclResourceService.name]: typeof WebaclResourceService;
     }
   }
 }

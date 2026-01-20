@@ -1,17 +1,17 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
-import { ServiceSchema } from 'moleculer';
+import { ServiceSchema, Errors } from 'moleculer';
+import { getSlugFromUri, isWebId } from '@semapps/ldp';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';
 
-const { MoleculerError } = require('moleculer').Errors;
+const { MoleculerError } = Errors;
 
 const InboxService = {
   name: 'activitypub.inbox' as const,
   mixins: [AwaitActivityMixin],
   settings: {
-    podProvider: false,
     collectionOptions: {
       path: '/inbox',
       attachToTypes: Object.values(ACTOR_TYPES),
@@ -21,17 +21,27 @@ const InboxService = {
       dereferenceItems: true,
       sortPredicate: 'as:published',
       sortOrder: 'semapps:DescOrder',
-      permissions: collectionPermissionsWithAnonRead
+      permissions: collectionPermissionsWithAnonRead,
+      controlledActions: {
+        post: 'activitypub.api.inbox'
+      }
     }
   },
-  dependencies: ['activitypub.collection', 'activitypub.collections-registry'],
+  dependencies: ['activitypub.collections-registry'],
   async started() {
     await this.broker.call('activitypub.collections-registry.register', this.settings.collectionOptions);
   },
   actions: {
     post: {
       async handler(ctx) {
-        const { collectionUri, ...activity } = ctx.params;
+        let { collectionUri, ...activity } = ctx.params;
+        const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+
+        // If the collection URI is not provided, find it from the webId (may happen if this action is called directly)
+        if (!collectionUri) {
+          if (!isWebId(webId)) throw Error(`If containerUri is not provided, a webId is required. Provided: ${webId}`);
+          collectionUri = await this.actions.getUri({ objectUri: webId }, { parentCtx: ctx });
+        }
 
         if (!collectionUri || !collectionUri.startsWith('http')) {
           throw new Error(`The collectionUri ${collectionUri} is not a valid URL`);
@@ -43,7 +53,6 @@ const InboxService = {
 
         // Ensure the actor in the activity is the same as the posting actor
         // (When posting, the webId is the one of the poster)
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         if (activity.actor !== ctx.meta.webId) {
           throw new E.UnAuthorizedError('INVALID_ACTOR', 'Activity actor is not the same as the posting actor');
         }
@@ -55,14 +64,10 @@ const InboxService = {
         if (!account) throw new E.NotFoundError();
         if (account.deletedAt) throw new MoleculerError(`User does not exist anymore`, 410, 'GONE');
 
-        if (this.settings.podProvider) {
-          // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-          ctx.meta.dataset = account.username;
-        }
+        ctx.meta.dataset = account.username;
 
         // We want the next operations to be done by the system
         // TODO check if we can avoid this, as this is a bad practice
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'system';
 
         const collectionExists = await ctx.call('activitypub.collection.exist', {
@@ -73,23 +78,18 @@ const InboxService = {
           throw new E.NotFoundError();
         }
 
-        // @ts-expect-error TS(2339): Property 'skipSignatureValidation' does not exist ... Remove this comment to see the full error message
         if (!ctx.meta.skipSignatureValidation) {
-          // @ts-expect-error TS(2339): Property 'rawBody' does not exist on type '{}'.
           if (!ctx.meta.rawBody || !ctx.meta.originalHeaders)
             throw new Error(`Cannot validate HTTP signature because of missing meta (rawBody or originalHeaders)`);
 
           const validDigest = await ctx.call('signature.verifyDigest', {
-            // @ts-expect-error TS(2339): Property 'rawBody' does not exist on type '{}'.
             body: ctx.meta.rawBody, // Stored by parseRawBody middleware
-            // @ts-expect-error TS(2339): Property 'originalHeaders' does not exist on type ... Remove this comment to see the full error message
             headers: ctx.meta.originalHeaders
           });
 
           const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
             url: collectionUri,
             method: 'POST',
-            // @ts-expect-error TS(2339): Property 'originalHeaders' does not exist on type ... Remove this comment to see the full error message
             headers: ctx.meta.originalHeaders
           });
 
@@ -100,28 +100,19 @@ const InboxService = {
 
         // TODO check activity is valid
 
-        try {
-          await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients: [inboxOwner] });
-        } catch (e) {
-          // If some processors failed, log error message but don't stop
-          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-          this.logger.error(e.message);
-        }
-
         // If this is a transient activity, we have no way to retrieve it
         // so do not store it in the inbox (Mastodon works the same way)
         if (activity.id && !activity.id.includes('#')) {
           // Save the remote activity in the local triple store
           await ctx.call('ldp.remote.store', {
             resource: activity,
-            keepInSync: false, // Activities are immutable
-            webId: inboxOwner
+            keepInSync: false // Activities are immutable
           });
 
           // Attach the activity to the activities container, in order to use the container options
           await ctx.call('activitypub.activity.attach', {
             resourceUri: activity.id,
-            webId: this.settings.podProvider ? inboxOwner : 'system'
+            webId: inboxOwner
           });
 
           // Attach the activity to the inbox
@@ -141,6 +132,14 @@ const InboxService = {
             },
             { meta: { webId: null, dataset: null } }
           );
+        }
+
+        try {
+          await this.broker.call('activitypub.side-effects.processInbox', { activity, recipients: [inboxOwner] });
+        } catch (e) {
+          // If some processors failed, log error message but don't stop
+          // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
+          this.logger.error(e.message);
         }
 
         ctx.emit(
@@ -169,7 +168,7 @@ const InboxService = {
             PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
             SELECT DISTINCT ?activityUri 
             WHERE {
-              GRAPH <${collectionUri}> {
+              GRAPH <${getSlugFromUri(collectionUri)}> {
                 <${collectionUri}> a as:Collection .
                 <${collectionUri}> as:items ?activityUri . 
               }

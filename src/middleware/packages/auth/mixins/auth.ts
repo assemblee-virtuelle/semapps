@@ -69,15 +69,11 @@ const AuthMixin = {
     reservedUsernames: [],
     minPasswordLength: 1,
     minUsernameLength: 1,
-    webIdSelection: [],
-    accountSelection: [],
-    accountsDataset: 'settings',
-    podProvider: false
+    accountsDataset: 'settings'
   },
   dependencies: ['api'],
   async created() {
-    const { jwtPath, reservedUsernames, minPasswordLength, minUsernameLength, accountsDataset, podProvider } =
-      this.settings;
+    const { jwtPath, reservedUsernames, minPasswordLength, minUsernameLength, accountsDataset } = this.settings;
 
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "auth.jwt"; se... Remove this comment to see the full error message
     this.broker.createService({
@@ -123,7 +119,6 @@ const AuthMixin = {
 
         if (!token) {
           // No token
-          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
           ctx.meta.webId = 'anon';
           return Promise.resolve(null);
         }
@@ -131,7 +126,6 @@ const AuthMixin = {
         if (method === 'Bearer') {
           const payload = await ctx.call('auth.jwt.verifyServerSignedToken', { token });
           if (payload) {
-            // @ts-expect-error TS(2339): Property 'tokenPayload' does not exist on type '{}... Remove this comment to see the full error message
             ctx.meta.tokenPayload = payload;
             // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             ctx.meta.webId = payload.webId;
@@ -149,7 +143,6 @@ const AuthMixin = {
         }
 
         // No valid auth method given.
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }
@@ -206,9 +199,7 @@ const AuthMixin = {
       // We do not use the VC-JOSE spec to sign and envelop presentations. Instead we go
       // with embedded signatures. This way, the signature persists within the resource.
 
-      const hasCapabilityService = ctx.broker.registry.actions.isAvailable(
-        'crypto.vc.verifier.verifyCapabilityPresentation'
-      );
+      const hasCapabilityService = ctx.broker.registry.actions.isAvailable('vc.verifier.verifyCapabilityPresentation');
       if (!hasCapabilityService) return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
 
       // Decode JTW to JSON.
@@ -220,7 +211,7 @@ const AuthMixin = {
         verified: isCapSignatureVerified,
         presentation: verifiedPresentation,
         presentationResult
-      } = await ctx.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+      } = await ctx.call('vc.verifier.verifyCapabilityPresentation', {
         verifiablePresentation: decodedToken,
         options: {
           maxChainLength: ctx.params.route.opts.maxChainLength
@@ -239,25 +230,6 @@ const AuthMixin = {
     },
     getApiRoutes() {
       throw new Error('getApiRoutes must be implemented by the service');
-    },
-    pickWebIdData(data) {
-      if (this.settings.webIdSelection.length > 0) {
-        return Object.fromEntries(
-          this.settings.webIdSelection.filter((key: any) => key in data).map((key: any) => [key, data[key]])
-        );
-      } else {
-        // TODO do not return anything if webIdSelection is empty, to conform with pickAccountData
-        return data || {};
-      }
-    },
-    pickAccountData(data) {
-      if (this.settings.accountSelection.length > 0) {
-        return Object.fromEntries(
-          this.settings.accountSelection.filter((key: any) => key in data).map((key: any) => [key, data[key]])
-        );
-      } else {
-        return {};
-      }
     }
   }
 } satisfies Partial<ServiceSchema>;

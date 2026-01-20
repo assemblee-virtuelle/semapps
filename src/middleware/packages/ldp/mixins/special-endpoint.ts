@@ -1,6 +1,5 @@
 import urlJoin from 'url-join';
-import { namedNode, triple } from '@rdfjs/data-model';
-
+import rdf from '@rdfjs/data-model';
 import {
   parseUrl,
   parseHeader,
@@ -9,10 +8,9 @@ import {
   negotiateContentType,
   parseJson
 } from '@semapps/middlewares';
-
 import { ServiceSchema } from 'moleculer';
 
-const Schema = {
+const SpecialEndpointMixin = {
   settings: {
     baseUrl: null,
     settingsDataset: null,
@@ -21,7 +19,7 @@ const Schema = {
       initialData: {}
     }
   },
-  dependencies: ['api', 'ldp'],
+  dependencies: ['api', 'ldp', 'type-index'],
   async started() {
     if (!this.settings.baseUrl) throw new Error(`The baseUrl must be specified for service ${this.name}`);
     if (!this.settings.settingsDataset)
@@ -78,7 +76,7 @@ const Schema = {
           'ldp.resource.patch',
           {
             resourceUri: this.endpointUrl,
-            triplesToAdd: [triple(namedNode(this.endpointUrl), predicate, object)],
+            triplesToAdd: [rdf.quad(rdf.namedNode(this.endpointUrl), predicate, object)],
             webId: 'system'
           },
           { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }
@@ -88,7 +86,6 @@ const Schema = {
 
     endpointGet: {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = ctx.meta.headers?.accept;
 
         return await ctx.call(
@@ -104,4 +101,4 @@ const Schema = {
   }
 } satisfies Partial<ServiceSchema>;
 
-export default Schema;
+export default SpecialEndpointMixin;

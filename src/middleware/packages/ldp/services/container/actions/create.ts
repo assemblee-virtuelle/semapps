@@ -1,19 +1,20 @@
 import { ActionSchema } from 'moleculer';
+import urlJoin from 'url-join';
 
-const Schema = {
+const CreateAction = {
   visibility: 'public',
   params: {
-    containerUri: { type: 'string' },
     title: { type: 'string', optional: true },
     description: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
-    options: { type: 'object', optional: true },
-    webId: { type: 'string', optional: true }
+    registration: { type: 'object', optional: true }
   },
   async handler(ctx) {
-    const { containerUri, title, description, options } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    let { title, description, registration } = ctx.params;
+
+    const graphName: string = await ctx.call('triplestore.named-graph.create');
+
+    const baseUrl: string = await ctx.call('solid-storage.getBaseUrl');
+    const containerUri = urlJoin(baseUrl, graphName);
 
     await ctx.call('triplestore.insert', {
       resource: {
@@ -22,12 +23,14 @@ const Schema = {
         'http://purl.org/dc/terms/title': title,
         'http://purl.org/dc/terms/description': description
       },
-      graphName: containerUri,
+      graphName,
       webId: 'system'
     });
 
-    ctx.emit('ldp.container.created', { containerUri, options, webId });
+    ctx.emit('ldp.container.created', { containerUri, registration });
+
+    return containerUri;
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default CreateAction;

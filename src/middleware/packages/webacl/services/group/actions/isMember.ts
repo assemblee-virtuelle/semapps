@@ -14,7 +14,6 @@ export const action = {
   },
   async handler(ctx) {
     let { groupSlug, groupUri, memberId } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
@@ -43,7 +42,7 @@ export const action = {
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         ASK
-        WHERE { GRAPH <${this.settings.graphName}> {
+        WHERE { GRAPH <${await ctx.call('triplestore.dataset.getWacGraph')}> {
           <${groupUri}> vcard:hasMember <${memberId}> .
         } }
         `,

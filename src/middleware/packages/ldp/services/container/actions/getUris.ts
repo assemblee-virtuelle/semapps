@@ -1,4 +1,5 @@
 import { ActionSchema } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -13,7 +14,7 @@ const Schema = {
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         SELECT ?resourceUri
         WHERE {
-          GRAPH <${containerUri}> {
+          GRAPH <${getSlugFromUri(containerUri)}> {
             <${containerUri}> ldp:contains ?resourceUri .
           }
         }

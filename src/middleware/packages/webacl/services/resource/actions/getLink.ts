@@ -1,7 +1,7 @@
 import { ActionSchema } from 'moleculer';
 import { getAclUriFromResourceUri } from '../../../utils.ts';
 
-export const action = {
+const GetLinkAction = {
   visibility: 'public',
   params: {
     uri: { type: 'string', optional: false }
@@ -14,3 +14,5 @@ export const action = {
     };
   }
 } satisfies ActionSchema;
+
+export default GetLinkAction;

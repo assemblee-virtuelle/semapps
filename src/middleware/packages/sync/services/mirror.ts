@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
-import { createFragmentURL, arrayOf, getId } from '@semapps/ldp';
+import { createFragmentURL, arrayOf, getId, getSlugFromUri } from '@semapps/ldp';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import { ServiceSchema, Errors } from 'moleculer';
 import SynchronizerService from './synchronizer.ts';
@@ -26,7 +26,6 @@ const MirrorSchema = {
     this.broker.createService({
       mixins: [SynchronizerService],
       settings: {
-        podProvider: false,
         synchronizeContainers: true,
         attachToLocalContainers: false
       }
@@ -47,7 +46,6 @@ const MirrorSchema = {
     mirror: {
       visibility: 'public',
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
         serverUrl: { type: 'string', optional: false }
       },
       async handler(ctx) {
@@ -127,7 +125,7 @@ const MirrorSchema = {
                 query: `
                   PREFIX ldp: <http://www.w3.org/ns/ldp#>
                   INSERT DATA {
-                    GRAPH <${containerUri}> {
+                    GRAPH <${getSlugFromUri(containerUri)}> {
                       <${containerUri}> a ldp:Container, ldp:BasicContainer .
                     }
                   }
@@ -146,7 +144,7 @@ const MirrorSchema = {
                   query: `
                     PREFIX ldp: <http://www.w3.org/ns/ldp#>
                     INSERT DATA {
-                      GRAPH <${containerUri}> {
+                      GRAPH <${getSlugFromUri(containerUri)}> {
                         <${containerUri}> ldp:contains <${resourceUri}> .
                       }
                     }

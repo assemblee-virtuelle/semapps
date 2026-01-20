@@ -49,11 +49,13 @@ var $be5569a64aeca92c$export$2e2bcd8739ae039 = $be5569a64aeca92c$var$ImageInput;
 
 
 
-const $c87f07c114e8d06d$var$OptionRenderer = ({ optionText: optionText, dataServers: dataServers })=>{
+const $b23d9d5b6162e692$var$OptionRenderer = ({ optionText: optionText, dataServers: dataServers })=>{
     const record = (0, $fAvTC$useRecordContext)();
+    // @ts-expect-error TS(2532): Object is possibly 'undefined'.
     const server = dataServers && Object.values(dataServers).find((server)=>record.id.startsWith(server.baseUrl));
     return /*#__PURE__*/ (0, $fAvTC$jsxs)("span", {
         children: [
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             record[optionText],
             server && /*#__PURE__*/ (0, $fAvTC$jsxs)("em", {
                 className: "serverName",
@@ -69,17 +71,17 @@ const $c87f07c114e8d06d$var$OptionRenderer = ({ optionText: optionText, dataServ
         ]
     });
 };
-var $c87f07c114e8d06d$export$2e2bcd8739ae039 = $c87f07c114e8d06d$var$OptionRenderer;
+var $b23d9d5b6162e692$export$2e2bcd8739ae039 = $b23d9d5b6162e692$var$OptionRenderer;
 
 
-const $6339f423cc6c3ee3$var$MultiServerAutocompleteArrayInput = ({ optionText: optionText, ...rest })=>{
+const $f6a1f9f295a87037$var$MultiServerAutocompleteArrayInput = ({ optionText: optionText, ...rest })=>{
     const dataServers = (0, $fAvTC$useDataServers)();
     const matchSuggestion = (0, $fAvTC$useCallback)((filterValue, choice)=>choice[optionText].toLowerCase().match(filterValue.toLowerCase()), [
         optionText
     ]);
     return /*#__PURE__*/ (0, $fAvTC$jsx)((0, $fAvTC$AutocompleteArrayInput), {
         matchSuggestion: matchSuggestion,
-        optionText: /*#__PURE__*/ (0, $fAvTC$jsx)((0, $c87f07c114e8d06d$export$2e2bcd8739ae039), {
+        optionText: /*#__PURE__*/ (0, $fAvTC$jsx)((0, $b23d9d5b6162e692$export$2e2bcd8739ae039), {
             optionText: optionText,
             dataServers: dataServers
         }),
@@ -87,14 +89,14 @@ const $6339f423cc6c3ee3$var$MultiServerAutocompleteArrayInput = ({ optionText: o
         ...rest
     });
 };
-var $6339f423cc6c3ee3$export$2e2bcd8739ae039 = $6339f423cc6c3ee3$var$MultiServerAutocompleteArrayInput;
+var $f6a1f9f295a87037$export$2e2bcd8739ae039 = $f6a1f9f295a87037$var$MultiServerAutocompleteArrayInput;
 
 
 
 
 
 
-const $b0f28d60b9360e4c$var$MultiServerAutocompleteInput = ({ optionText: optionText, ...rest })=>{
+const $109c96749658c295$var$MultiServerAutocompleteInput = ({ optionText: optionText, ...rest })=>{
     const dataServers = (0, $fAvTC$useDataServers)();
     // We cannot use OptionRenderer like MultiServerAutocompleteArrayInput because there is a bug with AutocompleteInput
     const optionTextWithServerName = (0, $fAvTC$useCallback)((record)=>{
@@ -111,27 +113,27 @@ const $b0f28d60b9360e4c$var$MultiServerAutocompleteInput = ({ optionText: option
         ...rest
     });
 };
-var $b0f28d60b9360e4c$export$2e2bcd8739ae039 = $b0f28d60b9360e4c$var$MultiServerAutocompleteInput;
+var $109c96749658c295$export$2e2bcd8739ae039 = $109c96749658c295$var$MultiServerAutocompleteInput;
 
 
 
 
 
-const $5caa484b443e2e14$var$MultiLinesInput = (props)=>/*#__PURE__*/ (0, $fAvTC$jsx)((0, $fAvTC$TextInput), {
+const $56023c392f290bc6$var$MultiLinesInput = (props)=>/*#__PURE__*/ (0, $fAvTC$jsx)((0, $fAvTC$TextInput), {
         multiline: true,
         minRows: 2,
         format: (value)=>value ? Array.isArray(value) ? value.join('\n') : value : '',
         parse: (value)=>value.split(/\r?\n/),
         ...props
     });
-var $5caa484b443e2e14$export$2e2bcd8739ae039 = $5caa484b443e2e14$var$MultiLinesInput;
+var $56023c392f290bc6$export$2e2bcd8739ae039 = $56023c392f290bc6$var$MultiLinesInput;
 
 
 
 
 
 
-const $0a220aa421897b42$var$ReferenceArrayInput = (props)=>{
+const $40d113c1dd835e32$var$ReferenceArrayInput = (props)=>{
     const { field: { value: value, onChange: onChange } } = (0, $fAvTC$useController)({
         name: props.source
     });
@@ -150,31 +152,31 @@ const $0a220aa421897b42$var$ReferenceArrayInput = (props)=>{
         ...props
     });
 };
-var $0a220aa421897b42$export$2e2bcd8739ae039 = $0a220aa421897b42$var$ReferenceArrayInput;
+var $40d113c1dd835e32$export$2e2bcd8739ae039 = $40d113c1dd835e32$var$ReferenceArrayInput;
 
 
 
 
 
-const $4dc5aebf6fd9ab50$var$format = (value)=>{
+const $f7451f4d7b42f8bb$var$format = (value)=>{
     // If there is no value, return immediately
     if (!value) return value;
     // If the value is an object with an @id field, return the uri
     return typeof value === 'object' ? value.id || value['@id'] : value;
 };
-const $4dc5aebf6fd9ab50$var$ReferenceInput = ({ children: children, ...rest })=>{
+const $f7451f4d7b42f8bb$var$ReferenceInput = ({ children: children, ...rest })=>{
     const child = (0, $fAvTC$react).Children.only(children);
     return /*#__PURE__*/ (0, $fAvTC$jsx)((0, $fAvTC$ReferenceInput), {
         ...rest,
         children: /*#__PURE__*/ (0, $fAvTC$react).cloneElement(child, {
-            format: $4dc5aebf6fd9ab50$var$format
+            format: $f7451f4d7b42f8bb$var$format
         })
     });
 };
-var $4dc5aebf6fd9ab50$export$2e2bcd8739ae039 = $4dc5aebf6fd9ab50$var$ReferenceInput;
+var $f7451f4d7b42f8bb$export$2e2bcd8739ae039 = $f7451f4d7b42f8bb$var$ReferenceInput;
 
 
 
 
-export {$be5569a64aeca92c$export$2e2bcd8739ae039 as ImageInput, $6339f423cc6c3ee3$export$2e2bcd8739ae039 as MultiServerAutocompleteArrayInput, $b0f28d60b9360e4c$export$2e2bcd8739ae039 as MultiServerAutocompleteInput, $5caa484b443e2e14$export$2e2bcd8739ae039 as MultiLinesInput, $0a220aa421897b42$export$2e2bcd8739ae039 as ReferenceArrayInput, $4dc5aebf6fd9ab50$export$2e2bcd8739ae039 as ReferenceInput};
+export {$be5569a64aeca92c$export$2e2bcd8739ae039 as ImageInput, $f6a1f9f295a87037$export$2e2bcd8739ae039 as MultiServerAutocompleteArrayInput, $109c96749658c295$export$2e2bcd8739ae039 as MultiServerAutocompleteInput, $56023c392f290bc6$export$2e2bcd8739ae039 as MultiLinesInput, $40d113c1dd835e32$export$2e2bcd8739ae039 as ReferenceArrayInput, $f7451f4d7b42f8bb$export$2e2bcd8739ae039 as ReferenceInput};
 //# sourceMappingURL=index.es.js.map

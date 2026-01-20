@@ -20,7 +20,7 @@
     "allowImportingTsExtensions": true,
     "outDir": "dist/",
     "rootDir": "./",
-    "typeRoots": ["node_modules/types", "types"]
+    "typeRoots": ["node_modules/@types", "types"]
   },
   "exclude": ["**/dist"]
 }

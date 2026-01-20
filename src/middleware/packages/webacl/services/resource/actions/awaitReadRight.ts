@@ -1,6 +1,7 @@
 import { ActionSchema } from 'moleculer';
+import { WacPermission } from '../../../types.ts';
 
-export const action = {
+const AwaitReadRightAction = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
@@ -14,7 +15,7 @@ export const action = {
       let interval: any;
       const checkRights = () => {
         ctx
-          .call('webacl.resource.hasRights', {
+          .call<WacPermission, any>('webacl.resource.hasRights', {
             resourceUri,
             rights: { read: true },
             webId
@@ -23,12 +24,11 @@ export const action = {
             if (rights.read === true) {
               if (interval) clearInterval(interval);
               resolve(true);
-              // @ts-expect-error TS(18048): 'timeout' is possibly 'undefined'.
             } else if (i * 1000 >= timeout) {
               if (interval) clearInterval(interval);
               resolve(false);
             }
-            i++;
+            i += 1;
           });
       };
       checkRights(); // Try immediately, then launch interval
@@ -36,3 +36,5 @@ export const action = {
     });
   }
 } satisfies ActionSchema;
+
+export default AwaitReadRightAction;

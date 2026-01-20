@@ -108,7 +108,7 @@ const JsonldParserSchema = {
     fromQuads: {
       async handler(ctx) {
         const { input } = ctx.params;
-        
+
         const context = await ctx.call('jsonld.context.get');
 
         // Options: https://github.com/rubensworks/jsonld-streaming-serializer.js?tab=readme-ov-file#configuration

@@ -14,21 +14,13 @@ const InferenceRemoteSchema = {
     acceptFromRemoteServers: true,
     offerToRemoteServers: true
   },
-  dependencies: ['activitypub.relay'],
-  async started() {
-    this.relayActor = await this.broker.call('activitypub.relay.getActor');
-  },
   actions: {
     offerInference: {
       visibility: 'public',
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
         subject: { type: 'string', optional: false },
-        // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
         predicate: { type: 'string', optional: false },
-        // @ts-expect-error TS(2322): Type '{ type: "string"; optional: false; }' is not... Remove this comment to see the full error message
         object: { type: 'string', optional: false },
-        // @ts-expect-error TS(2322): Type '{ type: "boolean"; optional: false; }' is no... Remove this comment to see the full error message
         add: { type: 'boolean', optional: false }
       },
       async handler(ctx) {

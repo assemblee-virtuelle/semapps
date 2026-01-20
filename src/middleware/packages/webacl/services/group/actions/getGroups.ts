@@ -1,7 +1,6 @@
 import { ActionSchema } from 'moleculer';
 
-export const api = async function api(this: any, ctx: any) {
-  if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;
+export const api = async function api(ctx: any) {
   return await ctx.call('webacl.group.getGroups', {});
 };
 
@@ -11,7 +10,6 @@ export const action = {
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let groups;
@@ -26,7 +24,7 @@ export const action = {
           PREFIX foaf: <http://xmlns.com/foaf/0.1/>
           SELECT ?g 
           WHERE 
-          { GRAPH <${this.settings.graphName}>
+          { GRAPH <${await ctx.call('triplestore.dataset.getWacGraph')}>
             { ?g a vcard:Group.
             ?auth a acl:Authorization;
               acl:mode acl:Read;
@@ -46,7 +44,7 @@ export const action = {
           PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
           SELECT ?g 
           WHERE { 
-            GRAPH <${this.settings.graphName}>
+            GRAPH <${await ctx.call('triplestore.dataset.getWacGraph')}>
             { ?g a vcard:Group } 
           }
         `,
