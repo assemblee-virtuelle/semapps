@@ -23,7 +23,7 @@ describe.each(['ng', 'fuseki'])('LDP handling through API with triplestore %s', 
   });
 
   let containerUri: string;
-  let resourceUri: any;
+  let resourceUri: string;
 
   test('Create resource', async () => {
     containerUri = await alice.getContainerUri('pair:Project');
