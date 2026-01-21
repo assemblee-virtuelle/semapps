@@ -6,11 +6,11 @@ import { AdapterInterface, BaseAdapter } from './base.ts';
 
 type NextGraphAdapterSettings = {
   serverPeerId: string; // The server peer id, is provided in the console of the NextGraph server
-  adminUserKey: string; // The admin user key, can be retrieved using the GUI of the NextGraph server
-  clientPeerKey: string; // The client peer key, can be generated usinf the CLI of the NextGraph server ex with cargo : cargo run --bin ngcli gen-key
+  adminUserKey: string; // The admin user key, can be retrieved using NextGraph CLI (add-user)
+  clientPeerKey: string; // The client peer key, can be generated using NextGraph CLI ex with cargo : cargo run --bin ngcli gen-key
   serverAddr: string; // The server address, can be retrieved using the console of the NextGraph server
-  adminUserId: string; // The admin user id, must be saved when first creating the user
-  mappingsNuri: string; // The mappings nuri, must be saved when first creating the document
+  mappingsUserId: string; // The mappings user id, must be saved when first creating the user
+  mappingsNuri: string; // The mappings document nuri, must be saved when first creating the document
   backupsPath?: string; // Path to store backups
 };
 
@@ -33,9 +33,9 @@ const openSessions: { [dataset: string]: Session } = {};
 export default class NextGraphAdapter extends BaseAdapter implements AdapterInterface {
   name = 'nextgraph';
 
-  private settings: { adminUserId: string; mappingsNuri: string; backupsPath?: string };
+  private settings: { mappingsUserId: string; mappingsNuri: string; backupsPath?: string };
 
-  private adminSessionid: string = '';
+  private mappingsSessionId: string = '';
 
   private sdkConfig: { server_peer_id: string; admin_user_key: string; client_peer_key: string; server_addr: string };
 
@@ -47,7 +47,7 @@ export default class NextGraphAdapter extends BaseAdapter implements AdapterInte
     if (!settings.adminUserKey) throw new Error('Admin user key is required');
     if (!settings.clientPeerKey) throw new Error('Client peer key is required');
     if (!settings.serverAddr) throw new Error('Server address is required');
-    if (!settings.adminUserId) throw new Error('Admin user id is required');
+    if (!settings.mappingsUserId) throw new Error('Admin user id is required');
     if (!settings.mappingsNuri) throw new Error('Mappings nuri is required');
 
     // Create the SDK config, used to initialize the adapter and to create datasets (users)
@@ -59,7 +59,7 @@ export default class NextGraphAdapter extends BaseAdapter implements AdapterInte
     };
 
     this.settings = {
-      adminUserId: settings.adminUserId,
+      mappingsUserId: settings.mappingsUserId,
       mappingsNuri: settings.mappingsNuri,
       backupsPath: settings.backupsPath
     };
@@ -76,11 +76,11 @@ export default class NextGraphAdapter extends BaseAdapter implements AdapterInte
       // Initialize the nextgraph backend in headless mode
       await ng.init_headless(this.sdkConfig);
 
-      // Start a session for the admin user (used to manage datasets)
-      const session = await ng.session_headless_start(this.settings.adminUserId);
-      this.adminSessionid = session.session_id;
+      // Start a session for the mappings user (used to manage datasets)
+      const session = await ng.session_headless_start(this.settings.mappingsUserId);
+      this.mappingsSessionId = session.session_id;
 
-      this.getLogger().info(`NextGraph adapter initialized. Admin session started with id: ${this.adminSessionid}`);
+      this.getLogger().info(`NextGraph adapter initialized. Admin session started with id: ${this.mappingsSessionId}`);
     } catch (error) {
       throw new Error(`NextGraph adapter initialization failed: ${error}`);
     }
@@ -149,7 +149,7 @@ export default class NextGraphAdapter extends BaseAdapter implements AdapterInte
       const mappingUri = `http://semapps.org/mappings/${encodeURIComponent(dataset)}`;
 
       await ng.sparql_update(
-        this.adminSessionid,
+        this.mappingsSessionId,
         `
           PREFIX semapps: <http://semapps.org/ns/core#>
           INSERT DATA { 
@@ -182,7 +182,7 @@ export default class NextGraphAdapter extends BaseAdapter implements AdapterInte
   async listDatasets() {
     try {
       const response = await ng.sparql_query(
-        this.adminSessionid,
+        this.mappingsSessionId,
         `
         PREFIX semapps: <http://semapps.org/ns/core#>
         SELECT ?datasetName WHERE {
@@ -210,7 +210,7 @@ export default class NextGraphAdapter extends BaseAdapter implements AdapterInte
 
       // Delete the mapping from the graph
       await ng.sparql_update(
-        this.adminSessionid,
+        this.mappingsSessionId,
         `
           PREFIX semapps: <http://semapps.org/ns/core#>
           DELETE WHERE { 
@@ -260,7 +260,7 @@ export default class NextGraphAdapter extends BaseAdapter implements AdapterInte
 
       fs.writeFileSync(pathJoin(this.settings.backupsPath, `${dataset}.nq`), dumpWithTrailingDots);
 
-      // const mappingsDump = await ng.rdf_dump(this.adminSessionid);
+      // const mappingsDump = await ng.rdf_dump(this.mappingsSessionId);
       // fs.writeFileSync(pathJoin(this.settings.backupsPath, 'mappings.nq'), mappingsDump);
     } catch (error) {
       throw new Error(`NextGraph backupDataset failed: ${error}\nDataset: ${dataset}`);
@@ -275,7 +275,7 @@ export default class NextGraphAdapter extends BaseAdapter implements AdapterInte
   private async getDatasetMetadata(dataset: string): Promise<DatasetMetadata | void> {
     try {
       const response = await ng.sparql_query(
-        this.adminSessionid,
+        this.mappingsSessionId,
         `
           PREFIX semapps: <http://semapps.org/ns/core#>
           SELECT ?mappingUri ?userId ?wacGraph WHERE {
@@ -353,7 +353,7 @@ export default class NextGraphAdapter extends BaseAdapter implements AdapterInte
   private async getUserIdForDataset(dataset: string): Promise<string> {
     try {
       const response = await ng.sparql_query(
-        this.adminSessionid,
+        this.mappingsSessionId,
         `
         PREFIX semapps: <http://semapps.org/ns/core#>
         SELECT ?userId WHERE {
@@ -382,7 +382,7 @@ export default class NextGraphAdapter extends BaseAdapter implements AdapterInte
       }
 
       // We can't close the admin session because it is started in init, which is called only on creation
-      // if (this.adminSessionid) await ng.session_headless_stop(this.adminSessionid, true);
+      // if (this.mappingsSessionId) await ng.session_headless_stop(this.mappingsSessionId, true);
 
       this.getLogger().info('NextGraph adapter cleaned up');
     } catch (error) {

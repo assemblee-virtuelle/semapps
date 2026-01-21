@@ -5,11 +5,12 @@ services:
     restart: always
     volumes:
       - ./data/ng:/nextgraph-rs/.ng:z
-      - .env:/stack-root/.env:z # In order to be able to update the .env file during the initialization of nextgraph
+      - .env.local:/stack-root/.env:z # Update the env variables during nextgraph initialization
     ports:
       - '1440:1440'
     expose:
       - '1440'
+
   fuseki_tests:
     image: stain/jena-fuseki:5.1.0
     container_name: fuseki_tests

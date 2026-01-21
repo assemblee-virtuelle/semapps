@@ -13,16 +13,14 @@ type FetchOptions = Omit<fetch.RequestInit, 'body'> & {
 
 export const getTripleStoreAdapter = (triplestore: string) => {
   if (triplestore === 'ng') {
-    // TODO : Environmentalize the nextgraph settings.
     return new NextGraphAdapter({
-      adminUserId: 'Ez4plcHN27PQneZoAitrS4gfkaq0-XNqGynvODTOOSoA',
-      mappingsNuri:
-        'did:ng:o:n2fJ7TM5CkpSxIQLZV57CFt3YrGBY9Y8hk8cAnZrIe0A:v:CT179cL3HgJg1OkYoE79iPNQ9vtcMcAZUHQq5RXUFeQA',
-      serverPeerId: 'QlJkY0KELV4W1aVZehn6Qvx5eauRkICSJbdYqIbFHPEA',
-      adminUserKey: 'bE0rIy0V8YQAEfXhqYas-erDrddazpTjhsoJHVqvSDIA',
-      clientPeerKey: 'HV_9Rh-yDpEqsvtwYUjcxqIARUnuP8g2JA4hEH1Nh7QA',
+      mappingsUserId: CONFIG.NG_MAPPINGS_USER_ID!,
+      mappingsNuri: CONFIG.NG_MAPPINGS_NURI!,
+      serverPeerId: CONFIG.NG_PEER_ID!,
+      adminUserKey: CONFIG.NG_ADMIN_USER_KEY!,
+      clientPeerKey: CONFIG.NG_CLIENT_PEER_KEY!,
       serverAddr: '127.0.0.1:14400',
-      backupsPath: './data/nextgraph'
+      backupsPath: './data/ng/backups'
     });
   } else if (triplestore === 'fuseki') {
     return new FusekiAdapter({

@@ -12,3 +12,9 @@ export const JENA_USER = process.env.SEMAPPS_JENA_USER;
 export const JENA_PASSWORD = process.env.SEMAPPS_JENA_PASSWORD;
 export const ACTIVATE_CACHE = process.env.SEMAPPS_ACTIVATE_CACHE === 'true';
 export const FUSEKI_BASE = process.env.FUSEKI_BASE;
+
+export const NG_ADMIN_USER_KEY = process.env.NG_ADMIN_USER_KEY;
+export const NG_CLIENT_PEER_KEY = process.env.NG_CLIENT_PEER_KEY;
+export const NG_PEER_ID = process.env.NG_PEER_ID;
+export const NG_MAPPINGS_NURI = process.env.NG_MAPPINGS_NURI;
+export const NG_MAPPINGS_USER_ID = process.env.NG_MAPPINGS_USER_ID;
