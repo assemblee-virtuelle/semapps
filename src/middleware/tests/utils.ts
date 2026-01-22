@@ -19,8 +19,8 @@ export const getTripleStoreAdapter = (triplestore: string) => {
       serverPeerId: CONFIG.NG_PEER_ID!,
       adminUserKey: CONFIG.NG_ADMIN_USER_KEY!,
       clientPeerKey: CONFIG.NG_CLIENT_PEER_KEY!,
-      serverAddr: '127.0.0.1:14400',
-      backupsPath: './data/ng/backups'
+      serverAddr: '172.25.0.2:1440',
+      backupsPath: './data/ng-backups'
     });
   } else if (triplestore === 'fuseki') {
     return new FusekiAdapter({
