@@ -1,15 +1,18 @@
 services:
   ng_tests:
-    image: nextgraph-rs:ubuntu
+    image: semapps/nextgraph
     container_name: ng_tests
     restart: always
     volumes:
       - ./data/ng:/nextgraph-rs/.ng:z
-      - .env.local:/stack-root/.env:z # Update the env variables during nextgraph initialization
+      - .env.test:/stack-root/.env:z # This file will be updated during initialization
     ports:
-      - '1440:1440'
+      - '14400:14400'
     expose:
-      - '1440'
+      - '14400'
+    networks:
+      default:
+        ipv4_address: 172.25.0.2 # Fix IP because the NextGraph SDK needs an exact IP address
 
   fuseki_tests:
     image: stain/jena-fuseki:5.1.0
@@ -65,4 +68,8 @@ services:
 
 networks:
   default:
-    name: middleware_tests_network
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+          ip_range: 172.25.5.0/24
+          gateway: 172.25.5.254

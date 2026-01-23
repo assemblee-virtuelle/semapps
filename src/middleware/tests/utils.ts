@@ -14,13 +14,13 @@ type FetchOptions = Omit<fetch.RequestInit, 'body'> & {
 export const getTripleStoreAdapter = (triplestore: string) => {
   if (triplestore === 'ng') {
     return new NextGraphAdapter({
-      mappingsUserId: CONFIG.NG_MAPPINGS_USER_ID!,
-      mappingsNuri: CONFIG.NG_MAPPINGS_NURI!,
-      serverPeerId: CONFIG.NG_PEER_ID!,
+      serverAddr: `${CONFIG.NG_SERVER_IP_ADDRESS}:${CONFIG.NG_SERVER_PORT}`,
+      serverPeerId: CONFIG.NG_SERVER_PEER_ID!,
       adminUserKey: CONFIG.NG_ADMIN_USER_KEY!,
       clientPeerKey: CONFIG.NG_CLIENT_PEER_KEY!,
-      serverAddr: '172.25.0.2:1440',
-      backupsPath: './data/ng-backups'
+      mappingsUserId: CONFIG.NG_MAPPINGS_USER_ID!,
+      mappingsNuri: CONFIG.NG_MAPPINGS_NURI!,
+      backupsPath: CONFIG.NG_BACKUPS_PATH
     });
   } else if (triplestore === 'fuseki') {
     return new FusekiAdapter({
