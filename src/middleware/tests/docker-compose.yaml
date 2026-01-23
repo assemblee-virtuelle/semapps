@@ -15,7 +15,7 @@ services:
         ipv4_address: 172.25.0.2 # Fix IP because the NextGraph SDK needs an exact IP address
 
   fuseki_tests:
-    image: stain/jena-fuseki:5.1.0
+    image: semapps/fuseki5-permissions-fix
     container_name: fuseki_tests
     restart: always
     volumes:
