@@ -7,6 +7,7 @@
   "dependencies": {
     "@rdfjs/data-model": "2.1.1",
     "@rdfjs/types": "^2.0.1",
+    "@ng-org/nextgraph": "0.1.2-alpha.1",
     "@semapps/middlewares": "1.2.0",
     "@semapps/mime-types": "1.2.0",
     "@semapps/ontologies": "1.2.0",
@@ -20,7 +21,6 @@
     "mime-types": "^2.1.35",
     "moleculer-db": "^0.8.16",
     "moleculer-web": "^0.10.0-beta1",
-    "nextgraph": "file:/home/sebastien/Code/nextgraph-rs/sdk/js/lib-wasm/pkg-node",
     "node-fetch": "^2.6.6",
     "path-to-regexp": "^6.2.0",
     "rdf-parse": "^1.7.0",

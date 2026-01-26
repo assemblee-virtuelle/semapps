@@ -5,7 +5,7 @@ services:
     restart: always
     volumes:
       - ./data/ng:/nextgraph-rs/.ng:z
-      - .env.test:/stack-root/.env:z # This file will be updated during initialization
+      - .env.test.local:/stack-root/.env:z # File created by Make and updated during NextGraph initialization
     ports:
       - '14400:14400'
     expose:

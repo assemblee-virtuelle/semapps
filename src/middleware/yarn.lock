@@ -1697,6 +1697,11 @@
     "@emnapi/runtime" "^1.4.3"
     "@tybys/wasm-util" "^0.10.0"
 
+"@ng-org/nextgraph@0.1.2-alpha.1":
+  version "0.1.2-alpha.1"
+  resolved "https://registry.yarnpkg.com/@ng-org/nextgraph/-/nextgraph-0.1.2-alpha.1.tgz#643b154aa9be81786eae35a617cc48d026f9adb7"
+  integrity sha512-qbk2DLsIvJifv/LMOpdHjoIzpx/TVQxwkEIvdaXvffw0IJ7Xjjac7HziY3XBwBQUq0t1Gj8ImFJFxLq0YNRfvw==
+
 "@noble/ed25519@^1.6.0":
   version "1.7.5"
   resolved "https://registry.yarnpkg.com/@noble/ed25519/-/ed25519-1.7.5.tgz#94df8bdb9fec9c4644a56007eecb57b0e9fbd0d7"
@@ -4892,6 +4897,11 @@ env-paths@^2.2.0, env-paths@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/env-paths/-/env-paths-2.2.1.tgz#420399d416ce1fbe9bc0a07c62fa68d67fd0f8f2"
   integrity sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==
+
+envfile@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/envfile/-/envfile-7.1.0.tgz#c0b101279dc710c25546602d5d17cfb9ab132e48"
+  integrity sha512-dyH4QnnZsArCLhPASr29eqBWDvKpq0GggQFTmysTT/S9TTmt1JrEKNvTBc09Cd7ujVZQful2HBGRMe2agu7Krg==
 
 envinfo@7.13.0:
   version "7.13.0"
@@ -8517,9 +8527,6 @@ neo-async@^2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
-
-"nextgraph@file:../../../nextgraph-rs/ng-sdk-js/pkg-node":
-  version "0.1.1-alpha.7"
 
 node-abi@^3.3.0:
   version "3.85.0"

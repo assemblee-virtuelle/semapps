@@ -1,4 +1,4 @@
-import ng from 'nextgraph';
+import ng from '@ng-org/nextgraph';
 import fs from 'fs';
 import { join as pathJoin } from 'path';
 import { SparqlJsonParser } from 'sparqljson-parse';

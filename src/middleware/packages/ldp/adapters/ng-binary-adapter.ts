@@ -1,4 +1,4 @@
-import ng from 'nextgraph';
+import ng from '@ng-org/nextgraph';
 import { Readable } from 'stream';
 import path from 'path';
 import fs from 'fs';
