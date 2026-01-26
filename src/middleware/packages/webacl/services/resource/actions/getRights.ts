@@ -84,7 +84,7 @@ async function filterAcls(hasControl: any, uaSearchParam: any, acls: any) {
   return [];
 }
 
-async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: any, graphName: any, isContainer: any) {
+async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: any, isContainer: any) {
   const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
   // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
   const uaSearchParam = getUserAgentSearchParam(user);
@@ -103,10 +103,10 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
 
   // Get the ACL for the resource
 
-  const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName);
-  const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName);
-  const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName);
-  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
+  const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read');
+  const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write');
+  const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append');
+  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control');
 
   document.push(...(await filterAcls(hasControl, uaSearchParam, reads)));
   document.push(...(await filterAcls(hasControl, uaSearchParam, writes)));
@@ -114,10 +114,10 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
   document.push(...(await filterAcls(hasControl, uaSearchParam, controls)));
 
   if (isContainer && hasControl) {
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName, true)));
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName, true)));
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName, true)));
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName, true)));
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', true)));
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', true)));
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', true)));
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', true)));
   }
 
   // Get the ACLs for all the parent containers
@@ -130,10 +130,10 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
     const containerUri = container.container.value;
     const aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
 
-    const reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', graphName, true);
-    const writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', graphName, true);
-    const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', graphName, true);
-    const controls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', graphName, true);
+    const reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', true);
+    const writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', true);
+    const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', true);
+    const controls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', true);
 
     // we keep all the authorization nodes we found
     // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
@@ -202,6 +202,6 @@ export const action = {
 
     const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));
 
-    return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
+    return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, isContainer);
   }
 } satisfies ActionSchema;

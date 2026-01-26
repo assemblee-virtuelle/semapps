@@ -1,25 +1,29 @@
 import fetch from 'node-fetch';
 import { ServiceBroker } from 'moleculer';
-import { createAccount, fetchServer } from '../utils.ts';
+import { createAccount, fetchServer, clearAllDatasets, backupAllDatasets } from '../utils.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
 let broker: ServiceBroker;
 let alice: any;
 
-beforeAll(async () => {
-  broker = await initialize(false);
-  await broker.start();
-  alice = await createAccount(broker, 'alice');
-});
+describe.each(['ng', 'fuseki'])('LDP handling through API with triplestore %s', (triplestore: string) => {
+  beforeAll(async () => {
+    broker = await initialize(triplestore);
+    await broker.start();
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice6');
+  });
 
-afterAll(async () => {
-  await broker.stop();
-});
+  afterAll(async () => {
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
+  });
 
-describe('LDP handling through API', () => {
   let containerUri: string;
-  let resourceUri: any;
+  let resourceUri: string;
 
   test('Create resource', async () => {
     containerUri = await alice.getContainerUri('pair:Project');

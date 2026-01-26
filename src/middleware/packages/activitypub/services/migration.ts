@@ -1,4 +1,5 @@
 import { ServiceSchema } from 'moleculer';
+import { getSlugFromUri } from '../utils.ts';
 
 const ActivitypubMigrationSchema = {
   name: 'activitypub.migration' as const,
@@ -25,7 +26,7 @@ const ActivitypubMigrationSchema = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             PREFIX ldp: <http://www.w3.org/ns/ldp#>
             INSERT {
-              GRAPH <${collectionsContainerUri}> {
+              GRAPH <${getSlugFromUri(collectionsContainerUri)}> {
                 <${collectionsContainerUri}> ldp:contains ?collectionUri
               }
             }

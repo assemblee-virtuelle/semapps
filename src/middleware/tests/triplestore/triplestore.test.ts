@@ -1,0 +1,520 @@
+import { ServiceBroker } from 'moleculer';
+import initialize from './initialize.ts';
+import { clearAllDatasets, backupAllDatasets } from '../utils.ts';
+
+jest.setTimeout(30000);
+
+describe.each(['fuseki', 'ng'])('Triplestore service tests with %s', (triplestore: any) => {
+  let broker: ServiceBroker;
+  const testDataset = 'test_dataset';
+
+  beforeAll(async () => {
+    broker = await initialize(triplestore);
+    await clearAllDatasets(broker);
+
+    await broker.waitForServices(['triplestore']);
+
+    if (await broker.call('triplestore.dataset.exist', { dataset: testDataset })) {
+      await broker.call('triplestore.dataset.clear', { dataset: testDataset });
+    } else {
+      await broker.call('triplestore.dataset.create', { dataset: testDataset });
+    }
+  });
+
+  afterAll(async () => {
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
+  });
+
+  describe('Dataset subservice', () => {
+    const testDatasetForSubServiceTests = 'test_dataset_for_sub_service_tests';
+
+    test('Create a new dataset', async () => {
+      await broker.call('triplestore.dataset.create', { dataset: testDatasetForSubServiceTests });
+      await expect(
+        broker.call('triplestore.dataset.exist', { dataset: testDatasetForSubServiceTests })
+      ).resolves.toBeTruthy();
+    });
+
+    test('Check dataset existence', async () => {
+      // Test non-existent dataset
+      await expect(broker.call('triplestore.dataset.exist', { dataset: 'non_existent_dataset' })).resolves.toBeFalsy();
+      // Create and test existing dataset
+      await broker.call('triplestore.dataset.create', { dataset: testDataset });
+      await expect(broker.call('triplestore.dataset.exist', { dataset: testDataset })).resolves.toBeTruthy();
+    });
+
+    test('List datasets', async () => {
+      const datasets = await broker.call('triplestore.dataset.list');
+      expect(Array.isArray(datasets)).toBeTruthy();
+      expect(datasets).toContain(testDataset);
+    });
+
+    test('Delete dataset', async () => {
+      await broker.call('triplestore.dataset.create', { dataset: testDatasetForSubServiceTests });
+      await expect(
+        broker.call('triplestore.dataset.exist', { dataset: testDatasetForSubServiceTests })
+      ).resolves.toBeTruthy();
+      await broker.call('triplestore.dataset.delete', { dataset: testDatasetForSubServiceTests });
+      await expect(
+        broker.call('triplestore.dataset.exist', { dataset: testDatasetForSubServiceTests })
+      ).resolves.toBeFalsy();
+    });
+  });
+
+  describe('Insert action', () => {
+    test('Insert JSON-LD data', async () => {
+      await broker.call('triplestore.insert', {
+        resource: {
+          '@context': {
+            ex: 'http://example.org/',
+            predicate: 'ex:predicate'
+          },
+          '@id': 'http://example.org/subject',
+          predicate: 'object'
+        },
+        dataset: testDataset
+      });
+      const result = await broker.call('triplestore.query', {
+        query: 'SELECT * WHERE { ?s ?p ?o }',
+        dataset: testDataset
+      });
+      expect(result).toHaveLength(1);
+      expect(result[0].s.value).toBe('http://example.org/subject');
+      expect(result[0].p.value).toBe('http://example.org/predicate');
+      expect(result[0].o.value).toBe('object');
+    });
+
+    test('Insert JSON-LD data with type', async () => {
+      await broker.call('triplestore.insert', {
+        resource: {
+          '@context': {
+            ex: 'http://example.org/',
+            name: 'ex:name',
+            type: '@type'
+          },
+          '@id': 'http://example.org/person1',
+          type: 'http://example.org/Person',
+          name: 'John Doe'
+        },
+        dataset: testDataset
+      });
+      const result = await broker.call('triplestore.query', {
+        query: 'SELECT * WHERE { ?s a <http://example.org/Person> }',
+        dataset: testDataset
+      });
+      expect(result).toHaveLength(1);
+    });
+
+    if (triplestore === 'fuseki') {
+      test('Insert data with graph name', async () => {
+        const graphName = 'http://example.org/graph';
+        await broker.call('triplestore.insert', {
+          resource: {
+            '@context': {
+              ex: 'http://example.org/',
+              predicate: 'ex:predicate'
+            },
+            '@id': 'http://example.org/subject',
+            predicate: 'object'
+          },
+          graphName,
+          dataset: testDataset
+        });
+        const result = await broker.call('triplestore.query', {
+          query: `SELECT * FROM <${graphName}> WHERE { ?s ?p ?o }`,
+          dataset: testDataset
+        });
+        expect(result).toHaveLength(1);
+      });
+    }
+
+    test('Insert should fail with non-existent dataset', async () => {
+      await expect(
+        broker.call('triplestore.insert', {
+          resource: {
+            '@context': {
+              ex: 'http://example.org/',
+              predicate: 'ex:predicate'
+            },
+            '@id': 'http://example.org/subject',
+            predicate: 'object'
+          },
+          dataset: 'non_existent_dataset'
+        })
+      ).rejects.toThrow("The dataset non_existent_dataset doesn't exist");
+    });
+  });
+
+  describe('Query action', () => {
+    beforeEach(async () => {
+      // Insert test data
+      const jsonLdData = [
+        {
+          '@context': {
+            ex: 'http://example.org/',
+            name: 'ex:name',
+            type: '@type'
+          },
+          '@id': 'http://example.org/person1',
+          type: 'http://example.org/Person',
+          name: 'John Doe'
+        },
+        {
+          '@context': {
+            ex: 'http://example.org/',
+            name: 'ex:name',
+            type: '@type'
+          },
+          '@id': 'http://example.org/person2',
+          type: 'http://example.org/Person',
+          name: 'Jane Smith'
+        }
+      ];
+      for (const data of jsonLdData) {
+        await broker.call('triplestore.insert', {
+          resource: data,
+          dataset: testDataset
+        });
+      }
+    });
+
+    test('SELECT query with JSON result', async () => {
+      const result = await broker.call('triplestore.query', {
+        query: 'SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 5',
+        dataset: testDataset
+      });
+      expect(Array.isArray(result)).toBeTruthy();
+      // includes the data inserted in the previous tests
+      expect(result.length).toBe(5);
+    });
+
+    test('ASK query', async () => {
+      const result = await broker.call('triplestore.query', {
+        query: 'ASK WHERE { ?s a <http://example.org/Person> }',
+        dataset: testDataset
+      });
+      expect(typeof result).toBe('boolean');
+      expect(result).toBeTruthy();
+    });
+
+    test('CONSTRUCT query with JSON result', async () => {
+      const result = await broker.call('triplestore.query', {
+        query: 'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o } LIMIT 5',
+        dataset: testDataset
+      });
+      expect(typeof result).toBe('object');
+    });
+
+    test('Query with SPARQL.js object', async () => {
+      const sparqlObject = {
+        type: 'query',
+        queryType: 'SELECT',
+        variables: [
+          { termType: 'Variable', value: 's' },
+          { termType: 'Variable', value: 'p' },
+          { termType: 'Variable', value: 'o' }
+        ],
+        where: [
+          {
+            type: 'bgp',
+            triples: [
+              {
+                subject: { termType: 'Variable', value: 's' },
+                predicate: { termType: 'Variable', value: 'p' },
+                object: { termType: 'Variable', value: 'o' }
+              }
+            ]
+          }
+        ],
+        limit: 5
+      };
+      const result = await broker.call('triplestore.query', {
+        query: sparqlObject,
+        dataset: testDataset
+      });
+      expect(Array.isArray(result)).toBeTruthy();
+    });
+
+    test('Query should fail with non-existent dataset', async () => {
+      await expect(
+        broker.call('triplestore.query', {
+          query: 'SELECT * WHERE { ?s ?p ?o }',
+          dataset: 'non_existent_dataset'
+        })
+      ).rejects.toThrow("The dataset non_existent_dataset doesn't exist");
+    });
+  });
+
+  describe('Update action', () => {
+    beforeEach(async () => {
+      // Insert test data
+      const jsonLdData = {
+        '@context': {
+          ex: 'http://example.org/',
+          name: 'ex:name',
+          type: '@type'
+        },
+        '@id': 'http://example.org/person1',
+        type: 'http://example.org/Person',
+        name: 'John Doe'
+      };
+      await broker.call('triplestore.insert', {
+        resource: jsonLdData,
+        dataset: testDataset
+      });
+    });
+
+    test('UPDATE query with string', async () => {
+      const updateQuery = `
+        DELETE { <http://example.org/person1> <http://example.org/name> ?name }
+        INSERT { <http://example.org/person1> <http://example.org/name> "John Updated" }
+        WHERE { <http://example.org/person1> <http://example.org/name> ?name }
+      `;
+      await broker.call('triplestore.update', {
+        query: updateQuery,
+        dataset: testDataset
+      });
+      const result = await broker.call('triplestore.query', {
+        query: 'SELECT ?name WHERE { <http://example.org/person1> <http://example.org/name> ?name }',
+        dataset: testDataset
+      });
+      expect(result).toHaveLength(1);
+      expect(result[0].name.value).toBe('John Updated');
+    });
+
+    test('UPDATE query with SPARQL.js object', async () => {
+      const updateObject = {
+        type: 'update',
+        updates: [
+          {
+            type: 'insertdelete',
+            delete: [
+              {
+                type: 'bgp',
+                triples: [
+                  {
+                    subject: { termType: 'NamedNode', value: 'http://example.org/person1' },
+                    predicate: { termType: 'NamedNode', value: 'http://example.org/name' },
+                    object: { termType: 'Variable', value: 'name' }
+                  }
+                ]
+              }
+            ],
+            insert: [
+              {
+                type: 'bgp',
+                triples: [
+                  {
+                    subject: { termType: 'NamedNode', value: 'http://example.org/person1' },
+                    predicate: { termType: 'NamedNode', value: 'http://example.org/name' },
+                    object: { termType: 'Literal', value: 'John Updated Again' }
+                  }
+                ]
+              }
+            ],
+            where: [
+              {
+                type: 'bgp',
+                triples: [
+                  {
+                    subject: { termType: 'NamedNode', value: 'http://example.org/person1' },
+                    predicate: { termType: 'NamedNode', value: 'http://example.org/name' },
+                    object: { termType: 'Variable', value: 'name' }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      };
+      await broker.call('triplestore.update', {
+        query: updateObject,
+        dataset: testDataset
+      });
+      const result = await broker.call('triplestore.query', {
+        query: 'SELECT ?name WHERE { <http://example.org/person1> <http://example.org/name> ?name }',
+        dataset: testDataset
+      });
+      expect(result).toHaveLength(1);
+      expect(result[0].name.value).toBe('John Updated Again');
+    });
+
+    test('UPDATE should fail with non-existent dataset', async () => {
+      const updateQuery = `
+        INSERT { <http://example.org/person1> <http://example.org/age> "30" }
+        WHERE { }
+      `;
+      await expect(
+        broker.call('triplestore.update', {
+          query: updateQuery,
+          dataset: 'non_existent_dataset'
+        })
+      ).rejects.toThrow("The dataset non_existent_dataset doesn't exist");
+    });
+  });
+
+  describe('Dataset clear action', () => {
+    beforeEach(async () => {
+      // Insert test data
+      const jsonLdData = {
+        '@context': {
+          ex: 'http://example.org/',
+          name: 'ex:name',
+          type: '@type'
+        },
+        '@id': 'http://example.org/person1',
+        type: 'http://example.org/Person',
+        name: 'John Doe'
+      };
+      await broker.call('triplestore.insert', {
+        resource: jsonLdData,
+        dataset: testDataset
+      });
+    });
+
+    test('Drop all data from dataset', async () => {
+      // Verify data exists
+      let result = await broker.call('triplestore.query', {
+        query: 'SELECT * WHERE { ?s ?p ?o }',
+        dataset: testDataset
+      });
+      expect(result.length).toBeGreaterThan(0);
+      // Drop all data
+      await broker.call('triplestore.dataset.clear', {
+        dataset: testDataset
+      });
+      // Verify data is gone
+      result = await broker.call('triplestore.query', {
+        query: 'SELECT * WHERE { ?s ?p ?o }',
+        dataset: testDataset
+      });
+      expect(result).toHaveLength(0);
+    });
+
+    test('DropAll should fail with non-existent dataset', async () => {
+      await expect(
+        broker.call('triplestore.dataset.clear', {
+          dataset: 'non_existent_dataset'
+        })
+      ).rejects.toThrow("The dataset non_existent_dataset doesn't exist");
+    });
+  });
+
+  describe('NamedGraph subservice', () => {
+    let namedGraphUri: string;
+    let secondNamedGraphUri: string;
+    beforeAll(async () => {
+      namedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
+      secondNamedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
+
+      // Insert test data into the first named graph
+      const jsonLdData = {
+        '@context': {
+          ex: 'http://example.org/',
+          name: 'ex:name',
+          type: '@type'
+        },
+        '@id': 'http://example.org/person1',
+        type: 'http://example.org/Person',
+        name: 'John Doe'
+      };
+      await broker.call('triplestore.insert', {
+        resource: jsonLdData,
+        graphName: namedGraphUri,
+        dataset: testDataset
+      });
+
+      // Insert test data into the second named graph
+      await broker.call('triplestore.insert', {
+        resource: jsonLdData,
+        graphName: secondNamedGraphUri,
+        dataset: testDataset
+      });
+    });
+
+    test('Create a new named graph and verify it exists', async () => {
+      const localNamedGraphUri = await broker.call('triplestore.named-graph.create', { dataset: testDataset });
+
+      expect(localNamedGraphUri).toBeTruthy();
+      expect(localNamedGraphUri).not.toBe('');
+
+      // Fuseki considers a named graph exist only if it contains triples
+      if (triplestore === 'fuseki') {
+        await broker.call('triplestore.insert', {
+          resource: {
+            '@context': {
+              ex: 'http://example.org/'
+            },
+            '@id': 'http://example.org/person1',
+            '@type': 'http://example.org/Person',
+            'ex:name': 'John Doe'
+          },
+          dataset: testDataset,
+          graphName: localNamedGraphUri
+        });
+      }
+
+      // Assert the named graph exists
+      expect(
+        await broker.call('triplestore.named-graph.exist', { uri: localNamedGraphUri, dataset: testDataset })
+      ).toBeTruthy();
+    });
+
+    test('Check named graph existence should return false with non-existent named graph', async () => {
+      await expect(
+        broker.call('triplestore.named-graph.exist', { uri: 'http://example.org/graph', dataset: testDataset })
+      ).resolves.toBeFalsy();
+    });
+
+    test('Clear named graph should clear the named graph, and only it', async () => {
+      // Assert the the named graphs exist
+      expect(
+        await broker.call('triplestore.named-graph.exist', { uri: namedGraphUri, dataset: testDataset })
+      ).toBeTruthy();
+      expect(
+        await broker.call('triplestore.named-graph.exist', { uri: secondNamedGraphUri, dataset: testDataset })
+      ).toBeTruthy();
+
+      // Assert the data is in both named graphs
+      const resultFirstNamedGraph = await broker.call('triplestore.query', {
+        query: `SELECT * FROM <${namedGraphUri}> { ?s ?p ?o }`,
+        dataset: testDataset
+      });
+      expect(resultFirstNamedGraph).toHaveLength(2);
+      const resultSecondNamedGraph = await broker.call('triplestore.query', {
+        query: `SELECT * FROM <${secondNamedGraphUri}> { ?s ?p ?o }`,
+        dataset: testDataset
+      });
+      expect(resultSecondNamedGraph).toHaveLength(2);
+
+      // Clear the named graph
+      await broker.call('triplestore.named-graph.clear', { uri: namedGraphUri, dataset: testDataset });
+
+      // Assert the data isn't in the first named graph anymore
+      const result = await broker.call('triplestore.query', {
+        query: `SELECT * FROM <${namedGraphUri}> WHERE { ?s ?p ?o }`,
+        dataset: testDataset
+      });
+      expect(result).toHaveLength(0); // the placeholder triple
+
+      // Assert the data is still in the second named graph
+      const resultSecondNamedGraphAfterClear = await broker.call('triplestore.query', {
+        query: `SELECT * FROM <${secondNamedGraphUri}> WHERE { ?s ?p ?o }`,
+        dataset: testDataset
+      });
+      expect(resultSecondNamedGraphAfterClear).toHaveLength(2);
+    });
+
+    if (triplestore === 'fuseki')
+      test('Delete named graph', async () => {
+        await broker.call('triplestore.named-graph.delete', { uri: secondNamedGraphUri, dataset: testDataset });
+
+        expect(
+          await broker.call('triplestore.named-graph.exist', { uri: secondNamedGraphUri, dataset: testDataset })
+        ).toBeFalsy();
+      });
+  });
+});

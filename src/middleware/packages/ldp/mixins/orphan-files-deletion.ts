@@ -1,5 +1,6 @@
 import { CronJob } from 'cron';
 import { ServiceSchema } from 'moleculer';
+import { getSlugFromUri } from '../utils.ts';
 
 const Schema = {
   settings: {
@@ -24,7 +25,7 @@ const Schema = {
             query: `
               SELECT ?file
               WHERE {
-                GRAPH <${containerUri}> {
+                GRAPH <${getSlugFromUri(containerUri)}> {
                   <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?file .
                 }
                 FILTER NOT EXISTS {

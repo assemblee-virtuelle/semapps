@@ -8,7 +8,6 @@ import deleteAction from './actions/delete.ts';
 import existAction from './actions/exist.ts';
 import getContainersAction from './actions/getContainers.ts';
 import getTypesAction from './actions/getTypes.ts';
-import uploadAction from './actions/upload.ts';
 import methods from './methods.ts';
 import { getDatasetFromUri } from '../../utils.ts';
 
@@ -17,10 +16,7 @@ const LdpResourceSchema = {
   settings: {
     baseUrl: null,
     preferredViewForResource: null,
-    allowSlugs: true,
-    binary: {
-      maxSize: '50Mb'
-    }
+    allowSlugs: true
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -33,8 +29,7 @@ const LdpResourceSchema = {
     getContainers: getContainersAction,
     getTypes: getTypesAction,
     patch: patchAction,
-    put: putAction,
-    upload: uploadAction
+    put: putAction
   },
   hooks: {
     before: {

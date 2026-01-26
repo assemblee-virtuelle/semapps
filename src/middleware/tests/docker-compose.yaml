@@ -1,6 +1,21 @@
 services:
+  ng_tests:
+    image: semapps/nextgraph
+    container_name: ng_tests
+    restart: always
+    volumes:
+      - ./data/ng:/nextgraph-rs/.ng:z
+      - .env.test.local:/stack-root/.env:z # File created by Make and updated during NextGraph initialization
+    ports:
+      - '14400:14400'
+    expose:
+      - '14400'
+    networks:
+      default:
+        ipv4_address: 172.25.0.2 # Fix IP because the NextGraph SDK needs an exact IP address
+
   fuseki_tests:
-    image: stain/jena-fuseki:5.1.0
+    image: semapps/fuseki5-permissions-fix
     container_name: fuseki_tests
     restart: always
     volumes:
@@ -53,4 +68,8 @@ services:
 
 networks:
   default:
-    name: middleware_tests_network
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+          ip_range: 172.25.5.0/24
+          gateway: 172.25.5.254

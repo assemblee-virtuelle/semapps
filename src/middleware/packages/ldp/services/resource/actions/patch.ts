@@ -1,5 +1,6 @@
 import rdf from '@rdfjs/data-model';
 import { ActionSchema, Errors } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -46,6 +47,8 @@ const Schema = {
       await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Append', webId });
     }
 
+    const namedGraphUri = getSlugFromUri(resourceUri);
+
     // Build the SPARQL update
     const sparqlUpdate = {
       type: 'update',
@@ -56,7 +59,7 @@ const Schema = {
       // @ts-expect-error TS(2345): Argument of type '{ updateType: string; delete: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'delete',
-        delete: [{ type: 'graph', triples: triplesToRemove, name: rdf.namedNode(resourceUri) }]
+        delete: [{ type: 'graph', triples: triplesToRemove, name: rdf.namedNode(namedGraphUri) }]
       });
     }
 
@@ -64,7 +67,7 @@ const Schema = {
       // @ts-expect-error TS(2345): Argument of type '{ updateType: string; insert: { ... Remove this comment to see the full error message
       sparqlUpdate.updates.push({
         updateType: 'insert',
-        insert: [{ type: 'graph', triples: triplesToAdd, name: rdf.namedNode(resourceUri) }]
+        insert: [{ type: 'graph', triples: triplesToAdd, name: rdf.namedNode(namedGraphUri) }]
       });
     }
 

@@ -125,7 +125,7 @@ const TypeIndexService = {
               VALUES ?typeIndexUri { ${typeIndexUris.map(typeIndexUri => `<${typeIndexUri}>`).join(' ')} }
               VALUES ?instancePredicate { solid:instanceContainer solid:instance }
               VALUES ?indexType { solid:ListedDocument solid:UnlistedDocument }
-              GRAPH ?typeIndexUri {
+              GRAPH ?g {
                 ?typeIndexUri a ?indexType .
                 ?typeRegistrationUri a solid:TypeRegistration .
                 ?typeRegistrationUri solid:forClass ?type .
@@ -180,7 +180,7 @@ const TypeIndexService = {
               VALUES ?typeIndexUri { ${typeIndexUris.map(uri => `<${uri}>`).join(' ')} }
               VALUES ?instancePredicate { ${instancePredicates.join(' ')} }
               VALUES ?indexType { solid:ListedDocument solid:UnlistedDocument }
-              GRAPH ?typeIndexUri {
+              GRAPH ?g {
                 ?typeIndexUri a ?indexType .
                 ?typeRegistrationUri a solid:TypeRegistration .
                 ?typeRegistrationUri solid:forClass <${expandedType}>, ?type .

@@ -1,22 +1,17 @@
 import { ServiceBroker } from 'moleculer';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
 import path, { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
 import { as, pair, petr, semapps, solid, vcard } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
-import { fileURLToPath } from 'url';
+import { getTripleStoreAdapter } from '../utils.ts';
 import * as CONFIG from '../config.ts';
-import { listDatasets, dropDataset } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
-  const datasets: string[] = await listDatasets();
-  for (let dataset of datasets) {
-    await dropDataset(dataset);
-  }
-
+const initialize = async (triplestore: string): Promise<ServiceBroker> => {
   const uploadsPath = pathJoin(__dirname, '../uploads');
   if (fs.existsSync(uploadsPath)) {
     fs.readdirSync(uploadsPath).forEach(f => fs.rmSync(`${uploadsPath}/${f}`, { recursive: true, force: true }));
@@ -40,10 +35,7 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
       baseUrl: CONFIG.HOME_URL,
       baseDir: path.resolve(__dirname, '..'),
       triplestore: {
-        url: CONFIG.SPARQL_ENDPOINT,
-        user: CONFIG.JENA_USER,
-        password: CONFIG.JENA_PASSWORD,
-        secure: false // TODO Remove when we move to Fuseki 5
+        adapter: getTripleStoreAdapter(triplestore)
       },
       containers: [],
       ontologies: [as, pair, petr, solid, vcard, semapps],
@@ -51,7 +43,7 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
       webfinger: false,
       webid: false,
       ldp: {
-        allowSlugs
+        allowSlugs: false
       }
     }
   });

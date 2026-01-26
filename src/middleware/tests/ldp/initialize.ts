@@ -2,12 +2,14 @@ import { ServiceBroker } from 'moleculer';
 import fs from 'fs';
 import path, { join as pathJoin } from 'path';
 import { CoreService } from '@semapps/core';
+import { FsBinaryAdapter, NgBinaryAdapter } from '@semapps/ldp';
 import { as, pair, petr, semapps, solid, vcard } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
+import { NextGraphAdapter } from '@semapps/triplestore';
 import { AuthLocalService } from '@semapps/auth';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { listDatasets, dropDataset } from '../utils.ts';
+import { getTripleStoreAdapter } from '../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -37,17 +39,12 @@ const containers = [
   },
   {
     path: '/files',
-    types: ['semapps:File'],
+    types: ['https://www.w3.org/ns/iana/media-types/application/octet-stream#Resource'],
     permissions
   }
 ];
 
-const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
-  const datasets: string[] = await listDatasets();
-  for (let dataset of datasets) {
-    await dropDataset(dataset);
-  }
-
+const initialize = async (triplestore: string): Promise<ServiceBroker> => {
   const uploadsPath = pathJoin(__dirname, '../uploads');
   if (fs.existsSync(uploadsPath)) {
     fs.readdirSync(uploadsPath).forEach(f => fs.rmSync(`${uploadsPath}/${f}`, { recursive: true, force: true }));
@@ -64,6 +61,23 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
     }
   });
 
+  const tripleStoreAdapter = getTripleStoreAdapter(triplestore);
+
+  const binaryAdapter =
+    triplestore === 'fuseki'
+      ? new FsBinaryAdapter({
+          rootDir: uploadsPath,
+          baseUrl: CONFIG.HOME_URL!,
+          maxSize: '80Mb',
+          tripleStoreAdapter
+        })
+      : new NgBinaryAdapter({
+          tmpDir: uploadsPath,
+          baseUrl: CONFIG.HOME_URL!,
+          maxSize: '80Mb',
+          ngAdapter: tripleStoreAdapter as NextGraphAdapter
+        });
+
   broker.createService({
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
     mixins: [CoreService],
@@ -71,10 +85,8 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
       baseUrl: CONFIG.HOME_URL,
       baseDir: path.resolve(__dirname, '..'),
       triplestore: {
-        url: CONFIG.SPARQL_ENDPOINT,
-        user: CONFIG.JENA_USER,
-        password: CONFIG.JENA_PASSWORD,
-        secure: false // TODO Remove when we move to Fuseki 5
+        defaultDataset: CONFIG.MAIN_DATASET,
+        adapter: tripleStoreAdapter
       },
       containers,
       ontologies: [as, pair, petr, solid, vcard, semapps],
@@ -82,7 +94,8 @@ const initialize = async (allowSlugs = true): Promise<ServiceBroker> => {
       webfinger: false,
       webid: false,
       ldp: {
-        allowSlugs
+        allowSlugs: false,
+        binaryAdapter
       }
     }
   });

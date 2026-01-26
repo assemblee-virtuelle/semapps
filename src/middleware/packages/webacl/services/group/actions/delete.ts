@@ -43,7 +43,7 @@ export const action = {
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
         DELETE WHERE { 
-          GRAPH <${this.settings.graphName}> { 
+          GRAPH <${await ctx.call('triplestore.dataset.getWacGraph')}> { 
             <${groupUri}> ?p ?o. 
           } 
         }
@@ -53,6 +53,6 @@ export const action = {
 
     await ctx.call('webacl.resource.deleteAllRights', { resourceUri: groupUri });
 
-    await removeAgentGroupOrAgentFromAuthorizations(groupUri, true, this.settings.graphName, ctx);
+    await removeAgentGroupOrAgentFromAuthorizations(groupUri, true, ctx);
   }
 } satisfies ActionSchema;

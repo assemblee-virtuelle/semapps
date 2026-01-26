@@ -1,7 +1,7 @@
-import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import Redis from 'ioredis';
 import { ActionParamSchema, CallingOptions, ServiceBroker, ServiceSchema } from 'moleculer';
+import { NextGraphAdapter, FusekiAdapter } from '@semapps/triplestore';
 import { Account } from '@semapps/auth';
 import { delay } from '@semapps/ldp';
 import * as CONFIG from './config.ts';
@@ -11,36 +11,43 @@ type FetchOptions = Omit<fetch.RequestInit, 'body'> & {
   headers?: fetch.Headers;
 };
 
-export const listDatasets = async (): Promise<string[]> => {
-  const response = await fetch(`${CONFIG.SPARQL_ENDPOINT}$/datasets`, {
-    headers: {
-      Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`
-    }
-  });
-
-  if (response.ok) {
-    const json = await response.json();
-    return json.datasets.map((dataset: any) => dataset['ds.name'].substring(1));
+export const getTripleStoreAdapter = (triplestore: string) => {
+  if (triplestore === 'ng') {
+    return new NextGraphAdapter({
+      serverAddr: `${CONFIG.NG_SERVER_IP_ADDRESS}:${CONFIG.NG_SERVER_PORT}`,
+      serverPeerId: CONFIG.NG_SERVER_PEER_ID!,
+      adminUserKey: CONFIG.NG_ADMIN_USER_KEY!,
+      clientPeerKey: CONFIG.NG_CLIENT_PEER_KEY!,
+      mappingsUserId: CONFIG.NG_MAPPINGS_USER_ID!,
+      mappingsNuri: CONFIG.NG_MAPPINGS_NURI!,
+      backupsPath: CONFIG.NG_BACKUPS_PATH
+    });
+  } else if (triplestore === 'fuseki') {
+    return new FusekiAdapter({
+      url: CONFIG.SPARQL_ENDPOINT,
+      user: CONFIG.JENA_USER,
+      password: CONFIG.JENA_PASSWORD
+    });
   } else {
-    return [];
+    throw new Error('Triplestore not supported');
   }
 };
 
-export const dropDataset = (dataset: string) =>
-  // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-  fetch(urlJoin(CONFIG.SPARQL_ENDPOINT, dataset, 'update'), {
-    method: 'POST',
-    body: 'update=DROP+ALL',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`
+export const clearAllDatasets = async (broker: ServiceBroker) => {
+  const datasets: string[] = await broker.call('triplestore.dataset.list');
+  for (const dataset of datasets) {
+    if (await broker.call('triplestore.dataset.exist', { dataset })) {
+      await broker.call('triplestore.dataset.clear', { dataset });
     }
-  });
+  }
+};
 
-export const dropAllDatasets = async () => {
-  const datasets = await listDatasets();
-  for (let dataset of datasets) {
-    await dropDataset(dataset);
+export const backupAllDatasets = async (broker: ServiceBroker) => {
+  const datasets: string[] = await broker.call('triplestore.dataset.list');
+  for (const dataset of datasets) {
+    if (await broker.call('triplestore.dataset.exist', { dataset })) {
+      await broker.call('triplestore.dataset.backup', { dataset });
+    }
   }
 };
 

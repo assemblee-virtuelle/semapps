@@ -15,7 +15,7 @@ const GetContainersAction = {
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         SELECT ?containerUri
         WHERE {
-          GRAPH ?containerUri {
+          GRAPH ?g {
             ?containerUri ldp:contains <${resourceUri}> .
           }
         }

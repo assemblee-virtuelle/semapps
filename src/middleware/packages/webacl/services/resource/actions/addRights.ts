@@ -85,13 +85,7 @@ export const action = {
           throw new MoleculerError('The rights cannot be added because they are incorrect', 400, 'BAD_REQUEST');
       }
 
-      const currentPerms = await this.getExistingPerms(
-        ctx,
-        resourceUri,
-        this.settings.baseUrl,
-        this.settings.graphName,
-        isContainer
-      );
+      const currentPerms = await this.getExistingPerms(ctx, resourceUri, this.settings.baseUrl, isContainer);
 
       // find the difference between addedRights and currentPerms. add only what is not existent yet.
       difference = addedRights.filter(
@@ -132,7 +126,7 @@ export const action = {
 
     if (addRequest.length > 0) {
       await ctx.call('triplestore.update', {
-        query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }`,
+        query: `INSERT DATA { GRAPH <${await ctx.call('triplestore.dataset.getWacGraph')}> { ${addRequest} } }`,
         webId: 'system'
       });
     }

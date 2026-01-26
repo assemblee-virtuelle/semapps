@@ -2,23 +2,27 @@ import fetch from 'node-fetch';
 import { ServiceBroker } from 'moleculer';
 import { parse as parseLinkHeader } from 'http-link-header';
 import initialize from './initialize.ts';
-import { createAccount } from '../utils.ts';
+import { createAccount, clearAllDatasets, backupAllDatasets } from '../utils.ts';
 
 jest.setTimeout(20000);
 let broker: ServiceBroker;
 let alice: any;
 
-beforeAll(async () => {
-  broker = await initialize(true);
-  await broker.start();
-  alice = await createAccount(broker, 'alice');
-});
+describe.each(['ng', 'fuseki'])('LDP paging tests with triplestore %s', (triplestore: string) => {
+  beforeAll(async () => {
+    broker = await initialize(triplestore);
+    await broker.start();
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice');
+  });
 
-afterAll(async () => {
-  if (broker) await broker.stop();
-});
+  afterAll(async () => {
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
+  });
 
-describe('LDP paging tests', () => {
   let containerUri: string;
   let resourcesUris: string[] = [];
 

@@ -1,17 +1,16 @@
-import urlJoin from 'url-join';
 import { Context, ServiceBroker } from 'moleculer';
 import { ControlledContainerMixin, delay, Registration } from '@semapps/ldp';
 import waitForExpect from 'wait-for-expect';
 import initialize from './initialize.ts';
-import { fetchServer, createAccount } from '../utils.ts';
+import { fetchServer, createAccount, clearAllDatasets, backupAllDatasets } from '../utils.ts';
 
 jest.setTimeout(50000);
 let broker: ServiceBroker;
 let alice: any;
 
-describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (allowSlugs: boolean) => {
+describe.each(['ng', 'fuseki'])('ControlledContainerMixin with triplestore %s', (triplestore: string) => {
   beforeAll(async () => {
-    broker = await initialize(allowSlugs);
+    broker = await initialize(triplestore);
 
     broker.createService({
       name: 'videos',
@@ -45,11 +44,15 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
     });
 
     await broker.start();
-    alice = await createAccount(broker, 'alice');
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice7');
   });
 
   afterAll(async () => {
-    if (broker) await broker.stop();
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
   });
 
   let containerUri: string;
@@ -66,21 +69,6 @@ describe.each([false, true])('ControlledContainerMixin with allowSlugs: %s', (al
 
     const containersUris = await alice.call('ldp.container.getAll');
     expect(containersUris).toHaveLength(8); // 7 containers + root container
-
-    if (allowSlugs) {
-      expect(containersUris).toEqual(
-        expect.arrayContaining([
-          urlJoin(alice.baseUrl, '/key'),
-          urlJoin(alice.baseUrl, '/public-key'),
-          urlJoin(alice.baseUrl, '/videos'),
-          urlJoin(alice.baseUrl, '/resources'),
-          urlJoin(alice.baseUrl, '/places'),
-          urlJoin(alice.baseUrl, '/themes'),
-          urlJoin(alice.baseUrl, '/files'),
-          urlJoin(alice.baseUrl, '/data')
-        ])
-      );
-    }
 
     containerUri = await alice.getContainerUri('as:Video');
     expect(containerUri).not.toBeUndefined();

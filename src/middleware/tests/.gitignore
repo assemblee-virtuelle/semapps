@@ -1,7 +1,7 @@
 /data
 /uploads
 
-.env.local
+.env.test.local
 
 */actors/
 */jwt/*.key

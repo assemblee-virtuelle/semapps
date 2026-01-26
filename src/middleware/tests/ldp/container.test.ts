@@ -3,22 +3,27 @@ import { ServiceBroker } from 'moleculer';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 import { createAccount } from '../utils.ts';
+import { clearAllDatasets, backupAllDatasets } from '../utils.ts';
 
 jest.setTimeout(20000);
 let broker: ServiceBroker;
 let alice: any;
 
-beforeAll(async () => {
-  broker = await initialize(false);
-  await broker.start();
-  alice = await createAccount(broker, 'alice');
-});
+describe.each(['ng', 'fuseki'])('LDP container tests with triplestore %s', (triplestore: string) => {
+  beforeAll(async () => {
+    broker = await initialize(triplestore);
+    await broker.start();
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice7');
+  });
 
-afterAll(async () => {
-  if (broker) await broker.stop();
-});
+  afterAll(async () => {
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
+  });
 
-describe('LDP container tests', () => {
   let resourceUri: string;
   let containerUri: string;
 

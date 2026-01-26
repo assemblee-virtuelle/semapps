@@ -33,10 +33,7 @@ const SolidStorageSchema = {
           secure: false // TODO Remove when we switch to Fuseki 5
         });
 
-        const allowSlugs = await ctx.call('ldp.getSetting', { key: 'allowSlugs' });
         const baseUrl = await this.actions.getBaseUrl({ username }, { parentCtx: ctx });
-
-        const rootContainerUri: string = await ctx.call('ldp.container.create', { path: '/data' });
 
         let resourcesUris: Record<string, string> = {};
 
@@ -46,10 +43,8 @@ const SolidStorageSchema = {
           const { controlledActions } = resourceRegistration;
 
           // TODO Put this inside the ldp.resource.create action
-          const resourceUri: string = await ctx.call('triplestore.named-graph.create', {
-            baseUrl,
-            slug: allowSlugs ? resourceRegistration.path : undefined
-          });
+          const graphName: string = await ctx.call('triplestore.named-graph.create');
+          const resourceUri = urlJoin(baseUrl, graphName);
 
           await ctx.call(controlledActions.create, {
             resourceUri,
@@ -58,13 +53,17 @@ const SolidStorageSchema = {
             webId: 'system'
           });
 
+          resourcesUris[resourceRegistration.name] = resourceUri;
+        }
+
+        // Once the type indexes are created, we can create the root container and attach all controlled resources to it
+        const rootContainerUri: string = await ctx.call('ldp.container.create', { path: '/data' });
+        for (const resourceRegistration of resourceRegistrations) {
           await ctx.call('ldp.container.attach', {
             containerUri: rootContainerUri,
-            resourceUri,
+            resourceUri: resourcesUris[resourceRegistration.name],
             webId: 'system'
           });
-
-          resourcesUris[resourceRegistration.name] = resourceUri;
         }
 
         const webId = resourcesUris.webid;

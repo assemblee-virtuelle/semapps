@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import { parse as parseLinkHeader } from 'http-link-header';
 import { ServiceBroker } from 'moleculer';
 import { ControlledContainerMixin } from '@semapps/ldp';
-import { fetchServer, createAccount } from '../utils.ts';
+import { fetchServer, createAccount, clearAllDatasets, backupAllDatasets } from '../utils.ts';
 import initialize from './initialize.ts';
 import * as CONFIG from '../config.ts';
 
@@ -10,45 +10,49 @@ jest.setTimeout(20000);
 let broker: ServiceBroker;
 let alice: any;
 
-beforeAll(async () => {
-  broker = await initialize(false);
+describe.each(['ng', 'fuseki'])('Headers handling of LDP server with triplestore %s', (triplestore: string) => {
+  beforeAll(async () => {
+    broker = await initialize(triplestore);
 
-  broker.createService({
-    name: 'event',
-    mixins: [ControlledContainerMixin],
-    settings: {
-      path: '/events',
-      types: ['pair:Event'],
-      permissions: {
-        anon: {
-          read: true,
-          write: true
+    broker.createService({
+      name: 'event',
+      mixins: [ControlledContainerMixin],
+      settings: {
+        path: '/events',
+        types: ['pair:Event'],
+        permissions: {
+          anon: {
+            read: true,
+            write: true
+          }
+        }
+      },
+      actions: {
+        getHeaderLinks: {
+          handler() {
+            return [
+              {
+                uri: 'http://foo.bar',
+                rel: 'http://foo.baz'
+              }
+            ];
+          }
         }
       }
-    },
-    actions: {
-      getHeaderLinks: {
-        handler() {
-          return [
-            {
-              uri: 'http://foo.bar',
-              rel: 'http://foo.baz'
-            }
-          ];
-        }
-      }
+    });
+
+    await broker.start();
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice7');
+  });
+
+  afterAll(async () => {
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
     }
   });
 
-  await broker.start();
-  alice = await createAccount(broker, 'alice');
-});
-
-afterAll(async () => {
-  if (broker) await broker.stop();
-});
-
-describe('Headers handling of LDP server', () => {
   let placesContainerUri: string;
   let eventsContainerUri: string;
 

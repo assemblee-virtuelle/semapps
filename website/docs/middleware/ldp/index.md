@@ -23,6 +23,7 @@ This package allows you to setup [LDP](https://www.w3.org/TR/ldp-primer/) contai
 - [LdpContainerService](container.md)
 - [LdpLinkHeaderService](link-header.md)
 - [LdpRegistryService](registry.md)
+- [LdpBinaryService](binary.md)
 - LdpRemoteService _(internal)_
 - LdpApiService _(internal)_
 - LdpCacheService _(internal)_
@@ -67,13 +68,14 @@ module.exports = {
 
 ## Settings
 
-| Property                   | Type       | Default      | Description                                                              |
-| -------------------------- | ---------- | ------------ | ------------------------------------------------------------------------ |
-| `baseUrl`                  | `String`   | **required** | Base URL of the LDP server                                               |
-| `containers`               | `[Object]` |              | List of containers to set up, with their options (see below)             |
-| `defaultContainerOptions`  | `[Object]` |              | Default options for all containers (see below)                           |
-| `preferredViewForResource` | `Function` |              | Function called to generate a redirect to the preferred view (see below) |
-| `allowSlugs`               | `Boolean`  | true         | If false, slugs will be ignored and UUIDs will be used everywhere        |
+| Property                   | Type            | Default      | Description                                                              |
+| -------------------------- | --------------- | ------------ | ------------------------------------------------------------------------ |
+| `baseUrl`                  | `String`        | **required** | Base URL of the LDP server                                               |
+| `containers`               | `[Object]`      |              | List of containers to set up, with their options (see below)             |
+| `defaultContainerOptions`  | `[Object]`      |              | Default options for all containers (see below)                           |
+| `preferredViewForResource` | `Function`      |              | Function called to generate a redirect to the preferred view (see below) |
+| `allowSlugs`               | `Boolean`       | true         | If false, slugs will be ignored and UUIDs will be used everywhere        |
+| `binaryAdapter`            | `BinaryAdapter` | **required** | The [adapter](./binary#adapters) that will store binaries                |
 
 ## Container options
 

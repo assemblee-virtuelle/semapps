@@ -1,4 +1,5 @@
 import { ActionSchema } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const DeleteAction = {
   visibility: 'public',
@@ -16,13 +17,14 @@ const DeleteAction = {
 
     await ctx.call('permissions.check', { uri: resourceUri, type: 'resource', mode: 'acl:Write', webId });
 
-    const exist = await ctx.call('triplestore.named-graph.exist', { uri: resourceUri });
+    const namedGraphUri = getSlugFromUri(resourceUri);
+    const exist = await ctx.call('triplestore.named-graph.exist', { uri: namedGraphUri });
     if (!exist) throw new Error(`No named graph found with resource ${resourceUri} (dataset: ${ctx.meta.dataset})`);
 
     const oldData = await this.actions.getStored({ resourceUri, webId: 'system' }, { parentCtx: ctx });
 
-    await ctx.call('triplestore.named-graph.clear', { uri: resourceUri });
-    await ctx.call('triplestore.named-graph.delete', { uri: resourceUri });
+    await ctx.call('triplestore.named-graph.clear', { uri: namedGraphUri });
+    await ctx.call('triplestore.named-graph.delete', { uri: namedGraphUri });
 
     // Detach from all containers
     const containersUris: string[] = await ctx.call('ldp.resource.getContainers', { resourceUri });

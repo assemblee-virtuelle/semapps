@@ -1,5 +1,5 @@
 import { sanitizeSparqlUri } from '@semapps/triplestore';
-import { getDatasetFromUri } from '@semapps/ldp';
+import { getDatasetFromUri, getSlugFromUri } from '@semapps/ldp';
 import { ActionSchema, Errors } from 'moleculer';
 import { getValueFromDataType } from '../../../../../utils.ts';
 
@@ -19,7 +19,7 @@ async function getCollectionMetadata(ctx: any, collectionUri: any, webId: any, d
       PREFIX semapps: <http://semapps.org/ns/core#>
       SELECT ?ordered ?summary ?dereferenceItems ?itemsPerPage ?sortPredicate ?sortOrder
       WHERE {
-        GRAPH <${collectionUri}> {
+        GRAPH <${getSlugFromUri(collectionUri)}> {
           <${collectionUri}> a <https://www.w3.org/ns/activitystreams#Collection> . # This will return [] if the user has no read permission
           BIND (EXISTS{<${collectionUri}> a <https://www.w3.org/ns/activitystreams#OrderedCollection>} AS ?ordered)
           OPTIONAL { <${collectionUri}> as:summary ?summary . }
@@ -47,7 +47,7 @@ async function verifyCursorExists(ctx: any, collectionUri: any, cursor: any, dat
       PREFIX as: <https://www.w3.org/ns/activitystreams#>
       SELECT ?itemExists
       WHERE {
-        GRAPH <${collectionUri}> {
+        GRAPH <${getSlugFromUri(collectionUri)}> {
           BIND (EXISTS{ <${collectionUri}> as:items <${cursor}> } AS ?itemExists)
         }
       }
@@ -82,7 +82,7 @@ async function fetchCollectionItemURIs(ctx: any, collectionUri: any, options: an
     PREFIX as: <https://www.w3.org/ns/activitystreams#>
     SELECT DISTINCT ?itemUri
     WHERE {
-      GRAPH <${collectionUri}> {
+      GRAPH <${getSlugFromUri(collectionUri)}> {
         <${collectionUri}> a as:Collection .
         OPTIONAL { 
           <${collectionUri}> as:items ?itemUri . 

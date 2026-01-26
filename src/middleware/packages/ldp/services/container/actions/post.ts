@@ -1,7 +1,8 @@
+import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import { ActionSchema, Errors } from 'moleculer';
-import { cleanUndefined } from '../../../utils.ts';
+import { cleanUndefined, getSlugFromUri } from '../../../utils.ts';
 import { Registration } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
@@ -11,10 +12,6 @@ const PostAction = {
   params: {
     containerUri: {
       type: 'string'
-    },
-    slug: {
-      type: 'string',
-      optional: true
     },
     resource: {
       type: 'object',
@@ -34,7 +31,7 @@ const PostAction = {
     }
   },
   async handler(ctx) {
-    let { resource, containerUri, slug, contentType, file } = ctx.params;
+    let { resource, containerUri, contentType, file } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     let isContainer = false;
     let expandedResource;
@@ -81,17 +78,22 @@ const PostAction = {
       );
     }
 
-    const resourceUri = await ctx.call('triplestore.named-graph.create', {
-      baseUrl: await ctx.call('solid-storage.getBaseUrl'),
-      slug: this.settings.allowSlugs ? slug : undefined
-    });
+    let resourceUri: string;
+
+    if (file) {
+      resourceUri = await ctx.call('ldp.binary.store', { stream: file.readableStream, mimeType: file.mimetype });
+    } else {
+      const graphName: string = await ctx.call('triplestore.named-graph.create');
+      const baseUrl: string = await ctx.call('solid-storage.getBaseUrl');
+      resourceUri = urlJoin(baseUrl, graphName);
+    }
 
     // We must add this first, otherwise side effects will not find the container of the created resource
     // But this create race conditions, especially when testing, since uncreated resources are linked to containers
     await ctx.call('triplestore.update', {
       query: sanitizeSparqlQuery`
         INSERT DATA {
-          GRAPH <${containerUri}> {
+          GRAPH <${getSlugFromUri(containerUri)}> {
             <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>
           }
         }
@@ -101,10 +103,8 @@ const PostAction = {
 
     try {
       if (file) {
-        resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
-      }
-
-      if (isContainer) {
+        // Do nothing. The binary has already been uploaded.
+      } else if (isContainer) {
         await ctx.call('ldp.container.create', {
           containerUri: resourceUri,
           title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],
@@ -133,7 +133,7 @@ const PostAction = {
       await ctx.call('triplestore.update', {
         query: `
           DELETE WHERE { 
-            GRAPH <${containerUri}> {  
+            GRAPH <${getSlugFromUri(containerUri)}> {  
               <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
             }
           }`,

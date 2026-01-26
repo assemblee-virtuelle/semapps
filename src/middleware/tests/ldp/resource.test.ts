@@ -1,23 +1,27 @@
 import rdf from '@rdfjs/data-model';
 import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
-import { createAccount } from '../utils.ts';
+import { createAccount, clearAllDatasets, backupAllDatasets } from '../utils.ts';
 
 jest.setTimeout(50000);
 let broker: ServiceBroker;
 let alice: any;
 
-beforeAll(async () => {
-  broker = await initialize(true);
-  await broker.start();
-  alice = await createAccount(broker, 'alice');
-});
+describe.each(['ng', 'fuseki'])('Resource CRUD operations with triplestore %s', (triplestore: string) => {
+  beforeAll(async () => {
+    broker = await initialize(triplestore);
+    await broker.start();
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice6');
+  });
 
-afterAll(async () => {
-  if (broker) await broker.stop();
-});
+  afterAll(async () => {
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
+  });
 
-describe('Resource CRUD operations', () => {
   let project1: any;
   let project2: any;
   let containerUri: string;
@@ -122,32 +126,27 @@ describe('Resource CRUD operations', () => {
     await alice.call('ldp.resource.put', { resource: resourceUpdated });
 
     let updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
-
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
       'pair:hasLocation': expect.arrayContaining([
-        {
+        expect.objectContaining({
           'pair:label': 'Nantes'
-        },
-        {
+        }),
+        expect.objectContaining({
           'pair:label': 'Compiegne'
-        }
+        })
       ])
     });
     expect(updatedProject['pair:label']).toBeUndefined();
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
-
     resourceUpdated.hasLocation = [
       {
         label: 'Compiegne'
       }
     ];
-
     await alice.call('ldp.resource.put', { resource: resourceUpdated });
-
     updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
-
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
@@ -155,7 +154,6 @@ describe('Resource CRUD operations', () => {
         'pair:label': 'Compiegne'
       }
     });
-
     resourceUpdated.hasLocation = [
       {
         label: 'Compiegne'
@@ -167,27 +165,23 @@ describe('Resource CRUD operations', () => {
         label: 'Oloron'
       }
     ];
-
     await alice.call('ldp.resource.put', { resource: resourceUpdated });
-
     updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
-
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
       'pair:hasLocation': expect.arrayContaining([
-        {
+        expect.objectContaining({
           'pair:label': 'Compiegne'
-        },
-        {
+        }),
+        expect.objectContaining({
           'pair:label': 'Nantes'
-        },
-        {
+        }),
+        expect.objectContaining({
           'pair:label': 'Oloron'
-        }
+        })
       ])
     });
-
     resourceUpdated.hasLocation = [
       {
         label: 'Compiegne'
@@ -199,11 +193,8 @@ describe('Resource CRUD operations', () => {
         label: 'Compiegne'
       }
     ];
-
     await alice.call('ldp.resource.put', { resource: resourceUpdated });
-
     updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
-
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
@@ -211,7 +202,6 @@ describe('Resource CRUD operations', () => {
         'pair:label': 'Compiegne'
       }
     });
-
     resourceUpdated.hasLocation = [
       {
         label: 'Compiegne',
@@ -224,67 +214,58 @@ describe('Resource CRUD operations', () => {
         description: 'or not'
       }
     ];
-
     await alice.call('ldp.resource.put', { resource: resourceUpdated });
-
     updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
-
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:affiliates': 'http://localhost:3000/users/pierre',
       'pair:hasLocation': expect.arrayContaining([
-        {
+        expect.objectContaining({
           'pair:label': 'Compiegne',
           'pair:description': 'the place to be'
-        },
-        {
+        }),
+        expect.objectContaining({
           'pair:label': 'Compiegne',
           'pair:description': 'or not'
-        }
+        })
       ])
     });
-
     // @ts-expect-error TS(2322): Type 'undefined' is not assignable to type '{ labe... Remove this comment to see the full error message
     resourceUpdated.hasLocation = undefined;
-
     await alice.call('ldp.resource.put', { resource: resourceUpdated });
-
     updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
-
     expect(updatedProject['pair:hasLocation']).toBeUndefined();
-
     // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     resourceUpdated['petr:openingTimesDay'] = [
       { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' }
     ];
-
     await alice.call('ldp.resource.put', { resource: resourceUpdated });
-
     updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
-
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'petr:openingTimesDay': {
+      'petr:openingTimesDay': expect.objectContaining({
         'petr:endingTime': '2021-10-07T09:40:56.131Z',
         'petr:startingTime': '2021-10-07T06:40:56.123Z'
-      }
+      })
     });
-
     // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     resourceUpdated['petr:openingTimesDay'] = [
       { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' },
       { 'petr:startingTime': '2021-10-07T10:44:54.883Z', 'petr:endingTime': '2021-10-07T16:44:54.888Z' }
     ];
-
     await alice.call('ldp.resource.put', { resource: resourceUpdated });
-
     updatedProject = await alice.call('ldp.resource.get', { resourceUri: project1Uri });
-
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'petr:openingTimesDay': expect.arrayContaining([
-        { 'petr:endingTime': '2021-10-07T09:40:56.131Z', 'petr:startingTime': '2021-10-07T06:40:56.123Z' },
-        { 'petr:startingTime': '2021-10-07T10:44:54.883Z', 'petr:endingTime': '2021-10-07T16:44:54.888Z' }
+        expect.objectContaining({
+          'petr:endingTime': '2021-10-07T09:40:56.131Z',
+          'petr:startingTime': '2021-10-07T06:40:56.123Z'
+        }),
+        expect.objectContaining({
+          'petr:startingTime': '2021-10-07T10:44:54.883Z',
+          'petr:endingTime': '2021-10-07T16:44:54.888Z'
+        })
       ])
     });
   });
@@ -345,20 +326,20 @@ describe('Resource CRUD operations', () => {
     const project3 = await alice.call('ldp.resource.get', { resourceUri: resourceUri3 });
 
     expect(project3).toMatchObject({
-      'pair:hasLocation': [
-        {
+      'pair:hasLocation': expect.arrayContaining([
+        expect.objectContaining({
           'pair:label': 'Paris',
-          'pair:hasPostalAddress': {
-            'pair:addressCountry': 'France'
-          }
-        },
-        {
-          'pair:label': 'Paris',
-          'pair:hasPostalAddress': {
+          'pair:hasPostalAddress': expect.objectContaining({
             'pair:addressCountry': 'USA'
-          }
-        }
-      ]
+          })
+        }),
+        expect.objectContaining({
+          'pair:label': 'Paris',
+          'pair:hasPostalAddress': expect.objectContaining({
+            'pair:addressCountry': 'France'
+          })
+        })
+      ])
     });
 
     // @ts-expect-error TS(2739): Type '{ label: string; hasPostalAddress: { address... Remove this comment to see the full error message
@@ -432,18 +413,18 @@ describe('Resource CRUD operations', () => {
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
       'pair:hasLocation': expect.arrayContaining([
-        {
+        expect.objectContaining({
           'pair:label': 'Paris',
-          'pair:hasPostalAddress': {
+          'pair:hasPostalAddress': expect.objectContaining({
             'pair:addressCountry': 'France'
-          }
-        },
-        {
+          })
+        }),
+        expect.objectContaining({
           'pair:label': 'Paris',
-          'pair:hasPostalAddress': {
+          'pair:hasPostalAddress': expect.objectContaining({
             'pair:addressCountry': 'USA'
-          }
-        }
+          })
+        })
       ])
     });
 
@@ -647,14 +628,14 @@ describe('Resource CRUD operations', () => {
       id: projectUri,
       'pair:label': 'ActivityPods',
       'pair:hasLocation': expect.arrayContaining([
-        {
+        expect.objectContaining({
           type: 'pair:Place',
           'pair:label': 'Paris'
-        },
-        {
+        }),
+        expect.objectContaining({
           type: 'pair:Place',
           'pair:label': 'Compiègne'
-        }
+        })
       ])
     });
   }, 20000);

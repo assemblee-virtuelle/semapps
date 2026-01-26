@@ -1,21 +1,25 @@
 import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
-import { createAccount, fetchServer } from '../utils.ts';
+import { backupAllDatasets, clearAllDatasets, createAccount, fetchServer } from '../utils.ts';
 import * as CONFIG from '../config.ts';
 
 jest.setTimeout(50000);
 let broker: ServiceBroker;
 let alice: any;
 
-describe.each([true])('Account tests with allowSlugs: %s', (allowSlugs: boolean) => {
+describe.each(['ng', 'fuseki'])('Account tests with triplestore %s', (triplestore: string) => {
   beforeAll(async () => {
-    broker = await initialize(allowSlugs);
+    broker = await initialize(triplestore);
     await broker.start();
-    alice = await createAccount(broker, 'alice');
+    await clearAllDatasets(broker);
+    alice = await createAccount(broker, 'alice4');
   });
 
   afterAll(async () => {
-    if (broker) await broker.stop();
+    if (broker) {
+      if (triplestore === 'ng') await backupAllDatasets(broker); // Allow to see what was persisted
+      await broker.stop();
+    }
   });
 
   test('WebID is created', async () => {
@@ -27,10 +31,22 @@ describe.each([true])('Account tests with allowSlugs: %s', (allowSlugs: boolean)
     expect(webIdData).toMatchObject({
       id: alice.webId,
       type: expect.arrayContaining(['foaf:Agent', 'foaf:Person']),
-      'foaf:nick': 'alice',
+      'foaf:nick': 'alice4',
       'pim:storage': rootContainerUri,
       'solid:oidcIssuer': CONFIG.HOME_URL!.replace(/\/$/, ''),
-      'solid:publicTypeIndex': publicTypeIndexUri
+      'solid:publicTypeIndex': publicTypeIndexUri,
+      assertionMethod: expect.objectContaining({
+        type: expect.arrayContaining(['sec:Multikey', 'sec:VerificationMethod', 'urn:ed25519-key']),
+        controller: alice.webId,
+        owner: alice.webId,
+        publicKeyMultibase: expect.anything()
+      }),
+      publicKey: expect.objectContaining({
+        type: expect.arrayContaining(['sec:VerificationMethod', 'https://www.w3.org/ns/auth/rsa#RSAKey']),
+        controller: alice.webId,
+        owner: alice.webId,
+        publicKeyPem: expect.anything()
+      })
     });
   });
 
@@ -39,18 +55,6 @@ describe.each([true])('Account tests with allowSlugs: %s', (allowSlugs: boolean)
 
     const containersUris = await alice.call('ldp.container.getUris', { containerUri: rootContainerUri });
     expect(containersUris).toHaveLength(5); // 2 containers and 3 resources
-
-    if (allowSlugs) {
-      expect(containersUris).toStrictEqual(
-        expect.arrayContaining([
-          'http://localhost:3000/alice/public-key',
-          'http://localhost:3000/alice/key',
-          'http://localhost:3000/alice/private-type-index',
-          'http://localhost:3000/alice/public-type-index',
-          'http://localhost:3000/alice/webid'
-        ])
-      );
-    }
   });
 
   test('Public type index is created', async () => {
