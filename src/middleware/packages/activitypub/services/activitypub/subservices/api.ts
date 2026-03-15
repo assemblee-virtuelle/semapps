@@ -11,7 +11,8 @@ import {
   parseJson,
   parseTurtle,
   parseFile,
-  saveDatasetMeta
+  saveDatasetMeta,
+  checkUsernameExists
 } from '@semapps/middlewares';
 
 import { ServiceSchema } from 'moleculer';
@@ -115,7 +116,7 @@ const ApiService = {
   },
   methods: {
     getBoxesRoute(actorsPath) {
-      const middlewares = [
+      let middlewares = [
         parseUrl,
         parseHeader,
         negotiateContentType,
@@ -126,6 +127,8 @@ const ApiService = {
         parseFile,
         saveDatasetMeta
       ];
+
+      if (this.settings.podProvider) middlewares.unshift(checkUsernameExists);
 
       return {
         name: this.settings.podProvider ? 'boxes' : `boxes${actorsPath}`,

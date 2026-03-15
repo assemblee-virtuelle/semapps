@@ -9,11 +9,12 @@ import {
   parseJson,
   parseTurtle,
   parseFile,
-  saveDatasetMeta
+  saveDatasetMeta,
+  checkUsernameExists
 } from '@semapps/middlewares';
 
 function getCatchAllRoute(basePath: any, podProvider: any) {
-  const middlewares = [
+  let middlewares = [
     parseUrl,
     parseHeader,
     negotiateContentType,
@@ -24,6 +25,8 @@ function getCatchAllRoute(basePath: any, podProvider: any) {
     parseFile,
     saveDatasetMeta
   ];
+
+  if (podProvider) middlewares.unshift(checkUsernameExists);
 
   return {
     name: 'ldp',

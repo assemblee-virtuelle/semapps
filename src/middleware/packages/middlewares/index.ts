@@ -49,7 +49,7 @@ const throw403 = (msg: string) => {
 };
 
 const throw404 = (msg: string) => {
-  throw new MoleculerError('Forbidden', 404, 'NOT_FOUND', { status: 'Not found', text: msg });
+  throw new MoleculerError('Not found', 404, 'NOT_FOUND', { status: 'Not found', text: msg });
 };
 
 const throw500 = (msg: string) => {
@@ -198,6 +198,23 @@ const saveDatasetMeta = (req: any, res: any, next: any) => {
   next();
 };
 
+// To be used with a pod provider setting
+const checkUsernameExists = async (req: any, res: any, next: any) => {
+  if (req.$params.username) {
+    const account = await req.$ctx.call('auth.account.findByUsername', { username: req.$params.username });
+    if (!account) {
+      res.statusCode = 404;
+      res.statusCode = `User ${req.$params.username} not found`;
+      res.end();
+    } else if (account.deletedAt) {
+      res.statusCode = 400;
+      res.statusCode = `User ${req.$params.username} has been deleted`;
+      res.end();
+    }
+  }
+  next();
+};
+
 export {
   parseUrl,
   parseHeader,
@@ -208,6 +225,7 @@ export {
   parseTurtle,
   parseFile,
   saveDatasetMeta,
+  checkUsernameExists,
   throw400,
   throw403,
   throw404,

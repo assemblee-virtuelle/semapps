@@ -15,11 +15,14 @@ const SparqlEndpointService = {
     const basePath = await this.broker.call('ldp.getBasePath');
     if (this.settings.podProvider) {
       await this.broker.call('api.addRoute', {
-        route: getRoute(path.join(basePath, '/:username([^/.][^/]+)/sparql')),
+        route: getRoute(path.join(basePath, '/:username([^/.][^/]+)/sparql'), this.settings.podProvider),
         toBottom: false
       });
     } else {
-      await this.broker.call('api.addRoute', { route: getRoute(path.join(basePath, '/sparql')), toBottom: false });
+      await this.broker.call('api.addRoute', {
+        route: getRoute(path.join(basePath, '/sparql'), this.settings.podProvider),
+        toBottom: false
+      });
     }
   },
   actions: {
