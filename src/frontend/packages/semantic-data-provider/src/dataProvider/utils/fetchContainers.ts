@@ -44,6 +44,9 @@ const isObject = (val: any) => {
   return val != null && typeof val === 'object' && !Array.isArray(val);
 };
 
+// Remove accents and uppercase
+const normalizeString = (str: string) => str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
 const fetchContainers = async (containers: Container[], params: GetListParams, config: RuntimeConfiguration) => {
   const { httpClient, jsonContext } = config;
 
@@ -122,7 +125,7 @@ const fetchContainers = async (containers: Container[], params: GetListParams, c
             const arrayValues = Array.isArray(attributeValue) ? attributeValue : [attributeValue];
             return arrayValues.some(value => {
               if (typeof value === 'string') {
-                return value.toLowerCase().normalize('NFD').includes(filters.q!.toLowerCase().normalize('NFD'));
+                return normalizeString(value).includes(normalizeString(filters.q!));
               }
               return false;
             });
@@ -138,7 +141,7 @@ const fetchContainers = async (containers: Container[], params: GetListParams, c
         if (resource[attribute]) {
           const arrayValues: any[] = Array.isArray(resource[attribute]) ? resource[attribute] : [resource[attribute]];
           return arrayValues.some(
-            (value: any) => typeof value === 'string' && value.includes(filters[attribute] as string)
+            (value: any) => typeof value === 'string' && normalizeString(value).includes(normalizeString(filters[attribute] as string))
           );
         }
 
