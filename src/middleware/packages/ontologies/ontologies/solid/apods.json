@@ -74,6 +74,9 @@
     },
     "apods:availableApps": {
       "@type": "@id"
+    },
+    "apods:recommendedBy": {
+      "@type": "@id"
     }
   }
 }
