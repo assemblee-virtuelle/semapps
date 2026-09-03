@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 // A acl:Write permission implicitly gives acl:Read and acl:Append permissions
 const modeMapping = {

@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import cronParser from 'cron-parser';
 import { promises as fsPromises } from 'fs';
 import { ACTIVITY_TYPES, PUBLIC_URI } from '@semapps/activitypub';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { isDir } from '../utils.ts';
 
 const Schema = {

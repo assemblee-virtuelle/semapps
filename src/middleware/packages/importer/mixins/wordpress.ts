@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import { getSlugFromUri, delay } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import ImporterMixin from './importer.ts';
 
 const Schema = {

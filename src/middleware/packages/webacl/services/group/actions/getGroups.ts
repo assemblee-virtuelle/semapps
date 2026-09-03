@@ -1,4 +1,4 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 export const api = async function api(ctx: any) {
   return await ctx.call('webacl.group.getGroups', {});

@@ -1,5 +1,5 @@
 import { ControlledContainerMixin } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { credentialsContext, credentialsContextNoGraphProof } from '../constants.ts';
 
 /**

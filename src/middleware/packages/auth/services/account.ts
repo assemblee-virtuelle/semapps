@@ -5,7 +5,7 @@ import createSlug from 'speakingurl';
 import DbService from 'moleculer-db';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import crypto from 'crypto';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { Account } from '../types.ts';
 
 // Taken from https://stackoverflow.com/a/9204568/7900695

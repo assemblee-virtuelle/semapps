@@ -1,6 +1,6 @@
 import { arrayOf } from '@semapps/ldp';
 import { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } from '@semapps/activitypub';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const SynchronizerService = {
   name: 'synchronizer' as const,

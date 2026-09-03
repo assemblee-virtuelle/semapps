@@ -1,5 +1,5 @@
 import { did, cred } from '@semapps/ontologies';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import AuthorizerService from './authorizer.ts';
 import HolderService from './holder.ts';
 import IssuerService from './issuer.ts';

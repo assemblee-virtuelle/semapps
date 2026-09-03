@@ -1,6 +1,6 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { getSlugFromUri, hasType } from '../../../utils.ts';
 
 const Schema = {

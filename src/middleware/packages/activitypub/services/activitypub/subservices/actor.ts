@@ -2,7 +2,8 @@ import fetch from 'node-fetch';
 import rdf from '@rdfjs/data-model';
 import { getDatasetFromUri } from '@semapps/ldp';
 import { Account } from '@semapps/auth';
-import { ServiceSchema, Context } from 'moleculer';
+import { Context } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { AS_PREFIX } from '../../../constants.ts';
 import { waitForResource } from '../../../utils.ts';
 

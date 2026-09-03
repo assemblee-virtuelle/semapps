@@ -1,6 +1,7 @@
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 import urlJoin from 'url-join';
-import { ActionSchema, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 const { MoleculerError } = Errors;
 

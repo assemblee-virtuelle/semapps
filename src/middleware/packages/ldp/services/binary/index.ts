@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import storeAction from './actions/store.ts';
 import deleteAction from './actions/delete.ts';
 import getAction from './actions/get.ts';

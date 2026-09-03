@@ -1,5 +1,5 @@
 import { getSlugFromUri } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const AuthMigrationSchema = {
   name: 'auth.migration' as const,

@@ -1,5 +1,5 @@
 import { arrayOf } from '@semapps/ldp';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 const GetUsersWithReadRightsAction = {
   visibility: 'public',

@@ -1,5 +1,5 @@
 import { TypeRegistration } from '@semapps/solid';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 /**
  * Get the container or resource URI based on its type

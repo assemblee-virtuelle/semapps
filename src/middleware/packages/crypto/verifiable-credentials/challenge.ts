@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 /**
  * Service to generate challenges upon request.

@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import addAuthorizerAction from './actions/addAuthorizer.ts';
 import checkAction from './actions/check.ts';
 import hasAction from './actions/has.ts';

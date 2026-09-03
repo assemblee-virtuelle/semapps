@@ -1,5 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { getSlugFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;

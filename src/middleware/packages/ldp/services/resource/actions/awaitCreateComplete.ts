@@ -1,4 +1,4 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { waitForResource } from '../../../utils.ts';
 
 /** @type {import('moleculer').ServiceActionsSchema} */

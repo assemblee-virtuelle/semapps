@@ -8,7 +8,7 @@ import {
   negotiateContentType,
   parseJson
 } from '@semapps/middlewares';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const SpecialEndpointMixin = {
   settings: {

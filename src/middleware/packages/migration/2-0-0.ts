@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { IBindings } from 'sparqljson-parse';
 import urlJoin from 'url-join';
 import { Account } from '@semapps/auth';

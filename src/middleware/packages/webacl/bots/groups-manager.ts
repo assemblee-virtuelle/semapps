@@ -1,5 +1,5 @@
 import { arrayOf } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { hasType } from '../utils.ts';
 
 const GroupsManagerSchema = {

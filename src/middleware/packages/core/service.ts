@@ -11,7 +11,7 @@ import { WebAclService } from '@semapps/webacl';
 import { WebfingerService } from '@semapps/webfinger';
 import { KeysService, SignatureService } from '@semapps/crypto';
 import { WebIdService } from '@semapps/webid';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { CoreServiceSettings } from './serviceTypes.ts';
 
 const CoreService = {

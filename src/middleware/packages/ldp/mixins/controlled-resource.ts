@@ -1,4 +1,5 @@
-import { ServiceSchema, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { arrayOf, delay } from '../utils.ts';
 
 const { MoleculerError } = Errors;

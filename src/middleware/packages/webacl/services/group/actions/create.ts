@@ -2,7 +2,8 @@
 import createSlug from 'speakingurl';
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { ActionSchema, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { WacPermissionObject } from '../../../types.ts';
 
 const { MoleculerError } = Errors;

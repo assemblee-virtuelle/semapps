@@ -1,4 +1,5 @@
-import { Context, ServiceSettingSchema } from 'moleculer';
+import { Context } from 'moleculer';
+import type { ServiceSettingSchema } from 'moleculer';
 import { Ontology } from '@semapps/ontologies';
 import { AdapterInterface } from '@semapps/triplestore';
 

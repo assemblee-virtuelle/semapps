@@ -1,5 +1,5 @@
 import { arrayOf } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 // Check, if a capability grants access to the resource.
 const hasValidCapability = async (ctx: any, resourceUri: any, mode: any) => {

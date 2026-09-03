@@ -1,4 +1,4 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { arrayOf } from '../../../utils.ts';
 import { Registration } from '../../../types.ts';
 

@@ -1,7 +1,8 @@
 import { Writer } from 'n3';
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema, Context, Errors } from 'moleculer';
+import { Context, Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import {
   getAuthorizationNode,
   findParentContainers,

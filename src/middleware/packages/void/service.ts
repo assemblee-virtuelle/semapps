@@ -5,7 +5,8 @@ import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import { DataFactory, Writer } from 'n3';
 import { createFragmentURL, arrayOf, Registration } from '@semapps/ldp';
 import { parseHeader } from '@semapps/middlewares';
-import { ServiceSchema, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const { quad, namedNode, literal, blankNode } = DataFactory;
 

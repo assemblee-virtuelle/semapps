@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import { Socket } from 'net';
 import { WebSocketServer } from 'ws';
 import http, { IncomingMessage, ServerResponse } from 'http';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { WebSocketConnection, WebSocketHandlers } from '../types.ts';
 
 /**

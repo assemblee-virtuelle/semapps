@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import GetByTypesAction from './actions/getByTypes.ts';
 import GetByUriAction from './actions/getByUri.ts';
 import GetUriAction from './actions/getUri.ts';

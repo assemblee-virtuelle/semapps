@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import { defaultContainerOptions } from '@semapps/ldp';
-import { Middleware } from 'moleculer';
+import type { Middleware } from 'moleculer';
 
 const modifyActions = [
   'ldp.resource.create',

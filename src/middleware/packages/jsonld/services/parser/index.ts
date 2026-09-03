@@ -4,7 +4,7 @@ import { JsonLdParser } from 'jsonld-streaming-parser';
 import { JsonLdSerializer } from 'jsonld-streaming-serializer';
 import streamifyString from 'streamify-string';
 import rdfParser from 'rdf-parse';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { getId, isObject } from '@semapps/ldp';
 import { arrayOf, isURI } from '../../utils/utils.ts';
 

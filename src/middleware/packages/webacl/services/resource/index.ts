@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
-import { ServiceSchema, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import * as addRights from './actions/addRights.ts';
 import * as getRights from './actions/getRights.ts';
 import * as hasRights from './actions/hasRights.ts';

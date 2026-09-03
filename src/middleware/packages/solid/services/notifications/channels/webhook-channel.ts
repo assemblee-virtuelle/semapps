@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import NotificationChannelMixin from './notification-channel.mixin.ts';
 import { NotificationChannel } from '../../../types.ts';
 

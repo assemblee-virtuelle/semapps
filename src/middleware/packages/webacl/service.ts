@@ -1,5 +1,5 @@
 import { acl, vcard, rdfs } from '@semapps/ontologies';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import WebAclResourceService from './services/resource/index.ts';
 import WebAclCacheService from './services/cache/index.ts';
 import WebAclGroupService from './services/group/index.ts';

@@ -1,6 +1,6 @@
 import DbService from 'moleculer-db';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const DigestSubscriptionSchema = {
   name: 'digest.subscription' as const,

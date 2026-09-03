@@ -1,5 +1,6 @@
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { ActionSchema, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { getSlugFromUri } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;

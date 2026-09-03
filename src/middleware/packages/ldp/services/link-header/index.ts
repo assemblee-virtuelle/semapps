@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import getAction from './actions/get.ts';
 import registerAction from './actions/register.ts';
 

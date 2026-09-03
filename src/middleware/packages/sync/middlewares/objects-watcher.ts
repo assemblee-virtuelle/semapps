@@ -1,5 +1,6 @@
 import { PUBLIC_URI, ACTIVITY_TYPES } from '@semapps/activitypub';
-import { Middleware, ServiceBroker } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
+import type { Middleware } from 'moleculer';
 
 interface MiddlewareConfig {
   baseUrl?: string;

@@ -1,7 +1,8 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { ActionSchema, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { cleanUndefined, getSlugFromUri } from '../../../utils.ts';
 import { Registration } from '../../../types.ts';
 

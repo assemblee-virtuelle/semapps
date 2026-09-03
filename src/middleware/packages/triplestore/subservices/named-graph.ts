@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { AdapterInterface } from '../adapters/base.ts';
 
 const NamedGraphService = {

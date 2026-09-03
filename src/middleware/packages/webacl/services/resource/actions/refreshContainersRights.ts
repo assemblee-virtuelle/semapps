@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { getDatasetFromUri, Registration } from '@semapps/ldp';
 import { WacPermission, WacPermissionObject } from '../../../types.ts';
 

@@ -1,7 +1,7 @@
 import { ControlledResourceMixin } from '@semapps/ldp';
 import { pim } from '@semapps/ontologies';
 import rdf from '@rdfjs/data-model';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const SolidPreferencesFileSchema = {
   name: 'solid-preferences-file' as const,

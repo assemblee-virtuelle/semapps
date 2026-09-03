@@ -7,7 +7,7 @@ import {
   saveDatasetMeta
 } from '@semapps/middlewares';
 import path from 'node:path';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { VC_API_PATH } from '../constants.ts';
 
 const middlewares = [saveDatasetMeta, parseHeader, negotiateAccept, negotiateContentType, parseRawBody, parseJson];

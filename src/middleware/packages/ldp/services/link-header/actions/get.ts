@@ -1,5 +1,5 @@
 import LinkHeader from 'http-link-header';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { Registration } from '../../../types.ts';
 
 const GetAction = {

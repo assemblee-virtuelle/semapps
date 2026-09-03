@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import ImporterMixin from './importer.ts';
 
 const Schema = {

@@ -2,7 +2,8 @@ import path from 'path';
 import urlJoin from 'url-join';
 import { Account } from '@semapps/auth';
 import { voidOntology } from '@semapps/ontologies';
-import { ServiceSchema, Context } from 'moleculer';
+import { Context } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import getRoute from './getRoute.ts';
 
 const SparqlEndpointService = {

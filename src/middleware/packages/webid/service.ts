@@ -1,6 +1,6 @@
 import { foaf, schema } from '@semapps/ontologies';
 import { ControlledResourceMixin, DereferenceMixin, waitForResource } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import getRedirectRoute from './routes/getRedirectRoute.ts';
 
 const WebIdService = {

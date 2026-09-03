@@ -5,7 +5,7 @@ import { parseRequest, verifySignature } from 'http-signature';
 import { createAuthzHeader, createSignatureString } from 'http-signature-header';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 
 const HttpSignatureService = {

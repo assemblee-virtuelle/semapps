@@ -1,7 +1,7 @@
 import rdf from '@rdfjs/data-model';
 import { arrayOf, getSlugFromUri } from '@semapps/ldp';
 import { solid, skos, apods } from '@semapps/ontologies';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import PublicTypeIndexService from './public-type-index.ts';
 import PrivateTypeIndexService from './private-type-index.ts';
 import { TypeRegistration } from '../../types.ts';

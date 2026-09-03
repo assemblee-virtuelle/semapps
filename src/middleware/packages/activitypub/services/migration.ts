@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { getSlugFromUri } from '../utils.ts';
 
 const ActivitypubMigrationSchema = {

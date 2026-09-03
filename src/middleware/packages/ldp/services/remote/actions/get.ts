@@ -1,4 +1,4 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { cleanUndefined, isWebId } from '../../../utils.ts';
 
 const Schema = {

@@ -1,5 +1,6 @@
 import sparqljsModule from 'sparqljs';
-import { ServiceSchema, Errors } from 'moleculer';
+import { Errors } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import insert from './actions/insert.ts';
 import query from './actions/query.ts';
 import update from './actions/update.ts';

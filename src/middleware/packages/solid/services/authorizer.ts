@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const SolidAuthorizerSchema = {
   name: 'solid-authorizer' as const,

@@ -4,7 +4,7 @@ import { Errors as E } from 'moleculer-web';
 import { Account } from '@semapps/auth';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getType, arrayOf, getDatasetFromUri, isWebId } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';

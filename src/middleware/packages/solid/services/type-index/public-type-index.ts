@@ -1,6 +1,7 @@
 import { ControlledResourceMixin } from '@semapps/ldp';
 import rdf from '@rdfjs/data-model';
-import { ServiceSchema, Context } from 'moleculer';
+import { Context } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const PublicTypeIndexService = {
   name: 'public-type-index' as const,

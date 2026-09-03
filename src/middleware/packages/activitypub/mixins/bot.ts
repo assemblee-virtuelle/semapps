@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import { arrayOf } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
 import { getSlugFromUri, getContainerFromUri } from '../utils.ts';
 

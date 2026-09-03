@@ -1,4 +1,5 @@
-import { Context, ServiceSchema, CallingOptions } from 'moleculer';
+import { Context } from 'moleculer';
+import type { ServiceSchema, CallingOptions } from 'moleculer';
 
 interface LocalServerSettings {
   fusekiBase: string | null;

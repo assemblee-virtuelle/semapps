@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { pim } from '@semapps/ontologies';
 import { Registration, arrayOf } from '@semapps/ldp';
 

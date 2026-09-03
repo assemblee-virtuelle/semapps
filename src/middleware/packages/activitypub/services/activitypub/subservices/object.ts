@@ -1,5 +1,6 @@
 import { arrayOf, getType, Registration } from '@semapps/ldp';
-import { ServiceSchema, Context } from 'moleculer';
+import { Context } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
 
 const ObjectService = {
