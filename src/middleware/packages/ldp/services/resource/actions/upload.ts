@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { getSlugFromUri, getContainerFromUri } from '../../../utils.ts';
 
 import { Errors } from 'moleculer';

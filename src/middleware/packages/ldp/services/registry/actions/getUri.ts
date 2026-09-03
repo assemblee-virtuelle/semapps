@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 /**
  * Get the container URI based on its path

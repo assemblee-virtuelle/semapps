@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const WebfingerService = {
   name: 'webfinger' as const,

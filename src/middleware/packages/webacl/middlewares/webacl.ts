@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import { throw403 } from '@semapps/middlewares';
 import { arrayOf, defaultContainerOptions } from '@semapps/ldp';
 import { getSlugFromUri } from '../utils.ts';
-import { Middleware } from 'moleculer';
+import type { Middleware } from 'moleculer';
 
 const modifyActions = [
   'ldp.resource.create',

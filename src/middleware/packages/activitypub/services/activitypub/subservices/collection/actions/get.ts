@@ -1,6 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlUri } from '@semapps/triplestore';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { getValueFromDataType } from '../../../../../utils.ts';
 
 import { Errors } from 'moleculer';

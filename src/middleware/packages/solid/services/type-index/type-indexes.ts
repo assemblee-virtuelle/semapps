@@ -2,7 +2,7 @@ import { ControlledContainerMixin, DereferenceMixin, delay, arrayOf } from '@sem
 import { solid, skos, apods } from '@semapps/ontologies';
 import { MIME_TYPES } from '@semapps/mime-types';
 import rdf from '@rdfjs/data-model';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import TypeRegistrationsService from './type-registrations.ts';
 
 const TypeIndexesSchema = {

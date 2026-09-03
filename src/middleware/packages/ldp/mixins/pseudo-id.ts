@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 /**
  * MoleculerJS mixin to be applied on the ControlledContainerMixin.

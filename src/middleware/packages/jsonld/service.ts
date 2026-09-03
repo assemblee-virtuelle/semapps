@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import JsonLdApiService from './services/api/index.ts';
 import JsonLdContextService from './services/context/index.ts';
 import JsonLdDocumentLoaderService from './services/document-loader/index.ts';

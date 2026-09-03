@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 import { getSlugFromUri, waitForResource } from '../../../utils.ts';
 

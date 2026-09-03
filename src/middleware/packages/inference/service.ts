@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import N3 from 'n3';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import RemoteService from './subservices/remote.ts';
 
 const { DataFactory } = N3;

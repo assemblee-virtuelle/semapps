@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import { Errors as E } from 'moleculer-web';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { getType, arrayOf } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } from '../../../utils.ts';
 import { ACTOR_TYPES } from '../../../constants.ts';
 import AwaitActivityMixin from '../../../mixins/await-activity.ts';

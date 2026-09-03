@@ -1,5 +1,5 @@
 import rdf from '@rdfjs/data-model';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 const Schema = {
   visibility: 'public',

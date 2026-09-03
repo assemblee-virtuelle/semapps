@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { ControlledContainerMixin, PseudoIdMixin } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { credentialsContext, credentialsContextNoGraphProof, VC_API_PATH } from '../constants.ts';
 
 /**

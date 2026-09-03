@@ -1,5 +1,5 @@
 import path from 'path';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import ExpoPushDeviceService from './device.ts';
 import ExpoPushNotificationService from './notification.ts';
 

@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES } from '../constants.ts';
 import { delay } from '../utils.ts';
 

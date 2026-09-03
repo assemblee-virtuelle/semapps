@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 import pathModule from 'path';
 import { pathToRegexp } from 'path-to-regexp';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { arrayOf } from '../../../utils.ts';
 
 const pathJoin = pathModule.join;

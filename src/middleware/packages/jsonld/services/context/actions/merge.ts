@@ -1,4 +1,4 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { isURL, isObject, mergeObjectInArray } from '../../../utils/utils.ts';
 
 const Schema = {

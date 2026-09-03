@@ -8,7 +8,8 @@ import DbService from 'moleculer-db';
 import { parseHeader, negotiateContentType, parseJson } from '@semapps/middlewares';
 import { notify } from '@semapps/ontologies';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { Errors, ServiceSchema } from 'moleculer';
+import { Errors } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const { MoleculerError } = Errors;
 

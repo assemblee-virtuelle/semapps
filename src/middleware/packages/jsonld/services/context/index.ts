@@ -1,5 +1,5 @@
 import { ContextParser } from 'jsonld-context-parser';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import getAction from './actions/get.ts';
 import getLocalAction from './actions/getLocal.ts';
 import mergeAction from './actions/merge.ts';

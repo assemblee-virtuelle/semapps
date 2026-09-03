@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle } from '@semapps/middlewares';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const Schema = {
   settings: {

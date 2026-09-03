@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
 import { pim } from '@semapps/ontologies';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const SolidStorageSchema = {

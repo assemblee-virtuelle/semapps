@@ -1,7 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
 
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import {
   getAclUriFromResourceUri,
   convertBodyToTriples,

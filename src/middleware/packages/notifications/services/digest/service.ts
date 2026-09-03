@@ -2,7 +2,7 @@
 import MailService from 'moleculer-mail';
 import cronParser from 'cron-parser';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import DigestSubscriptionService from './subscription.ts';
 
 const DigestNotificationsService = {

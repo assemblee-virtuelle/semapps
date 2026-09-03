@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const WebaclCacheSchema = {
   name: 'webacl.cache' as const,

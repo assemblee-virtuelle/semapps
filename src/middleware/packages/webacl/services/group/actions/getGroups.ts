@@ -1,4 +1,4 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 export const api = async function api(this: any, ctx: any) {
   if (this.settings.podProvider) ctx.meta.dataset = ctx.params.username;

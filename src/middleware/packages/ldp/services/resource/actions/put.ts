@@ -1,5 +1,5 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { cleanUndefined } from '../../../utils.ts';
 
 import { Errors } from 'moleculer';
