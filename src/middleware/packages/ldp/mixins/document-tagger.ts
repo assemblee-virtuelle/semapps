@@ -1,5 +1,5 @@
 import { dc } from '@semapps/ontologies';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { getDatasetFromUri } from '../utils.ts';
 
 const Schema = {

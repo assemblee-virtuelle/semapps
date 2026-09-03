@@ -1,5 +1,5 @@
 import { CronJob } from 'cron';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const Schema = {
   settings: {

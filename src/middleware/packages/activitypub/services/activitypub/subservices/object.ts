@@ -1,7 +1,7 @@
 import { getType } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { OBJECT_TYPES, ACTIVITY_TYPES } from '../../../constants.ts';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const ObjectService = {
   name: 'activitypub.object' as const,

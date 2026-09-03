@@ -1,5 +1,5 @@
 import { ldp, semapps } from '@semapps/ontologies';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import LdpApiService from './services/api/index.ts';
 import LdpContainerService from './services/container/index.ts';
 import LdpCacheService from './services/cache/index.ts';

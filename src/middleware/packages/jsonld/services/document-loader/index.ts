@@ -2,7 +2,7 @@ import jsonld from 'jsonld';
 import fsModule from 'fs';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'lru-... Remove this comment to see the full error message
 import LRU from 'lru-cache';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const fsPromises = fsModule.promises;
 

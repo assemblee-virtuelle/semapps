@@ -1,6 +1,6 @@
 import { getAclUriFromResourceUri } from '@semapps/webacl';
 import { getContainerFromUri } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const MigrationSchema = {
   name: 'migration' as const,

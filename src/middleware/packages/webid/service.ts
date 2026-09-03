@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { foaf, schema } from '@semapps/ontologies';
 import { ControlledContainerMixin, DereferenceMixin, getDatasetFromUri } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 /** @type {import('moleculer').ServiceSchema} */
 const WebIdService = {

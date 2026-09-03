@@ -1,4 +1,5 @@
-import { Context, ServiceSettingSchema } from 'moleculer';
+import { Context } from 'moleculer';
+import type { ServiceSettingSchema } from 'moleculer';
 
 export interface CoreServiceSettings extends ServiceSettingSchema {
   baseUrl?: string;

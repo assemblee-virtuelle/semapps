@@ -1,6 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import { arrayOf } from '@semapps/ldp';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 export const action = {
   visibility: 'public',

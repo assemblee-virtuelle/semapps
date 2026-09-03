@@ -2,7 +2,7 @@ import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
 import { ControlledContainerMixin, arrayOf } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const TypeRegistrationsSchema = {
   name: 'type-registrations' as const,

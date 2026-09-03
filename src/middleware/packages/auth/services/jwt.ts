@@ -3,7 +3,7 @@ import path from 'path';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'json... Remove this comment to see the full error message
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 /**
  * Service that creates and validates JSON web tokens(JWT).

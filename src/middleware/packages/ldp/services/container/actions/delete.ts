@@ -1,5 +1,5 @@
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 const Schema = {
   visibility: 'public',

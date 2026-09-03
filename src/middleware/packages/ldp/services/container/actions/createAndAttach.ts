@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { getParentContainerUri } from '../../../utils.ts';
 
 /**

@@ -1,6 +1,6 @@
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'dash... Remove this comment to see the full error message
 import dashify from 'dashify';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { isURL } from '../../../utils.ts';
 
 const Schema = {

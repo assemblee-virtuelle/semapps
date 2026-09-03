@@ -14,7 +14,7 @@ import {
   saveDatasetMeta
 } from '@semapps/middlewares';
 
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { FULL_ACTOR_TYPES } from '../../../constants.ts';
 
 const ApiService = {

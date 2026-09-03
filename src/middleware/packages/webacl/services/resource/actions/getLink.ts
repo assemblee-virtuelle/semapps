@@ -1,4 +1,4 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { getAclUriFromResourceUri } from '../../../utils.ts';
 
 export const action = {

@@ -1,4 +1,5 @@
-import { ServiceSchema, defineAction } from 'moleculer';
+import { defineAction } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import awaitCreateCompleteAction from './actions/awaitCreateComplete.ts';
 import getAction from './actions/get.ts';
 import createAction from './actions/create.ts';

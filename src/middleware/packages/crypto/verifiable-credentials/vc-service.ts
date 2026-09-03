@@ -1,5 +1,5 @@
 import { did, cred } from '@semapps/ontologies';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import VCHolderService from './vc-holder-service.ts';
 import VCIssuerService from './vc-issuer-service.ts';
 import VCVerifierService from './vc-verifier-service.ts';

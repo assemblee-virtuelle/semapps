@@ -1,6 +1,6 @@
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { removeAgentGroupOrAgentFromAuthorizations } from '../../../utils.ts';
 
 import { Errors } from 'moleculer';
