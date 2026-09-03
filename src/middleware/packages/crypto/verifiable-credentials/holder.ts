@@ -69,11 +69,15 @@ const HolderService = {
         const {
           presentation: presentationParam,
           options: { challenge, domain, proofPurpose = 'assertionMethod' },
-          webId = ctx.meta.webId,
           keyObject = undefined,
           keyId = undefined,
           noAnonRead = false
         } = ctx.params;
+
+        const webId =
+          ctx.meta.webId === 'system' && ctx.params.webId
+            ? ctx.params.webId
+            : ctx.meta.impersonatedUser || ctx.meta.webId;
 
         const purpose = new AuthenticationProofPurpose({ term: proofPurpose, challenge, domain });
 

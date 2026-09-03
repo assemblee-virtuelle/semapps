@@ -5,7 +5,7 @@
   "packages": ["packages/*", "tests"],
   "command": {
     "version": {
-      "allowBranch": ["master", "next"]
+      "allowBranch": ["master", "next", "1.1.x"]
     }
   }
 }
