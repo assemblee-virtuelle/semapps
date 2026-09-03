@@ -76,12 +76,16 @@ const VCHolderService = {
         const {
           presentation: presentationParam,
           options: { challenge, domain, proofPurpose = 'assertionMethod' },
-          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
-          webId = ctx.meta.webId,
           keyObject = undefined,
           keyId = undefined,
           noAnonRead = false
         } = ctx.params;
+
+        const webId =
+          ctx.meta.webId === 'system' && ctx.params.webId
+            ? ctx.params.webId
+            : ctx.meta.impersonatedUser || ctx.meta.webId;
+
         const purpose = new AuthenticationProofPurpose({ term: proofPurpose, challenge, domain });
 
         const key = await ctx.call('keys.getMultikey', {

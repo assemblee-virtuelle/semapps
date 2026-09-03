@@ -92,13 +92,16 @@ const VCCredentialService = {
         const {
           credential: receivedCredential,
           options: { proofPurpose = 'assertionMethod' },
-          // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
-          webId = ctx.meta.webId,
           noAnonRead = false,
           purpose = new AssertionProofPurpose({ term: proofPurpose }),
           keyObject = undefined,
           keyId = undefined
         } = ctx.params;
+
+        const webId =
+          ctx.meta.webId === 'system' && ctx.params.webId
+            ? ctx.params.webId
+            : ctx.meta.impersonatedUser || ctx.meta.webId;
 
         const key = await ctx.call('keys.getMultikey', {
           webId,
