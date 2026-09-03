@@ -1,7 +1,6 @@
 import { credentialsContext } from '@semapps/crypto';
 import { arrayOf } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import matchActivity from '../../../utils/matchActivity.ts';
 
 /**
@@ -11,9 +10,6 @@ import matchActivity from '../../../utils/matchActivity.ts';
  */
 const ActivitypubSideEffectsSchema = {
   name: 'activitypub.side-effects' as const,
-  settings: {
-    podProvider: false
-  },
   async started() {
     this.processors = [];
   },
@@ -86,7 +82,6 @@ const ActivitypubSideEffectsSchema = {
           'ldp.resource.get',
           {
             resourceUri,
-            accept: MIME_TYPES.JSON,
             webId
           },
           { meta: { dataset } }
@@ -106,7 +101,7 @@ const ActivitypubSideEffectsSchema = {
 
       // Dereference capability, if necessary.
       if (typeof retActivity.capability === 'string') {
-        retActivity.capability = await this.broker.call('crypto.vc.holder.presentation-container.get', {
+        retActivity.capability = await this.broker.call('vc.presentations-container.get', {
           resourceUri: retActivity.capability
         });
       }
@@ -123,7 +118,7 @@ const ActivitypubSideEffectsSchema = {
       }
 
       // Verify cryptographic and capability-related properties.
-      const { verified, error } = await this.broker.call('crypto.vc.verifier.verifyCapabilityPresentation', {
+      const { verified, error } = await this.broker.call('vc.verifier.verifyCapabilityPresentation', {
         verifiablePresentation: retActivity.capability
       });
 
@@ -309,10 +304,8 @@ const ActivitypubSideEffectsSchema = {
             job.log(`Processing activity for recipient ${recipientUri}...`);
 
             // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ name... Remove this comment to see the full error message
-            const dataset = this.settings.podProvider
-              ? // @ts-expect-error TS(2339): Property 'broker' does not exist on type '{ name: ... Remove this comment to see the full error message
-                await this.broker.call('auth.account.findDatasetByWebId', { webId: recipientUri })
-              : undefined;
+            const dataset = await this.broker.call('auth.account.findDatasetByWebId', { webId: recipientUri });
+
             // @ts-expect-error TS(2339): Property 'fetch' does not exist on type '{ name: s... Remove this comment to see the full error message
             const fetcher = (resourceUri: any) => this.fetch(resourceUri, recipientUri, dataset);
 
@@ -378,10 +371,8 @@ const ActivitypubSideEffectsSchema = {
         let dereferencedActivity = activity;
 
         // @ts-expect-error TS(2339): Property 'settings' does not exist on type '{ name... Remove this comment to see the full error message
-        const dataset = this.settings.podProvider
-          ? // @ts-expect-error TS(2339): Property 'broker' does not exist on type '{ name: ... Remove this comment to see the full error message
-            await this.broker.call('auth.account.findDatasetByWebId', { webId: emitterUri })
-          : undefined;
+        const dataset = await this.broker.call('auth.account.findDatasetByWebId', { webId: emitterUri });
+
         // @ts-expect-error TS(2339): Property 'fetch' does not exist on type '{ name: s... Remove this comment to see the full error message
         const fetcher = (resourceUri: any) => this.fetch(resourceUri, emitterUri, dataset);
 

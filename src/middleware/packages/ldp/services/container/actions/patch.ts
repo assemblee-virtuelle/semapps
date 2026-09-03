@@ -1,7 +1,6 @@
-import { ActionSchema } from 'moleculer';
-import { isMirror } from '../../../utils.ts';
-
 import { Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
+import { isMirror } from '../../../utils.ts';
 
 const { MoleculerError } = Errors;
 
@@ -27,12 +26,10 @@ const Schema = {
     containerUri: {
       type: 'string'
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToAdd: {
       type: 'array',
       optional: true
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToRemove: {
       type: 'array',
       optional: true
@@ -44,7 +41,6 @@ const Schema = {
   },
   async handler(ctx) {
     const { containerUri, triplesToAdd, triplesToRemove } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const resourcesAdded = [];
     const resourcesRemoved = [];
@@ -79,9 +75,7 @@ const Schema = {
             try {
               await ctx.call('ldp.remote.store', {
                 resourceUri,
-                keepInSync: true,
-                mirrorGraph: true,
-                webId
+                keepInSync: true
               });
 
               // Now if the import went well, we can retry the attach
@@ -104,8 +98,9 @@ const Schema = {
         try {
           await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId });
 
-          // If the mirrored resource is not attached to any container anymore, it must be deleted.
+          // If the imported resource is not attached to any container anymore, it must be deleted.
           const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
+          // @ts-expect-error TS(2533): Object is possibly 'null' or 'undefined'.
           if (containers.length === 0 && isMirror(resourceUri, this.settings.baseUrl)) {
             await ctx.call('ldp.remote.delete', { resourceUri });
           }
@@ -118,14 +113,8 @@ const Schema = {
         }
       }
     }
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
-      ctx.emit(
-        'ldp.container.patched',
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-        { containerUri, resourcesAdded, resourcesRemoved, dataset: ctx.meta.dataset },
-        { meta: { webId: null, dataset: null } }
-      );
+      ctx.emit('ldp.container.patched', { containerUri, resourcesAdded, resourcesRemoved, dataset: ctx.meta.dataset });
     }
   }
 } satisfies ActionSchema;

@@ -1,5 +1,5 @@
 import Handlebars from 'handlebars';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import matchActivity from '../utils/matchActivity.ts';
 import { ACTIVITY_TYPES } from '../constants.ts';
 
@@ -60,7 +60,6 @@ const ActivityMappingService = {
                 : {};
             } catch (e) {
               this.logger.warn(
-                // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
                 `Could not get profile of actor ${activity.actor} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`
               );
             }

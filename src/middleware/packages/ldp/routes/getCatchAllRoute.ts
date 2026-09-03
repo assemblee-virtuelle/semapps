@@ -3,31 +3,29 @@ import path from 'path';
 import {
   parseUrl,
   parseHeader,
-  parseSparql,
+  parseRawBody,
   negotiateContentType,
   negotiateAccept,
   parseJson,
-  parseTurtle,
   parseFile,
   saveDatasetMeta
 } from '@semapps/middlewares';
 
-function getCatchAllRoute(basePath: any, podProvider: any) {
+function getCatchAllRoute(basePath: string) {
   const middlewares = [
     parseUrl,
     parseHeader,
     negotiateContentType,
     negotiateAccept,
-    parseSparql,
+    parseRawBody,
     parseJson,
-    parseTurtle,
     parseFile,
     saveDatasetMeta
   ];
 
   return {
     name: 'ldp',
-    path: path.join(basePath, podProvider ? '/:username([^/.][^/]+)/:slugParts*' : '/:slugParts([^/_][^/]+)*'),
+    path: path.join(basePath, '/:username([^/._][^/]+)/:slugParts*'),
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
     bodyParsers: false,

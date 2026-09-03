@@ -2,8 +2,7 @@
 import fse from 'fs-extra';
 import path from 'path';
 import urlJoin from 'url-join';
-import Redis from 'ioredis';
-import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import { FULL_ACTOR_TYPES, RelayService } from '@semapps/activitypub';
 import { AuthLocalService } from '@semapps/auth';
 import { CoreService } from '@semapps/core';
@@ -13,40 +12,36 @@ import { MirrorService, ObjectsWatcherMiddleware } from '@semapps/sync';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
-import { clearDataset } from '../utils.ts';
+import { dropDataset, clearQueue } from '../utils.ts';
 
-// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const containers = [
   {
     path: '/resources',
-    acceptedTypes: ['pair:Resource']
+    types: ['pair:Resource']
   },
   {
     path: '/protected-resources',
-    acceptedTypes: ['pair:Resource'],
+    types: ['pair:Resource'],
     permissions: {},
     newResourcesPermissions: {}
   }
 ];
 
 const initialize = async (
-  port: any,
-  mainDataset: any,
-  accountsDataset: any,
-  queueServiceDb: any,
-  serverToMirror: any
+  port: number,
+  mainDataset: string,
+  accountsDataset: string,
+  queueServiceDb: number,
+  serverToMirror: string
 ) => {
-  // Clear datasets
-  await clearDataset(mainDataset);
-  await clearDataset(accountsDataset);
-
-  // Clear queue
   const queueServiceUrl = `redis://localhost:6379/${queueServiceDb}`;
-  const redisClient = new Redis(queueServiceUrl);
-  const result = await redisClient.flushdb();
-  redisClient.disconnect();
+
+  // Clear datasets
+  await dropDataset(mainDataset);
+  await dropDataset(accountsDataset);
+  await clearQueue(queueServiceUrl);
 
   // Remove all actors keys
   await fse.emptyDir(path.resolve(__dirname, './actors'));
@@ -71,8 +66,8 @@ const initialize = async (
     }
   });
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
     mixins: [CoreService],
     settings: {
       baseUrl,
@@ -81,7 +76,8 @@ const initialize = async (
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset
+        mainDataset,
+        secure: false // TODO Remove when we move to Fuseki 5
       },
       containers,
       ontologies: [pair],
@@ -91,10 +87,9 @@ const initialize = async (
       api: {
         port
       },
-      mirror: serverToMirror ? { servers: [serverToMirror] } : true,
       webid: {
         path: '/as/actor',
-        acceptedTypes: [FULL_ACTOR_TYPES.PERSON, FULL_ACTOR_TYPES.APPLICATION]
+        types: [FULL_ACTOR_TYPES.PERSON, FULL_ACTOR_TYPES.APPLICATION]
       }
     }
   });

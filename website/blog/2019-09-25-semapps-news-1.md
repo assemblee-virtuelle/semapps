@@ -34,21 +34,22 @@ It is now possible to deploy in a few minutes an ActivityPub server based on Sem
 
 #### Jérémy Dufraisse has joined us
 
-New to web development and passionate about cooperation in all domains, Jeremy joins the SemApps team, aiming to get more involved, especially in programming this software's code. 
+New to web development and passionate about cooperation in all domains, Jeremy joins the SemApps team, aiming to get more involved, especially in programming this software's code.
 Member of the Colibris core team in Lorient, he's already working on the first version of the Paths of Transition's platform, one of SemApps ecosystem's projects.
 
 #### Work on governance
 
 By implementing the principles of "election by consent", the SemApps team was not only able to define several roles, regarding to the effective needs of its organization, but also to fill the roles according to the competencies that were identified.
 
-Among the 13 roles that came out, the following ones deserve a particular attention : 
-* Onboarding / Inclusion / Welcoming role - Gabriel HENRY
-* Technical partnership / Interoperability role : Simon LOUVET
-* Communication role : Pierre BOUVIER-MULLER
-* Information gardening/Informational heritage role : Guillaume ROUYER
-* The Virtual Assembly's coordination role : Garbriel HENRY
+Among the 13 roles that came out, the following ones deserve a particular attention :
 
-Thanks to an agile governance, these roles will benefits from a regular review, in order to be reajusted if needed. 
+- Onboarding / Inclusion / Welcoming role - Gabriel HENRY
+- Technical partnership / Interoperability role : Simon LOUVET
+- Communication role : Pierre BOUVIER-MULLER
+- Information gardening/Informational heritage role : Guillaume ROUYER
+- The Virtual Assembly's coordination role : Garbriel HENRY
+
+Thanks to an agile governance, these roles will benefits from a regular review, in order to be reajusted if needed.
 
 #### Work on economic sustainability
 
@@ -74,11 +75,12 @@ SemApps has therefore helped to reach phase 2 CFD technology without waiting for
 
 #### Meetup Interoperability
 
-Following the SemApps residency in El Capitan during June, the Virtual Assembly and Startin'blox showed their ambition to cooperate more closely. This resulted in the co-organization of [a meetup on September 15th at Les Grands Voisins](https://www.facebook.com/events/609531263097830/). We had excellent feedbacks, met new people and even new contributors ! Even if there were not so many participants, they all grasped the message we wanted to convey. We know how to mediate better and better on our subjects ! A big thank you to all the interveners and volunteer contributors (an incredible team <3) present at the event !
+Following the SemApps residency in El Capitan during June, the Virtual Assembly and Startin'blox showed their ambition to cooperate more closely. This resulted in the co-organization of [a meetup on September 15th at Les Grands Voisins](https://www.facebook.com/events/609531263097830/). We had excellent feedbacks, met new people and even new contributors ! Even if there were not so many participants, they all grasped the message we wanted to convey. We know how to mediate better and better on our subjects ! A big thank you to all the interveners and volunteer contributors (an incredible team) present at the event !
 
 #### Publication of several SemApps presentation videos!
+
 You will find the May 20th meeting videos on [the Virtual Assembly's Youtube channel](https://www.youtube.com/channel/UCg7sYh_Y8cHFT4s82K4SVmA/), with English subtitles in option.
-We have also just published [the video](https://youtu.be/wjQSKP4DWmM) of a presentation we made at UTT about SemApps and peer-to-peer architectures. Here is [a document](https://pad.lescommuns.org/IRs8_6lIS_iucxqiPSXwNA?both)  summarizing these interventions, as well as [the Power-point](https://docs.google.com/presentation/d/1lVUx4URcKkV1Z3G4EticbH1uCV_NwtVBlYo5cvqUOOc/edit?usp=sharing) on which Guillaume and Sébastien based their presentation.
+We have also just published [the video](https://youtu.be/wjQSKP4DWmM) of a presentation we made at UTT about SemApps and peer-to-peer architectures. Here is [a document](https://pad.lescommuns.org/IRs8_6lIS_iucxqiPSXwNA?both) summarizing these interventions, as well as [the Power-point](https://docs.google.com/presentation/d/1lVUx4URcKkV1Z3G4EticbH1uCV_NwtVBlYo5cvqUOOc/edit?usp=sharing) on which Guillaume and Sébastien based their presentation.
 
 ## And in the ecosystem...
 
@@ -108,15 +110,13 @@ Mid-August, Inrupt announces the release of the Beta version of its [solid serve
 
 Here are two working groups where it would be nice to have representatives from our ecosystem in the Solid community :
 
-* [The Interoperability panel](https://github.com/solid/data-interoperability-panel) every Tuesday at 4PM.
-* [The Authorization panel](https://github.com/solid/authorization-panel) every Wednesday at 4PM.
-If you want to share information about the Solid ecosystem, there is a dedicated channel on Hubl "Solid Watch" :)
+- [The Interoperability panel](https://github.com/solid/data-interoperability-panel) every Tuesday at 4PM.
+- [The Authorization panel](https://github.com/solid/authorization-panel) every Wednesday at 4PM.
+  If you want to share information about the Solid ecosystem, there is a dedicated channel on Hubl "Solid Watch" :)
 
-#### Virtual Assembly's donation campaign 
+#### Virtual Assembly's donation campaign
 
 The Virtual Assembly's organization mainly relies on volunteering. In order to maintain its sustainability, its research and development activities as well as its independance, we count on your donations. The more you contribute regularly, the more our association strengthens economically. In this way, we encourage you to choose monthly donations rather than ponctual ones. In any case, we will be gratefull to benefit from your help :)
 
-* I would like to make a [regular donation](https://www.virtual-assembly.org/faire-un-don/)
-* I would like to make a [one-time donation](https://www.virtual-assembly.org/faire-un-don/)
-
-
+- I would like to make a [regular donation](https://www.virtual-assembly.org/faire-un-don/)
+- I would like to make a [one-time donation](https://www.virtual-assembly.org/faire-un-don/)

@@ -1,15 +1,18 @@
 import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { getSlugFromUri } from '@semapps/ldp';
-import { fetchServer } from '../utils.ts';
+import { ServiceBroker } from 'moleculer';
+import { fetchServer, createAccount } from '../utils.ts';
 import * as CONFIG from '../config.ts';
 import initialize from './initialize.ts';
 
 jest.setTimeout(20000);
-let broker: any;
+let broker: ServiceBroker;
+let alice: any;
 
 beforeAll(async () => {
   broker = await initialize();
+  await broker.start();
+  alice = await createAccount(broker, 'alice');
 });
 
 afterAll(async () => {
@@ -17,11 +20,14 @@ afterAll(async () => {
 });
 
 describe('middleware CRUD resource with perms', () => {
-  test('A call to ldp.container.post fails if anonymous user, because container access denied', async () => {
-    // this is because containers only get Read perms for anonymous users.
+  let containerUri: string;
+  let resourceUri: string;
 
-    try {
-      const urlParamsPost = {
+  test('A call to ldp.container.post fails if anonymous user, because container access denied', async () => {
+    containerUri = await alice.getContainerUri('as:Article');
+
+    await expect(
+      alice.call('ldp.container.post', {
         resource: {
           '@context': {
             '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -30,58 +36,41 @@ describe('middleware CRUD resource with perms', () => {
           description: 'myProject',
           label: 'myTitle'
         },
-        contentType: MIME_TYPES.JSON,
-        containerUri: `${CONFIG.HOME_URL}resources`
-      };
-      await broker.call('ldp.container.post', urlParamsPost, { meta: { webId: 'anon' } });
-    } catch (e) {
-      // @ts-expect-error
-      expect(e.code).toEqual(403);
-    }
+        webId: 'anon'
+      })
+    ).rejects.toThrow();
   }, 20000);
 
-  let resourceUri: any;
-
   test('A call to ldp.container.post creates some default permissions', async () => {
-    try {
-      const urlParamsPost = {
-        resource: {
-          '@context': {
-            '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
-          },
-          '@type': 'Project',
-          description: 'myProject',
-          label: 'myTitle'
-        },
-        contentType: MIME_TYPES.JSON,
-        containerUri: `${CONFIG.HOME_URL}resources`
-      };
-      const webId = 'http://a/user';
-      resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId } });
-      const project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
-      expect(project1['pair:description']).toBe('myProject');
+    resourceUri = await alice.call('ldp.container.post', {
+      resource: {
+        type: 'Event',
+        name: 'My event #1'
+      },
+      containerUri
+    });
 
-      const resourceRights = await broker.call('webacl.resource.hasRights', {
+    await expect(alice.call('ldp.resource.get', { resourceUri })).resolves.toMatchObject({
+      type: 'Event',
+      name: 'My event #1'
+    });
+
+    await expect(
+      alice.call('webacl.resource.hasRights', {
         resourceUri,
         rights: {
           read: true,
           write: true,
           append: true,
           control: true
-        },
-        webId
-      });
-
-      expect(resourceRights).toMatchObject({
-        read: true,
-        write: true,
-        append: false,
-        control: true
-      });
-    } catch (e) {
-      console.log(e);
-      expect(e).toBe(null);
-    }
+        }
+      })
+    ).resolves.toMatchObject({
+      read: true,
+      write: true,
+      append: false,
+      control: true
+    });
   }, 20000);
 
   test('The ACL URI is returned in headers of GET and HEAD calls', async () => {
@@ -91,7 +80,7 @@ describe('middleware CRUD resource with perms', () => {
 
     expect(result.headers.get('Link')).toMatch(
       // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-      `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
+      `<${urlJoin(CONFIG.HOME_URL, '_acl', 'alice', getSlugFromUri(resourceUri))}>; rel=acl`
     );
 
     result = await fetchServer(resourceUri, {
@@ -100,33 +89,27 @@ describe('middleware CRUD resource with perms', () => {
 
     expect(result.headers.get('Link')).toMatch(
       // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-      `<${urlJoin(CONFIG.HOME_URL, '_acl', 'resources', getSlugFromUri(resourceUri))}>; rel=acl`
+      `<${urlJoin(CONFIG.HOME_URL, '_acl', 'alice', getSlugFromUri(resourceUri))}>; rel=acl`
     );
   }, 20000);
 
   test('A call to ldp.resource.delete removes all its permissions', async () => {
-    try {
-      const urlParamsPost = {
-        resourceUri,
-        webId: 'http://a/user'
-      };
+    await alice.call('ldp.resource.delete', { resourceUri });
 
-      await broker.call('ldp.resource.delete', urlParamsPost);
+    const result = await alice.call('triplestore.query', {
+      query: `
+        PREFIX acl: <http://www.w3.org/ns/auth/acl#>
+        SELECT ?auth ?p2 ?o 
+        WHERE { 
+          GRAPH <http://semapps.org/webacl> { 
+            ?auth ?p <${resourceUri}>.
+            FILTER (?p IN (acl:accessTo, acl:default ) )
+            ?auth ?p2 ?o
+          }
+        }
+      `
+    });
 
-      const result = await broker.call('triplestore.query', {
-        query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-          SELECT ?auth ?p2 ?o WHERE { GRAPH <http://semapps.org/webacl> { 
-          ?auth ?p <${resourceUri}>.
-          FILTER (?p IN (acl:accessTo, acl:default ) )
-          ?auth ?p2 ?o  } }`,
-        webId: 'system',
-        accept: MIME_TYPES.JSON
-      });
-
-      expect(result.length).toBe(0);
-    } catch (e) {
-      console.log(e);
-      expect(e).toBe(null);
-    }
+    expect(result.length).toBe(0);
   }, 20000);
 });

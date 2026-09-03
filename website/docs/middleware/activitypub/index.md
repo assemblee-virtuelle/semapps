@@ -56,7 +56,7 @@ const { ActivityPubService } = require('@semapps/activitypub');
 module.exports = {
   mixins: [ActivityPubService],
   settings: {
-    baseUri: 'http://localhost:3000/',
+    baseUrl: 'http://localhost:3000/',
     queueServiceUrl: null,
     activateTombestones: true
   }
@@ -65,7 +65,7 @@ module.exports = {
 
 ### Configure the LDP containers
 
-The containers for actors and objects are handled through the LDP service. You need to define containers with ActivityStreams's actors and objects in the `acceptedTypes`. Alternatively, you can load the default containers from the `@semapps/activitypub` package as below:
+The containers for actors and objects are handled through the LDP service. You need to define containers with ActivityStreams's actors and objects in the `types`. Alternatively, you can load the default containers from the `@semapps/activitypub` package as below:
 
 ```js
 const { LdpService } = require('@semapps/ldp');
@@ -115,7 +115,7 @@ Additionally, the ActivityPub services will append all the ActivityPub-specific 
 
 | Property              | Type       | Default      | Description                                                                                                                                                                         |
 | --------------------- | ---------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `baseUri`             | `String`   | **required** | Base URI of your web server                                                                                                                                                         |
+| `baseUrl`             | `String`   | **required** | Base URI of your web server                                                                                                                                                         |
 | `selectActorData`     | `Function` |              | Receives the data provided on signup (as JSON-LD), and must return the properties (with full URI) to be appended to the actor profile (see above).                                  |
 | `queueServiceUrl`     | `String`   |              | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs.                                              |
 | `activateTombestones` | `Boolean`  | true         | If true, all deleted resources will be replaced with a [Tombstone](https://www.w3.org/TR/activitystreams-vocabulary/#dfn-tombstone), except for containers which have disabled this |
@@ -123,28 +123,6 @@ Additionally, the ActivityPub services will append all the ActivityPub-specific 
 ## Events
 
 The following events are emitted by the different ActivityPub sub-services.
-
-### `activitypub.follow.added`
-
-Sent after an actor follows another one.
-
-##### Payload
-
-| Property    | Type     | Description                     |
-| ----------- | -------- | ------------------------------- |
-| `follower`  | `String` | URI of the actor being followed |
-| `following` | `String` | URI of the actor following      |
-
-### `activitypub.follow.removed`
-
-Sent after an actor stops following another one.
-
-##### Payload
-
-| Property    | Type     | Description                                 |
-| ----------- | -------- | ------------------------------------------- |
-| `follower`  | `String` | URI of the actor not being followed anymore |
-| `following` | `String` | URI of the actor following                  |
 
 ### `activitypub.inbox.received`
 

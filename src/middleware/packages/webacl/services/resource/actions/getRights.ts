@@ -1,21 +1,15 @@
-import { JsonLdSerializer } from 'jsonld-streaming-serializer';
-import { DataFactory, Writer } from 'n3';
+import { Writer } from 'n3';
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
-
-import { ActionSchema } from 'moleculer';
+import { Context, Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import {
   getAuthorizationNode,
-  checkAgentPresent,
-  getUserGroups,
   findParentContainers,
   filterAgentAcl,
   getAclUriFromResourceUri,
   getUserAgentSearchParam
 } from '../../../utils.ts';
-
-const { quad } = DataFactory;
-import { Errors } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -46,20 +40,11 @@ const webAclContext = {
   }
 };
 
-function streamToString(stream: any) {
-  let res = '';
-  return new Promise((resolve, reject) => {
-    stream.on('data', (chunk: any) => (res += chunk));
-    stream.on('error', (err: any) => reject(err));
-    stream.on('end', () => resolve(res));
-  });
-}
-
-async function formatOutput(ctx: any, output: any, resourceAclUri: any, jsonLD: any) {
-  const turtle = await new Promise((resolve, reject) => {
+async function formatOutput(ctx: Context, output: any, resourceAclUri: string, jsonLD: boolean) {
+  const rdf = await new Promise(resolve => {
     const writer = new Writer({
       prefixes: { ...prefixes, '': `${resourceAclUri}#` },
-      format: 'Turtle'
+      format: jsonLD ? 'N-Quad' : 'Turtle' // If we need to convert to JSON-LD, we generate N-Quads to increase performance
     });
     output.forEach((f: any) => writer.addQuad(f.auth, f.p, f.o));
     writer.end((error, res) => {
@@ -67,20 +52,12 @@ async function formatOutput(ctx: any, output: any, resourceAclUri: any, jsonLD: 
     });
   });
 
-  if (!jsonLD) return turtle;
+  if (!jsonLD) return rdf;
 
-  const mySerializer = new JsonLdSerializer({
-    context: webAclContext,
-    baseIRI: resourceAclUri
-  });
+  const jsonLd = await ctx.call('jsonld.parser.fromRDF', { input: rdf, options: { format: 'application/n-quads' } });
 
-  output.forEach((f: any) => mySerializer.write(quad(f.auth, f.p, f.o)));
-  mySerializer.end();
-
-  // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-  const jsonLd = JSON.parse(await streamToString(mySerializer));
-
-  const compactJsonLd = await ctx.call('jsonld.parser.frame', {
+  // Reframe the results with the WebACL JSON-LD context
+  const compactJsonLd: any = await ctx.call('jsonld.parser.frame', {
     input: jsonLd,
     frame: {
       '@context': webAclContext,
@@ -97,7 +74,7 @@ async function formatOutput(ctx: any, output: any, resourceAclUri: any, jsonLD: 
 }
 
 async function filterAcls(hasControl: any, uaSearchParam: any, acls: any) {
-  if (hasControl || uaSearchParam.system) return acls;
+  if (hasControl) return acls;
 
   const filtered = acls.filter((acl: any) => filterAgentAcl(acl, uaSearchParam, false));
   if (filtered.length) {
@@ -108,24 +85,43 @@ async function filterAcls(hasControl: any, uaSearchParam: any, acls: any) {
   return [];
 }
 
-async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: any, graphName: any, isContainer: any) {
+async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: any, isContainer: any) {
   const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
-  // @ts-expect-error
-  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
-  // @ts-expect-error
+  // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
   const uaSearchParam = getUserAgentSearchParam(user);
-  let hasControl = checkAgentPresent(controls, uaSearchParam);
-  let groups;
+  const document = [];
 
-  if (!hasControl && user !== 'anon' && user !== 'system') {
-    // retrieve the groups of the user
-    groups = await getUserGroups(ctx, user, graphName);
-    uaSearchParam.groups = groups;
-    // we check again for the groups. maybe user has control from a group
-    hasControl = checkAgentPresent(controls, uaSearchParam);
+  // Check if the user has a acl:Control permission
+  // If so, it will return all WAC permissions associated with the resource
+  // Otherwise only the permissions associated with the given user will be returned
+
+  const hasControl = await ctx.call('permissions.has', {
+    uri: resourceUri,
+    type: isContainer ? 'container' : 'resource',
+    mode: 'acl:Control',
+    webId: user
+  });
+
+  // Get the ACL for the resource
+
+  const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read');
+  const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write');
+  const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append');
+  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control');
+
+  document.push(...(await filterAcls(hasControl, uaSearchParam, reads)));
+  document.push(...(await filterAcls(hasControl, uaSearchParam, writes)));
+  document.push(...(await filterAcls(hasControl, uaSearchParam, appends)));
+  document.push(...(await filterAcls(hasControl, uaSearchParam, controls)));
+
+  if (isContainer && hasControl) {
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', true)));
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', true)));
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', true)));
+    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', true)));
   }
 
-  // we continue to search for control perms, now in the parent containers (but we take everything anyway)
+  // Get the ACLs for all the parent containers
 
   const parentContainers = await findParentContainers(ctx, resourceUri);
   const containersMap = {};
@@ -134,53 +130,27 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
     const container = parentContainers.shift();
     const containerUri = container.container.value;
     const aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
-    const containerControls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', graphName, true);
 
-    if (!hasControl) {
-      hasControl = checkAgentPresent(containerControls, uaSearchParam);
-    }
-
-    const reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', graphName, true);
-    const writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', graphName, true);
-    const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', graphName, true);
+    const reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', true);
+    const writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', true);
+    const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', true);
+    const controls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', true);
 
     // we keep all the authorization nodes we found
-    // @ts-expect-error
+    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     containersMap[containerUri] = {
       reads,
       writes,
       appends,
-      controls: containerControls
+      controls
     };
 
     const moreParentContainers = await findParentContainers(ctx, containerUri);
     parentContainers.push(...moreParentContainers);
   }
 
-  // we finish to get all the ACLs for the resource itself
-  // @ts-expect-error
-  const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName);
-  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-  const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName);
-  // @ts-expect-error TS(2554): Expected 6 arguments, but got 5.
-  const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName);
-
-  const document = [];
-
-  document.push(...(await filterAcls(hasControl, uaSearchParam, reads)));
-  document.push(...(await filterAcls(hasControl, uaSearchParam, writes)));
-  document.push(...(await filterAcls(hasControl, uaSearchParam, appends)));
-  document.push(...(await filterAcls(hasControl, uaSearchParam, controls)));
-
-  if (isContainer && hasControl) {
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName, true)));
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName, true)));
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName, true)));
-    document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName, true)));
-  }
-
-  for (const [key, value] of Object.entries(containersMap)) {
-    // @ts-expect-error
+  for (const value of Object.values(containersMap)) {
+    // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.reads)));
     // @ts-expect-error TS(18046): 'value' is of type 'unknown'.
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.writes)));
@@ -190,30 +160,34 @@ async function getPermissions(ctx: any, resourceUri: any, baseUrl: any, user: an
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.controls)));
   }
 
+  // Format output
+
   return await formatOutput(ctx, document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }
 
-export const api = async function api(this: any, ctx: any) {
-  const { accept } = ctx.meta.headers;
-  let { slugParts } = ctx.params;
+export const api = {
+  async handler(ctx) {
+    const { accept } = ctx.meta.headers;
+    let { username, slugParts } = ctx.params;
 
-  if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
-    throw new MoleculerError(`Accept not supported : ${accept}`, 400, 'ACCEPT_NOT_SUPPORTED');
+    if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
+      throw new MoleculerError(`Accept not supported : ${accept}`, 400, 'ACCEPT_NOT_SUPPORTED');
 
-  // This is the root container
-  if (!slugParts || slugParts.length === 0) slugParts = ['/'];
+    // This is the root container
+    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
-  return await ctx.call('webacl.resource.getRights', {
-    resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-    accept: accept
-  });
-};
+    return await ctx.call('webacl.resource.getRights', {
+      resourceUri: urlJoin(this.settings.baseUrl, username, ...slugParts),
+      accept
+    });
+  }
+} satisfies ActionSchema;
 
 export const action = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    accept: { type: 'string', optional: true },
+    accept: { type: 'string', default: MIME_TYPES.JSON },
     webId: { type: 'string', optional: true },
     skipResourceCheck: { type: 'boolean', default: false }
   },
@@ -221,16 +195,14 @@ export const action = {
     keys: ['resourceUri', 'accept', 'webId', '#webId']
   },
   async handler(ctx) {
-    let { resourceUri, webId, accept, skipResourceCheck } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
-    webId = webId || ctx.meta.webId || 'anon';
+    let { resourceUri, accept, skipResourceCheck } = ctx.params;
+    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     accept = accept || MIME_TYPES.TURTLE;
-    // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
     ctx.meta.$responseType = accept;
 
     const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));
 
-    return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
+    return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, isContainer);
   }
 } satisfies ActionSchema;

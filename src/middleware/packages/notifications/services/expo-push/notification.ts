@@ -1,7 +1,7 @@
 import DbService from 'moleculer-db';
 import { Expo } from 'expo-server-sdk';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const ExpoPushNotificationService = {
   name: 'expo-push.notification' as const,

@@ -1,10 +1,16 @@
 import urlJoin from 'url-join';
 import rdf from '@rdfjs/data-model';
-import { MIME_TYPES } from '@semapps/mime-types';
-import { parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle } from '@semapps/middlewares';
-import { ServiceSchema } from 'moleculer';
+import {
+  parseUrl,
+  parseHeader,
+  parseRawBody,
+  negotiateAccept,
+  negotiateContentType,
+  parseJson
+} from '@semapps/middlewares';
+import type { ServiceSchema } from 'moleculer';
 
-const Schema = {
+const SpecialEndpointMixin = {
   settings: {
     baseUrl: null,
     settingsDataset: null,
@@ -13,13 +19,13 @@ const Schema = {
       initialData: {}
     }
   },
-  dependencies: ['api', 'ldp'],
+  dependencies: ['api', 'ldp', 'type-index'],
   async started() {
     if (!this.settings.baseUrl) throw new Error(`The baseUrl must be specified for service ${this.name}`);
     if (!this.settings.settingsDataset)
       throw new Error(`The settingsDataset must be specified for service ${this.name}`);
 
-    const middlewares = [parseUrl, parseHeader, negotiateAccept, parseJson, parseTurtle];
+    const middlewares = [parseUrl, parseHeader, negotiateAccept, negotiateContentType, parseRawBody, parseJson];
 
     let aliases = {};
     // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
@@ -54,7 +60,7 @@ const Schema = {
             id: this.endpointUrl,
             ...this.settings.endpoint.initialData
           },
-          contentType: MIME_TYPES.JSON,
+          resourceUri: this.endpointUrl,
           webId: 'system'
         },
         { meta: { dataset: this.settings.settingsDataset, skipEmitEvent: true, skipObjectsWatcher: true } }
@@ -80,15 +86,12 @@ const Schema = {
 
     endpointGet: {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = ctx.meta.headers?.accept;
 
         return await ctx.call(
           'ldp.resource.get',
           {
             resourceUri: this.endpointUrl,
-            // @ts-expect-error
-            accept: ctx.meta.headers?.accept,
             webId: 'system'
           },
           { meta: { dataset: this.settings.settingsDataset } }
@@ -98,4 +101,4 @@ const Schema = {
   }
 } satisfies Partial<ServiceSchema>;
 
-export default Schema;
+export default SpecialEndpointMixin;

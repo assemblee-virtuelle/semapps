@@ -1,5 +1,5 @@
-import rdf from '@rdfjs/data-model';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -10,29 +10,43 @@ const Schema = {
   },
   async handler(ctx) {
     const { resourceUri, acceptTombstones } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    let exist = await ctx.call('triplestore.tripleExist', {
-      triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
-      webId
-    });
+    let exist = await ctx.call('triplestore.named-graph.exist', { uri: getSlugFromUri(resourceUri) });
 
-    // If this is a remote URI and the resource is not found in default graph, also look in mirror graph
-    if (!exist && (await ctx.call('ldp.remote.isRemote', { resourceUri }))) {
-      exist = await ctx.call('triplestore.tripleExist', {
-        triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
-        webId,
-        // @ts-expect-error TS(2339): Property 'mirrorGraphName' does not exist on type '... Remove this comment to see the full error message
-        graphName: this.settings.mirrorGraphName
+    if (exist) {
+      // If the named graph exist, ensure it is not empty (otherwise consider the resource doesn't exist)
+      exist = await ctx.call('triplestore.query', {
+        query: `
+          ASK
+          WHERE {
+            GRAPH <${getSlugFromUri(resourceUri)}> {
+              ?s ?p ?o
+            }
+          }
+        `,
+        webId: 'system'
       });
     }
 
     // If resource exists but we don't want tombstones, check the resource type
     if (exist && !acceptTombstones) {
-      // @ts-expect-error TS(2339): Property 'getTypes' does not exist on type '... Remove this comment to see the full error message
       const types = await this.actions.getTypes({ resourceUri }, { parentCtx: ctx });
       if (types.includes('https://www.w3.org/ns/activitystreams#Tombstone')) return false;
+    }
+
+    // Ensure the logged user has the right to see the resource
+    // TODO Verify if we really need this kind of check
+    if (
+      exist &&
+      !(await ctx.call('permissions.has', {
+        uri: resourceUri,
+        type: 'resource',
+        mode: 'acl:Read',
+        webId
+      }))
+    ) {
+      return false;
     }
 
     return exist;

@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
+import { getSlugFromUri } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -10,7 +11,6 @@ const Schema = {
   },
   async handler(ctx) {
     let { containerUri, resourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const isRemoteContainer = await ctx.call('ldp.remote.isRemote', { resourceUri: containerUri });
@@ -26,17 +26,15 @@ const Schema = {
     await ctx.call('triplestore.update', {
       query: `
         DELETE
-        WHERE
-        { 
-          ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
-          <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
-          ${isRemoteContainer ? '}' : ''}
+        WHERE { 
+          GRAPH <${getSlugFromUri(containerUri)}> {
+            <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
+          }
         }
       `,
       webId
     });
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!isRemoteContainer && !ctx.meta.skipEmitEvent) {
       ctx.emit(
         'ldp.container.detached',

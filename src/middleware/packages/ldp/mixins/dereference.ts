@@ -1,5 +1,4 @@
-import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { isObject, arrayOf } from '../utils.ts';
 
 /**
@@ -55,8 +54,7 @@ const Schema = {
       // Get the resource.
       try {
         let result = await ctx.call('ldp.resource.get', {
-          resourceUri,
-          accept: MIME_TYPES.JSON
+          resourceUri
         });
         // Delete the context from the result
         delete result['@context'];

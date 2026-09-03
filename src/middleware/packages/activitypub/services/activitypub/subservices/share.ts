@@ -1,22 +1,21 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
-import { ACTIVITY_TYPES, OBJECT_TYPES } from '../../../constants.ts';
+import { ACTIVITY_TYPES } from '../../../constants.ts';
 import { collectionPermissionsWithAnonRead } from '../../../utils.ts';
 import matchActivity from '../../../utils/matchActivity.ts';
+import { CollectionRegistration } from '../../../types.ts';
 
 const ShareService = {
   name: 'activitypub.share' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    baseUri: null,
-    podProvider: false,
     collectionOptions: {
       path: '/shares',
       attachPredicate: 'https://www.w3.org/ns/activitystreams#shares',
       ordered: false,
       dereferenceItems: false,
       permissions: collectionPermissionsWithAnonRead
-    }
+    } as CollectionRegistration
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   actions: {
@@ -27,8 +26,7 @@ const ShareService = {
         // Create the /shares collection and attach it to the object, unless it already exists
         const collectionUri = await ctx.call('activitypub.collections-registry.createAndAttachCollection', {
           objectUri,
-          collection: this.settings.collectionOptions,
-          webId: 'system'
+          collection: this.settings.collectionOptions
         });
 
         // Add the announce to the shares collection

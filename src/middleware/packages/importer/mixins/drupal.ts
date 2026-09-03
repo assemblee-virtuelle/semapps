@@ -1,4 +1,4 @@
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import ImporterMixin from './importer.ts';
 import { convertToIsoString } from '../utils.ts';
 

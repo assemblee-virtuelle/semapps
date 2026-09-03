@@ -1,6 +1,5 @@
-import { ActionSchema } from 'moleculer';
-
 import { Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 const { MoleculerError } = Errors;
 

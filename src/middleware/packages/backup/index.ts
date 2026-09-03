@@ -3,7 +3,7 @@ import fs from 'fs';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'fs-e... Remove this comment to see the full error message
 import { emptyDirSync } from 'fs-extra';
 import pathModule from 'path';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import fsCopy from './utils/fsCopy.ts';
 import ftpCopy from './utils/ftpCopy.ts';
 import rsyncCopy from './utils/rsyncCopy.ts';

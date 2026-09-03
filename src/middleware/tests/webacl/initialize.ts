@@ -1,17 +1,21 @@
 import path from 'path';
-import { ServiceBroker, ServiceSchema } from 'moleculer';
+import { ServiceBroker } from 'moleculer';
 import { CoreService } from '@semapps/core';
-import { pair } from '@semapps/ontologies';
+import { as, solid } from '@semapps/ontologies';
 import { WebAclMiddleware, CacherMiddleware } from '@semapps/webacl';
 import { AuthLocalService } from '@semapps/auth';
 import { fileURLToPath } from 'url';
-import { clearDataset } from '../utils.ts';
+import { dropDataset, listDatasets } from '../utils.ts';
 import * as CONFIG from '../config.ts';
 
-// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const initialize = async () => {
+  const datasets: string[] = await listDatasets();
+  for (let dataset of datasets) {
+    await dropDataset(dataset);
+  }
+
   const broker = new ServiceBroker({
     // @ts-expect-error TS(2322): Type '{ name: string; created(broker: any): void; ... Remove this comment to see the full error message
     middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
@@ -23,8 +27,8 @@ const initialize = async () => {
     }
   });
 
-  // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
   broker.createService({
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "core"; settin... Remove this comment to see the full error message
     mixins: [CoreService],
     settings: {
       baseUrl: CONFIG.HOME_URL,
@@ -33,17 +37,43 @@ const initialize = async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
+        mainDataset: CONFIG.MAIN_DATASET,
+        secure: false // TODO Remove when we move to Fuseki 5
       },
-      ontologies: [pair],
-      containers: ['/resources'],
+      ontologies: [as, solid],
+      containers: [
+        {
+          path: '/resources',
+          types: ['as:Article']
+        },
+        {
+          path: '/resources2',
+          types: ['as:Video'],
+          permissions: {},
+          newResourcesPermissions: (webId: any) => {
+            switch (webId) {
+              case 'anon':
+                return {};
+              case 'system':
+                return {};
+              default:
+                return {
+                  user: {
+                    uri: webId,
+                    read: true // This is required, otherwise there will be an error when a user post a resource
+                  }
+                };
+            }
+          }
+        }
+      ],
       activitypub: false,
+      ldp: {
+        documentTagger: false,
+        allowSlugs: false
+      },
       mirror: false,
-      void: false,
-      webfinger: false,
-      webid: {
-        path: '/users'
-      }
+      webfinger: false
     }
   });
 
@@ -56,8 +86,6 @@ const initialize = async () => {
       accountsDataset: CONFIG.SETTINGS_DATASET
     }
   });
-
-  await broker.start();
 
   return broker;
 };

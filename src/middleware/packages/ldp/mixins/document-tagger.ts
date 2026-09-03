@@ -1,6 +1,6 @@
 import { dc } from '@semapps/ontologies';
-import { ServiceSchema } from 'moleculer';
-import { getDatasetFromUri } from '../utils.ts';
+import type { ServiceSchema } from 'moleculer';
+import { getDatasetFromUri, getSlugFromUri } from '../utils.ts';
 
 const Schema = {
   settings: {
@@ -41,9 +41,9 @@ const Schema = {
         }
 
         if (triples.length > 0) {
-          await ctx.call('triplestore.insert', {
-            resource: triples.join('\n'),
-            dataset: this.settings.podProvider ? dataset || getDatasetFromUri(resourceUri) : undefined,
+          await ctx.call('triplestore.update', {
+            query: `INSERT DATA { GRAPH <${getSlugFromUri(resourceUri)}> { ${triples.join('\n')} } }`,
+            dataset: dataset || getDatasetFromUri(resourceUri),
             webId: 'system'
           });
         }
@@ -56,13 +56,14 @@ const Schema = {
         const now = new Date();
         await ctx.call('triplestore.update', {
           query: `
+            WITH <${getSlugFromUri(resourceUri)}>
             DELETE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
             INSERT { <${resourceUri}> <${
               this.settings.documentPredicates.updated
             }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> }
             WHERE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
           `,
-          dataset: this.settings.podProvider ? dataset || getDatasetFromUri(resourceUri) : undefined,
+          dataset: dataset || getDatasetFromUri(resourceUri),
           webId: 'system'
         });
       }
@@ -71,10 +72,8 @@ const Schema = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData, webId, dataset } = ctx.params;
         this.actions.tagCreatedResource(
-          // @ts-expect-error TS(2339): Property 'impersonatedUser' does not exist on type... Remove this comment to see the full error message
           { resourceUri, newData, webId: ctx.meta.impersonatedUser || webId, dataset },
           { parentCtx: ctx }
         );
@@ -83,7 +82,6 @@ const Schema = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
         this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
@@ -91,9 +89,7 @@ const Schema = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         this.actions.tagUpdatedResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
     }

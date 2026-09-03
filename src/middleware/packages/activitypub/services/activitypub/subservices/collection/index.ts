@@ -1,12 +1,11 @@
-import { ControlledContainerMixin, arrayOf, getDatasetFromUri } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
+import { ControlledContainerMixin, arrayOf, getDatasetFromUri, getSlugFromUri } from '@semapps/ldp';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
-import { ServiceSchema } from 'moleculer';
-import getAction from './actions/get.ts';
-
 import { Errors } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
+import getAction from './actions/get.ts';
+import { CollectionRegistration } from '../../../../types.ts';
 
 const { MoleculerError } = Errors;
 
@@ -14,19 +13,17 @@ const CollectionService = {
   name: 'activitypub.collection' as const,
   mixins: [ControlledContainerMixin],
   settings: {
-    podProvider: false,
     // ControlledContainerMixin settings
     path: '/as/collection',
-    acceptedTypes: [
+    types: [
       'https://www.w3.org/ns/activitystreams#Collection',
       'https://www.w3.org/ns/activitystreams#OrderedCollection'
     ],
-    accept: MIME_TYPES.JSON,
     activateTombstones: false,
     permissions: {},
     // These default permissions can be overridden by providing
     // a `permissions` param when calling activitypub.collection.post
-    newResourcesPermissions: (webId: any) => {
+    newResourcesPermissions: (webId: string) => {
       switch (webId) {
         case 'anon':
         case 'system':
@@ -64,7 +61,6 @@ const CollectionService = {
     patch: {
       async handler(ctx) {
         const { resourceUri: collectionUri, triplesToAdd, triplesToRemove } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
         const collectionExist = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri, webId });
@@ -108,7 +104,7 @@ const CollectionService = {
           ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
         }
 
-        await this.actions.waitForContainerCreation({ containerUri: ctx.params.containerUri });
+        await this.actions.waitForContainerCreation({ containerUri: ctx.params.containerUri }, { parentCtx: ctx });
 
         const ordered = arrayOf(ctx.params.resource.type).includes('OrderedCollection');
 
@@ -145,11 +141,12 @@ const CollectionService = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             SELECT ( Count(?items) as ?count )
             WHERE {
-              <${collectionUri}> as:items ?items .
+              GRAPH <${getSlugFromUri(collectionUri)}> {
+                <${collectionUri}> as:items ?items .
+              }
             }
           `,
-          accept: MIME_TYPES.JSON,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
         return Number(res[0].count.value) === 0;
@@ -171,12 +168,13 @@ const CollectionService = {
             PREFIX as: <https://www.w3.org/ns/activitystreams#>
             ASK
             WHERE {
-              <${collectionUri}> a as:Collection .
-              <${collectionUri}> as:items <${itemUri}> .
+              GRAPH <${getSlugFromUri(collectionUri)}> {
+                <${collectionUri}> a as:Collection .
+                <${collectionUri}> as:items <${itemUri}> .
+              }
             }
           `,
-          accept: MIME_TYPES.JSON,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
       }
@@ -197,17 +195,21 @@ const CollectionService = {
         // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: itemUri });
         // if (!resourceExist) throw new Error('Cannot attach a non-existing resource !')
 
-        // TODO check why thrown error is lost and process is stopped
         const collectionExist = await ctx.call('activitypub.collection.exist', { resourceUri: collectionUri });
         if (!collectionExist)
           throw new Error(
-            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             `Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`
           );
 
-        await ctx.call('triplestore.insert', {
-          resource: sanitizeSparqlQuery`<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
-          dataset: this.getCollectionDataset(collectionUri),
+        await ctx.call('triplestore.update', {
+          query: sanitizeSparqlQuery`
+            INSERT DATA { 
+              GRAPH <${getSlugFromUri(collectionUri)}> {
+                <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>
+              }
+            }
+          `,
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
 
@@ -235,10 +237,13 @@ const CollectionService = {
         await ctx.call('triplestore.update', {
           query: sanitizeSparqlQuery`
             DELETE
-            WHERE
-            { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
+            WHERE { 
+              GRAPH <${getSlugFromUri(collectionUri)}> {
+                <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> 
+              }
+            }
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
 
@@ -251,26 +256,52 @@ const CollectionService = {
 
     get: getAction,
 
+    postOnResource: {
+      async handler(ctx) {
+        const { resourceUri: collectionUri, payload } = ctx.params;
+
+        const collectionRegistration: CollectionRegistration = await ctx.call(
+          'activitypub.collections-registry.getByUri',
+          { collectionUri }
+        );
+
+        // Check if the collection has a special handling for POST
+        if (collectionRegistration?.controlledActions?.post) {
+          await ctx.call(collectionRegistration.controlledActions.post, {
+            collectionUri,
+            payload
+          });
+        } else {
+          throw new E.ForbiddenError();
+        }
+      }
+    },
+
     clear: {
       /*
        * Empty the collection, deleting all items it contains.
        * @param collectionUri The full URI of the collection
        */
       async handler(ctx) {
-        const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
+        const { collectionUri } = ctx.params;
         await ctx.call('triplestore.update', {
           query: sanitizeSparqlQuery`
             PREFIX as: <https://www.w3.org/ns/activitystreams#> 
             DELETE {
-              ?s1 ?p1 ?o1 .
+              GRAPH ?g1 {
+                ?s1 ?p1 ?o1 .
+              }
             }
             WHERE { 
-              FILTER(?container IN (<${collectionUri}>, <${`${collectionUri}/`}>)) .
-              ?container as:items ?s1 .
-              ?s1 ?p1 ?o1 .
+              GRAPH <${getSlugFromUri(collectionUri)}> {
+                <${collectionUri}> as:items ?s1 .
+              }
+              GRAPH ?g1 {
+                ?s1 ?p1 ?o1 .
+              }
             } 
           `,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
       }
@@ -294,22 +325,17 @@ const CollectionService = {
             PREFIX ldp: <http://www.w3.org/ns/ldp#>
             SELECT ?actorUri
             WHERE { 
-              ?actorUri ${prefix}:${collectionKey} <${collectionUri}>
+              GRAPH ?g {
+                ?actorUri ${prefix}:${collectionKey} <${collectionUri}>
+              }
             }
           `,
-          accept: MIME_TYPES.JSON,
-          dataset: this.getCollectionDataset(collectionUri),
+          dataset: getDatasetFromUri(collectionUri),
           webId: 'system'
         });
 
         return results.length > 0 ? results[0].actorUri.value : null;
       }
-    }
-  },
-  methods: {
-    getCollectionDataset(collectionUri) {
-      if (!this.settings.podProvider) return undefined;
-      return getDatasetFromUri(collectionUri);
     }
   }
 } satisfies ServiceSchema;

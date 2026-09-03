@@ -1,0 +1,9 @@
+{
+  "prefix": "stat",
+  "namespace": "http://www.w3.org/ns/posix/stat#",
+  "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "stat:size": { "@type": "xsd:integer" },
+    "stat:mtime": { "@type": "xsd:dateTime" }
+  }
+}

@@ -23,7 +23,6 @@
     "@semapps/mime-types": "1.2.0",
     "@semapps/ontologies": "1.2.0",
     "@semapps/triplestore": "1.2.0",
-    "jsonld-streaming-serializer": "^1.2.0",
     "n3": "^1.8.0",
     "rdf-parse": "^1.7.0",
     "speakingurl": "^14.0.1",

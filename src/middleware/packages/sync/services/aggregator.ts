@@ -1,29 +1,22 @@
 import { ActivitiesHandlerMixin, ACTIVITY_TYPES } from '@semapps/activitypub';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import SynchronizerService from './synchronizer.ts';
 
-const AggregatorSchema = {
+const AggregatorService = {
   name: 'aggregator' as const,
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    acceptFollowOffers: true,
-    mirrorGraph: true
+    acceptFollowOffers: true
   },
-  dependencies: ['activitypub.relay'],
   created() {
     // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "synchronizer"... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [SynchronizerService],
       settings: {
-        podProvider: false,
-        mirrorGraph: this.settings.mirrorGraph,
         synchronizeContainers: false,
         attachToLocalContainers: true
       }
     });
-  },
-  async started() {
-    this.relayActor = await this.broker.call('activitypub.relay.getActor');
   },
   activities: {
     offerFollow: {
@@ -53,12 +46,12 @@ const AggregatorSchema = {
   }
 } satisfies ServiceSchema;
 
-export default AggregatorSchema;
+export default AggregatorService;
 
 declare global {
   export namespace Moleculer {
     export interface AllServices {
-      [AggregatorSchema.name]: typeof AggregatorSchema;
+      [AggregatorService.name]: typeof AggregatorService;
     }
   }
 }

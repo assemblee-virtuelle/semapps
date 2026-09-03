@@ -4,7 +4,6 @@ title: RelayService
 
 An instance-level ActivityPub actor. Used by the [InferenceService](../inference.md) and the [SynchronizerService](../sync/synchronizer.md).
 
-
 ## Usage
 
 ```js
@@ -26,15 +25,17 @@ This service will create an ActivityPub actor there, with the name `relay`.
 You could put the actor in the `/users` container, or in a dedicated `/bots` container.
 
 ```js
-const containers = [{
-  path: '/users',
-  acceptedTypes: ['pair:Person', 'Application'], // The Application type is important
-  blankNodes: ['sec:publicKey'],
-  excludeFromMirror: true
-}];
+const containers = [
+  {
+    path: '/users',
+    types: ['pair:Person', 'Application'], // The Application type is important
+    blankNodes: ['sec:publicKey'],
+    excludeFromMirror: true
+  }
+];
 ```
-You also most probably want to use the option `excludeFromMirror: true`. It will hide prevent this container from being [mirrored](../sync/mirror.md).
 
+You also most probably want to use the option `excludeFromMirror: true`. It will hide prevent this container from being [mirrored](../sync/mirror.md).
 
 ## Actions
 
@@ -45,5 +46,5 @@ The following service actions are available:
 Get the Relay ActivityPub actor
 
 ##### Return
-The full data of the Relay actor.
 
+The full data of the Relay actor.

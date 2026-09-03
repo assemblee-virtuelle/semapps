@@ -10,7 +10,7 @@ The following service actions are available:
 
 ### `getByType`
 
-Get the first container registration matching with the `acceptedTypes`.
+Get the first container registration matching with the `types`.
 
 ##### Parameters
 
@@ -71,12 +71,12 @@ Register a container.
 
 ##### Parameters
 
-| Property        | Type                | Default | Description                                                                                                                            |
-| --------------- | ------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `path`          | `String`            |         | Path of the container. If not provided, will be generated with [`ldp.container.getPath`](container.md#getpath) and the `acceptedTypes` |
-| `name`          | `String`            |         | Name of the container, used to store it (path will be used if none are provided)                                                       |
-| `acceptedTypes` | `Array` or `String` |         | RDF classes accepted in this container                                                                                                 |
-| `dataset`       | `String`            |         | If provided, will register the container only for the given dataset                                                                    |
+| Property  | Type                | Default | Description                                                                                                                    |
+| --------- | ------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `path`    | `String`            |         | Path of the container. If not provided, will be generated with [`ldp.container.getPath`](container.md#getpath) and the `types` |
+| `name`    | `String`            |         | Name of the container, used to store it (path will be used if none are provided)                                               |
+| `types`   | `Array` or `String` |         | RDF classes accepted in this container                                                                                         |
+| `dataset` | `String`            |         | If provided, will register the container only for the given dataset                                                            |
 
 For other available parameters, see the [container options](index.md#container-options).
 

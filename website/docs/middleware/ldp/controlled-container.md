@@ -17,7 +17,7 @@ module.exports = {
   mixins: [ControlledContainerMixin],
   settings: {
     path: '/users',
-    acceptedTypes: ['foaf:Person'],
+    types: ['foaf:Person'],
     // Other container options
   },
   actions: {

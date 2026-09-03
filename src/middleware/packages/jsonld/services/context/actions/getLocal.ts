@@ -1,4 +1,5 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
+import type { Ontology } from '@semapps/ontologies';
 
 const Schema = {
   visibility: 'public',
@@ -6,7 +7,7 @@ const Schema = {
   async handler(ctx) {
     let context: any = [];
 
-    let ontologies = await ctx.call('ontologies.list');
+    let ontologies: Ontology[] = await ctx.call('ontologies.list');
 
     // Do not include ontologies which want to preserve their context URI
     ontologies = ontologies.filter((ont: any) => ont.preserveContextUri !== true);

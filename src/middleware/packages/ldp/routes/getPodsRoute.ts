@@ -3,11 +3,10 @@ import path from 'path';
 import {
   parseUrl,
   parseHeader,
-  parseSparql,
+  parseRawBody,
   negotiateContentType,
   negotiateAccept,
   parseJson,
-  parseTurtle,
   parseFile,
   saveDatasetMeta
 } from '@semapps/middlewares';
@@ -31,9 +30,8 @@ function getPodsRoute(basePath: any) {
     parseHeader,
     negotiateContentType,
     negotiateAccept,
-    parseSparql,
+    parseRawBody,
     parseJson,
-    parseTurtle,
     parseFile,
     saveDatasetMeta,
     transformRouteParamsToSlugParts
@@ -41,7 +39,7 @@ function getPodsRoute(basePath: any) {
 
   return {
     name: 'pods',
-    path: path.join(basePath, '/:username([^/.][^/]+)'),
+    path: path.join(basePath, '/:username([^/._][^/]+)'),
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
     bodyParsers: false,

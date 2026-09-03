@@ -28,9 +28,9 @@ module.exports = {
         autoCollapseCategories: true
       }
     },
-    prism: {
-      theme: require('prism-react-renderer/themes/shadesOfPurple')
-    },
+    // prism: {
+    //   theme: require('prism-react-renderer/themes/shadesOfPurple')
+    // },
     colorMode: {
       defaultMode: 'light',
       disableSwitch: true

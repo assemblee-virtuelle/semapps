@@ -1,50 +1,39 @@
 import waitForExpect from 'wait-for-expect';
 import { OBJECT_TYPES, ACTIVITY_TYPES } from '@semapps/activitypub';
-import { MIME_TYPES } from '@semapps/mime-types';
+import { ServiceBroker } from 'moleculer';
 import initialize from './initialize.ts';
+import { createAccount, dropAllDatasets } from '../utils.ts';
 
-jest.setTimeout(70000);
-const NUM_USERS = 2;
+jest.setTimeout(50_000);
 
-describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages', (mode: any) => {
-  let broker: any;
-  const actors: any = [];
-  let alice: any;
-  let bob: any;
-  let aliceMessageUri: any;
-  let bobMessageUri: any;
+let brokers: ServiceBroker[] = [];
+let alice: any;
+let bob: any;
+let aliceMessageUri: string;
+let bobMessageUri: string;
+let repliesCollectionUri: string;
 
+describe.each([1, 2])('With %i server(s), test messaging features', (numServers: number) => {
   beforeAll(async () => {
-    if (mode === 'single-server') {
-      broker = await initialize(3000, 'testData', 'settings');
+    await dropAllDatasets();
+
+    for (let i = 1; i <= numServers; i++) {
+      brokers[i] = await initialize(i);
+      await brokers[i].start();
+    }
+
+    if (numServers === 1) {
+      alice = await createAccount(brokers[1], 'alice');
+      bob = await createAccount(brokers[1], 'bob');
     } else {
-      broker = [];
+      alice = await createAccount(brokers[1], 'alice');
+      bob = await createAccount(brokers[2], 'bob');
     }
-
-    for (let i = 1; i <= NUM_USERS; i++) {
-      if (mode === 'multi-server') {
-        broker[i] = await initialize(3000 + i, `testData${i}`, `settings${i}`, i);
-      } else {
-        broker[i] = broker;
-      }
-      const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
-      actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
-      actors[i].call = (actionName: any, params: any, options = {}) =>
-        // @ts-expect-error TS(2339): Property 'meta' does not exist on type '{}'.
-        broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
-    }
-
-    alice = actors[1];
-    bob = actors[2];
   });
 
   afterAll(async () => {
-    if (mode === 'multi-server') {
-      for (let i = 1; i <= NUM_USERS; i++) {
-        await broker[i].stop();
-      }
-    } else {
-      await broker.stop();
+    for (let i = 1; i <= numServers; i++) {
+      if (brokers[i]) await brokers[i].stop();
     }
   });
 
@@ -53,66 +42,55 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
       collectionUri: alice.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
-      attributedTo: alice.id,
+      attributedTo: alice.webId,
       content: 'Hello Bob, how are you doing ?',
-      to: bob.id
+      to: bob.webId
     });
 
     aliceMessageUri = createActivity.object.id;
 
     // Check the object has been created
-    const message = await alice.call('ldp.resource.get', {
-      resourceUri: aliceMessageUri,
-      accept: MIME_TYPES.JSON
-    });
+    const message = await alice.call('ldp.resource.get', { resourceUri: aliceMessageUri });
     expect(message).toMatchObject({
       type: OBJECT_TYPES.NOTE,
-      attributedTo: alice.id,
+      attributedTo: alice.webId,
       content: 'Hello Bob, how are you doing ?'
     });
 
-    // Ensure the /replies collection has not been created yet
+    // Ensure the replies collection has not been created yet
     expect(message.replies).not.toBeDefined();
   });
 
-  test('Bob replies to Alice and his message appears in the /replies collection', async () => {
+  test('Bob replies to Alice and his message appears in the replies collection', async () => {
     const createActivity = await bob.call('activitypub.outbox.post', {
       collectionUri: bob.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
-      attributedTo: bob.id,
+      attributedTo: bob.webId,
       content: "I'm fine, what about you ?",
       inReplyTo: aliceMessageUri,
-      to: alice.id
+      to: alice.webId
     });
 
     bobMessageUri = createActivity.object.id;
 
-    // @ts-expect-error
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      await expect(
-        alice.call('ldp.resource.get', {
-          resourceUri: aliceMessageUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
-        replies: `${aliceMessageUri}/replies`
-      });
+      const aliceMessage = await alice.call('ldp.resource.get', { resourceUri: aliceMessageUri });
+      expect(aliceMessage.replies).not.toBeUndefined();
+      repliesCollectionUri = aliceMessage.replies;
     });
 
-    // @ts-expect-error
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
       await expect(
-        alice.call('activitypub.collection.get', {
-          resourceUri: `${aliceMessageUri}/replies`,
-          accept: MIME_TYPES.JSON
-        })
+        alice.call('activitypub.collection.get', { resourceUri: repliesCollectionUri })
       ).resolves.toMatchObject({
         type: 'Collection',
         items: {
           id: bobMessageUri,
           type: OBJECT_TYPES.NOTE,
-          attributedTo: bob.id,
+          attributedTo: bob.webId,
           content: "I'm fine, what about you ?"
         }
       });
@@ -125,30 +103,22 @@ describe.each(['single-server', 'multi-server'])('In mode %s, exchange messages'
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: ACTIVITY_TYPES.DELETE,
       object: bobMessageUri,
-      to: alice.id
+      to: alice.webId
     });
 
-    // @ts-expect-error
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      await expect(
-        alice.call('ldp.resource.get', {
-          resourceUri: bobMessageUri,
-          accept: MIME_TYPES.JSON
-        })
-      ).resolves.toMatchObject({
+      await expect(alice.call('ldp.resource.get', { resourceUri: bobMessageUri })).resolves.toMatchObject({
         type: OBJECT_TYPES.TOMBSTONE,
         formerType: 'as:Note',
         deleted: expect.anything()
       });
     });
 
-    // @ts-expect-error
+    // @ts-expect-error This expression is not callable
     await waitForExpect(async () => {
-      const replies = await alice.call('activitypub.collection.get', {
-        resourceUri: `${aliceMessageUri}/replies`,
-        accept: MIME_TYPES.JSON
-      });
-      // @ts-expect-error
+      const replies = await alice.call('activitypub.collection.get', { resourceUri: repliesCollectionUri });
+      // @ts-expect-error Property 'toBeUndefinedOrEmptyArray' does not exist
       expect(replies.items).toBeUndefinedOrEmptyArray();
     });
   });

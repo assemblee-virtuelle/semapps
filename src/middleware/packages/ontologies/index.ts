@@ -1,6 +1,7 @@
 import OntologiesService from './service.ts';
 import OntologiesRegistryService from './sub-services/registry.ts';
 
+export * from './types.ts';
 export { OntologiesService, OntologiesRegistryService };
 
 export * from './ontologies/core/index.ts';

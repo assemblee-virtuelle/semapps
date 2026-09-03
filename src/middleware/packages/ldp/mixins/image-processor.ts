@@ -1,7 +1,7 @@
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'shar... Remove this comment to see the full error message
 import sharp from 'sharp';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import { arrayOf } from '../utils.ts';
 
 const SUPPORTED_IMAGES_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -30,7 +30,6 @@ const Schema = {
         const metadata = await ctx.call('ldp.resource.get', {
           resourceUri,
           jsonContext: { '@vocab': 'http://semapps.org/ns/core#' },
-          accept: MIME_TYPES.JSON,
           webId: 'system'
         });
 

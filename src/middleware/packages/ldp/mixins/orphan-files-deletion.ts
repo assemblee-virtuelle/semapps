@@ -1,5 +1,6 @@
 import { CronJob } from 'cron';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
+import { getSlugFromUri } from '../utils.ts';
 
 const Schema = {
   settings: {
@@ -18,14 +19,21 @@ const Schema = {
           this.logger.info('OrphanFilesDeletion - Check...');
 
           const containerUri = await this.actions.getContainerUri();
+
+          // Ignore ACL files
           const results = await ctx.call('triplestore.query', {
             query: `
               SELECT ?file
               WHERE {
-                <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?file .
+                GRAPH <${getSlugFromUri(containerUri)}> {
+                  <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?file .
+                }
                 FILTER NOT EXISTS {
-                  ?s ?p ?file .
-                  FILTER(?s != <${containerUri}>)
+                  GRAPH ?g {            
+                    ?s ?p ?file .
+                    FILTER(?s != <${containerUri}>)
+                    FILTER(?p != <http://www.w3.org/ns/auth/acl#accessTo>)
+                  }
                 }
               }
             `,

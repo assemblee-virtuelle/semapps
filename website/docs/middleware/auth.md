@@ -42,8 +42,6 @@ module.exports = {
     jwtPath: path.resolve(__dirname, '../jwt'),
     // Usernames you don't want users to signup with
     reservedUsernames: [],
-    // User data you want to be available in the webId
-    webIdSelection: [],
     // If false, user account must be created manually with a foaf:email field. True by default.
     registrationAllowed: true,
     // Dataset where the account data will be stored (email, hashed password...)
@@ -67,7 +65,6 @@ module.exports = {
     baseUrl: 'http://localhost:3000',
     jwtPath: path.resolve(__dirname, '../jwt'),
     reservedUsernames: [],
-    webIdSelection: [],
     registrationAllowed: true,
     // OIDC-specific settings
     issuer: 'https://myissuer.com/auth/realms/master',
@@ -101,7 +98,6 @@ module.exports = {
     baseUrl: 'http://localhost:3000',
     jwtPath: path.resolve(__dirname, '../jwt'),
     reservedUsernames: [],
-    webIdSelection: [],
     registrationAllowed: true,
     // CAS-specific settings
     casUrl: 'https://my-cas-server.com/cas',

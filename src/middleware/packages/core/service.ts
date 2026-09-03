@@ -1,41 +1,25 @@
-import path from 'path';
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import ApiGatewayService, { Errors as E } from 'moleculer-web';
-import { ActivityPubService, FULL_ACTOR_TYPES } from '@semapps/activitypub';
+import { ActivityPubService } from '@semapps/activitypub';
 import { JsonLdService } from '@semapps/jsonld';
 import { LdpService, DocumentTaggerMixin } from '@semapps/ldp';
 import { OntologiesService } from '@semapps/ontologies';
 import { SparqlEndpointService } from '@semapps/sparql-endpoint';
-import { TripleStoreService } from '@semapps/triplestore';
-import { VoidService } from '@semapps/void';
+import { AdapterInterface, TripleStoreService } from '@semapps/triplestore';
+import { TypeIndexService, StorageService } from '@semapps/solid';
 import { WebAclService } from '@semapps/webacl';
 import { WebfingerService } from '@semapps/webfinger';
 import { KeysService, SignatureService } from '@semapps/crypto';
 import { WebIdService } from '@semapps/webid';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
+import { CoreServiceSettings } from './serviceTypes.ts';
 
-const botsContainer = {
-  path: '/as/application',
-  acceptedTypes: [FULL_ACTOR_TYPES.APPLICATION],
-  readOnly: true
-};
-
-/**
- * @typedef {import('./serviceTypes').CoreServiceSettings} CoreServiceSettings
- */
-
-/** @type {import('moleculer').ServiceSchema<CoreServiceSettings>} */
 const CoreService = {
   name: 'core' as const,
   settings: {
     baseUrl: undefined,
-    baseDir: undefined,
     triplestore: {
-      url: undefined,
-      user: undefined,
-      password: undefined,
-      mainDataset: undefined,
-      fusekiBase: undefined
+      adapter: null
     },
     // Optional
     containers: undefined,
@@ -48,21 +32,20 @@ const CoreService = {
     ldp: {},
     signature: {},
     sparqlEndpoint: {},
-    void: {},
+    typeIndex: {},
     webacl: {},
     webfinger: {},
     webid: {}
   },
   created() {
-    const { baseUrl, baseDir, triplestore, containers, ontologies } = this.settings;
+    const { baseUrl, triplestore, containers, ontologies } = this.settings;
 
     if (this.settings.activitypub !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "activitypub";... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [ActivityPubService],
-        // Type support for settings could be given, once moleculer type definitions improve...
         settings: {
-          baseUri: baseUrl,
+          baseUrl,
           ...this.settings.activitypub
         }
       });
@@ -117,12 +100,13 @@ const CoreService = {
       this.broker.createService({
         mixins: [JsonLdService],
         settings: {
-          baseUri: baseUrl,
+          baseUrl,
           ...this.settings.jsonld
         }
       });
     }
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: ({ name: ... Remove this comment to see the full error message
     this.broker.createService({
       mixins: [OntologiesService],
       settings: {
@@ -133,17 +117,35 @@ const CoreService = {
     if (this.settings.ldp !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: ({ name: "ldp"; settin... Remove this comment to see the full error message
       this.broker.createService({
-        mixins: [DocumentTaggerMixin, LdpService],
+        mixins: this.settings.ldp.documentTagger !== false ? [DocumentTaggerMixin, LdpService] : [LdpService],
         settings: {
           baseUrl,
-          containers: containers || (this.settings.mirror !== false ? [botsContainer] : []),
+          containers,
           ...this.settings.ldp
         }
       });
     }
 
+    // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
+    this.broker.createService({
+      mixins: [StorageService],
+      settings: {
+        baseUrl
+      }
+    });
+
+    if (this.settings.typeIndex !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
+      this.broker.createService({
+        mixins: [TypeIndexService],
+        settings: {
+          ...this.settings.typeIndex
+        }
+      });
+    }
+
     if (this.settings.signature !== false) {
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "signature"; a... Remove this comment to see the full error message
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [SignatureService],
         settings: {
@@ -164,11 +166,10 @@ const CoreService = {
     }
 
     if (this.settings.keys !== false) {
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "keys"; settin... Remove this comment to see the full error message
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: any[]; settings: any; ... Remove this comment to see the full error message
       this.broker.createService({
         mixins: [KeysService],
         settings: {
-          actorsKeyPairsDir: path.resolve(baseDir, './actors'),
           ...this.settings.keys
         }
       });
@@ -186,34 +187,11 @@ const CoreService = {
     }
 
     if (this.settings.triplestore !== false) {
-      // If WebACL service is disabled, don't create a secure dataset
-      // We define a constant here, because this.settings.webacl is not available inside the started method
-      const secure = this.settings.webacl !== false;
-
+      // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
       this.broker.createService({
-        // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
         mixins: [TripleStoreService],
         settings: {
           ...triplestore
-        },
-        async started() {
-          if (triplestore.mainDataset) {
-            await this.broker.call('triplestore.dataset.create', {
-              dataset: triplestore.mainDataset,
-              secure
-            });
-          }
-        }
-      });
-    }
-
-    if (this.settings.void !== false) {
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "void"; settin... Remove this comment to see the full error message
-      this.broker.createService({
-        mixins: [VoidService],
-        settings: {
-          baseUrl,
-          ...this.settings.void
         }
       });
     }
@@ -240,7 +218,7 @@ const CoreService = {
       });
     }
   }
-} satisfies ServiceSchema;
+} satisfies ServiceSchema<CoreServiceSettings>;
 
 export default CoreService;
 

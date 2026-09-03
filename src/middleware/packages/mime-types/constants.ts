@@ -2,12 +2,14 @@ const MIME_TYPES = {
   JSON: 'application/ld+json',
   TURTLE: 'text/turtle',
   TRIPLE: 'application/n-triples',
+  SPARQL_QUERY: 'application/sparql-query',
+  SPARQL_UPDATE: 'application/sparql-update',
+  // Not supported
   SPARQL_JSON: 'application/sparql-results+json',
   SPARQL_XML: 'application/sparql-results+xml',
   CSV: 'text/csv',
   TSV: 'text/tab-separated-values',
-  RDF: 'application/rdf+xml',
-  SPARQL_UPDATE: 'application/sparql-update'
+  RDF: 'application/rdf+xml'
 };
 
 const TYPES_REPO = [

@@ -90,7 +90,7 @@
     "import/no-unresolved": "off",
     "import/no-useless-path-segments": "warn",
     "import/order": "warn",
-    "jest/no-conditional-expect": "warn",
+    "jest/no-conditional-expect": "off",
     "jsdoc/require-jsdoc": "off",
     "jsdoc/require-param": "off",
     "jsdoc/require-returns": "off",

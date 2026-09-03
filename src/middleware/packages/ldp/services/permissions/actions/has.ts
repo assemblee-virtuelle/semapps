@@ -1,4 +1,4 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 const Schema = {
   visibility: 'public',
@@ -10,9 +10,7 @@ const Schema = {
   },
   async handler(ctx) {
     const { uri, type, mode } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-
     // If no authorizers have been registered, assume user can access everything
     if (this.authorizers.length === 0) return true;
 

@@ -2,13 +2,14 @@ import path from 'path';
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import LinkHeader from 'http-link-header';
+import { Errors } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
 import DbService from 'moleculer-db';
-import { parseHeader, negotiateContentType, parseJson } from '@semapps/middlewares';
+import { parseHeader, parseRawBody, negotiateContentType, parseJson } from '@semapps/middlewares';
 import { notify } from '@semapps/ontologies';
 import { TripleStoreAdapter } from '@semapps/triplestore';
-import { Errors, ServiceSchema } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -21,7 +22,7 @@ const SolidNotificationsListenerSchema = {
     // DbService settings
     idField: '@id'
   },
-  dependencies: ['api', 'app', 'ontologies'],
+  dependencies: ['api', 'ontologies'],
   async started() {
     if (!this.settings.baseUrl) throw new Error(`The baseUrl setting is required`);
 
@@ -39,7 +40,13 @@ const SolidNotificationsListenerSchema = {
         authorization: false,
         authentication: false,
         aliases: {
-          'POST /': [parseHeader, negotiateContentType, parseJson, 'solid-notifications.listener.transfer']
+          'POST /': [
+            parseHeader,
+            negotiateContentType,
+            parseRawBody,
+            parseJson,
+            'solid-notifications.listener.transfer'
+          ]
         },
         bodyParsers: false
       }
@@ -49,8 +56,7 @@ const SolidNotificationsListenerSchema = {
     register: {
       async handler(ctx) {
         const { resourceUri, actionName } = ctx.params;
-
-        const appActor = await ctx.call('app.get');
+        const webId = ctx.params.webId || ctx.meta.webId;
 
         // Check if a listener already exist
         const existingListener = this.listeners.find(
@@ -62,7 +68,7 @@ const SolidNotificationsListenerSchema = {
             // Check if channel still exist. If not, it will throw an error.
             await ctx.call('ldp.remote.get', {
               resourceUri: existingListener.channelUri,
-              webId: appActor.id,
+              webId,
               strategy: 'networkOnly'
             });
 
@@ -132,7 +138,7 @@ const SolidNotificationsListenerSchema = {
             'notify:topic': resourceUri,
             'notify:sendTo': webhookUrl
           }),
-          actorUri: appActor.id
+          actorUri: webId
         });
 
         // Keep track of the channel URI, to be able to check if it still exists
@@ -159,7 +165,6 @@ const SolidNotificationsListenerSchema = {
           } catch (e) {
             // Ignore errors that the actions may generate (otherwise 404 errors will be considered as non-existing webhooks)
           }
-          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = 200;
         } else {
           throw new MoleculerError(`No webhook found with URL ${webhookUrl}`, 404, 'NOT_FOUND');

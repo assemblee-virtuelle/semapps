@@ -1,4 +1,4 @@
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import { isURL, isObject, mergeObjectInArray } from '../../../utils/utils.ts';
 
 const Schema = {
@@ -6,13 +6,11 @@ const Schema = {
   params: {
     a: {
       type: 'multi',
-      // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     },
     b: {
       type: 'multi',
-      // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     }

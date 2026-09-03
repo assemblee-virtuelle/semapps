@@ -1,8 +1,12 @@
+import { getDatasetFromUri } from '../../../utils.ts';
+
 export default async function patch(this: any, ctx: any) {
   try {
     const { username, slugParts } = ctx.params;
 
     const uri = this.getUriFromSlugParts(slugParts, username);
+    ctx.meta.dataset = getDatasetFromUri(uri);
+
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
     if (types.includes('http://www.w3.org/ns/ldp#Container')) {
@@ -19,7 +23,7 @@ export default async function patch(this: any, ctx: any) {
     };
   } catch (e) {
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
-    if (e.code !== 404 && e.code !== 403) console.error(e);
+    if (!e.code || (e.code < 400 && e.code >= 500)) console.error(e);
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
     ctx.meta.$statusCode = e.code || 500;
     // @ts-expect-error TS(18046): 'e' is of type 'unknown'.

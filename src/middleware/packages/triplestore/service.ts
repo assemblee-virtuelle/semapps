@@ -1,95 +1,70 @@
-import { SparqlJsonParser } from 'sparqljson-parse';
 import sparqljsModule from 'sparqljs';
-import fetch from 'node-fetch';
-import { throw403, throw500 } from '@semapps/middlewares';
-import { ServiceSchema, defineAction } from 'moleculer';
-import countTriplesOfSubject from './actions/countTriplesOfSubject.ts';
-import deleteOrphanBlankNodes from './actions/deleteOrphanBlankNodes.ts';
-import dropAll from './actions/dropAll.ts';
+import { Errors } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import insert from './actions/insert.ts';
 import query from './actions/query.ts';
 import update from './actions/update.ts';
-import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
+import NamedGraphService from './subservices/named-graph.ts';
+import { AdapterInterface } from './adapters/base.ts';
 
 const SparqlGenerator = sparqljsModule.Generator;
-import { Errors } from 'moleculer';
-
 const { MoleculerError } = Errors;
 
 const TripleStoreService = {
   name: 'triplestore' as const,
   settings: {
-    url: null,
-    user: null,
-    password: null,
-    mainDataset: null,
-    fusekiBase: null,
+    defaultDataset: null,
+    adapter: null as AdapterInterface | null,
     // Sub-services customization
-    dataset: {}
+    dataset: {},
+    namedGraph: {}
   },
   dependencies: ['jsonld.parser'],
   async created() {
-    const { url, user, password, dataset, fusekiBase } = this.settings;
-    this.subservices = {};
+    const { dataset, namedGraph, adapter, defaultDataset } = this.settings;
 
+    if (!adapter) throw new Error('Adapter is required');
+
+    // Initialize the adapter with the broker
+    await adapter.init({ broker: this.broker });
+
+    // Create subservices
     if (dataset !== false) {
       // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
-      this.subservices.dataset = this.broker.createService({
+      this.broker.createService({
         mixins: [DatasetService],
         settings: {
-          url,
-          user,
-          password,
-          fusekiBase,
+          adapter,
           ...dataset
+        }
+      });
+    }
+
+    if (namedGraph !== false) {
+      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "triplestore.d... Remove this comment to see the full error message
+      this.broker.createService({
+        mixins: [NamedGraphService],
+        settings: {
+          defaultDataset,
+          adapter,
+          ...namedGraph
         }
       });
     }
   },
   started() {
-    this.sparqlJsonParser = new SparqlJsonParser();
-    this.sparqlGenerator = new SparqlGenerator({
-      /* prefixes, baseIRI, factory, sparqlStar */
-    });
+    this.sparqlGenerator = new SparqlGenerator({});
+  },
+  stopped() {
+    this.settings.adapter.cleanup();
   },
   actions: {
     insert,
     update,
-    query,
-    dropAll,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ uri: { type: "string"; }; web... Remove this comment to see the full error message
-    countTriplesOfSubject,
-    tripleExist,
-    deleteOrphanBlankNodes
+    query
   },
   methods: {
-    async fetch(url, { method = 'POST', body, headers }) {
-      const response = await fetch(url, {
-        method,
-        body,
-        headers: {
-          ...headers,
-          Authorization: `Basic ${Buffer.from(`${this.settings.user}:${this.settings.password}`).toString('base64')}`
-        }
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        if (response.status === 403) {
-          throw403(text);
-        } else {
-          // the 3 lines below (until the else) can be removed once we switch to jena-fuseki version 4.0.0 or above
-          if (response.status === 500 && text.includes('permissions violation')) {
-            throw403(text);
-          } else {
-            throw500(`Problem with SPARQL-request to ${url}. Error message: ${response.statusText}. Query: ${body}`);
-          }
-        }
-      }
-
-      return response;
-    },
     generateSparqlQuery(query) {
       try {
         return this.sparqlGenerator.stringify(query);

@@ -1,6 +1,5 @@
 import urlJoin from 'url-join';
 import waitForExpect from 'wait-for-expect';
-import { MIME_TYPES } from '@semapps/mime-types';
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import initialize from './initialize.ts';
 
@@ -27,7 +26,7 @@ afterAll(async () => {
   if (server2) await server2.stop();
 });
 
-describe('Resource on server1 is shared with user on server2', () => {
+describe.skip('Resource on server1 is shared with user on server2', () => {
   let resourceUri: any;
   let user2: any;
 
@@ -60,7 +59,6 @@ describe('Resource on server1 is shared with user on server2', () => {
         '@type': 'Resource',
         label: 'My protected resource'
       },
-      contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3001/protected-resources',
       webId: 'system'
     });

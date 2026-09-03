@@ -1,5 +1,5 @@
 import { SpecialEndpointMixin } from '@semapps/ldp';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 
 const SolidEndpointSchema = {
   name: 'solid-endpoint' as const,

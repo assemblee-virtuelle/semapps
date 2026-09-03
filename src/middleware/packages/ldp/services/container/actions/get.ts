@@ -1,8 +1,8 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema } from 'moleculer';
-import { buildFiltersQuery, isContainer, cleanUndefined, arrayOf } from '../../../utils.ts';
-
 import { Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
+import { buildFiltersQuery, isContainer, cleanUndefined, arrayOf, getSlugFromUri } from '../../../utils.ts';
+import { Registration } from '../../../types.ts';
 
 const { MoleculerError } = Errors;
 
@@ -12,36 +12,54 @@ const Schema = {
     containerUri: { type: 'string', optional: true },
     webId: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     filters: { type: 'object', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     doNotIncludeResources: { type: 'boolean', default: false },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
+    maxPerPage: { type: 'number', optional: true },
+    page: { type: 'number', default: 1 },
+    sortOrder: { type: 'enum', values: ['ASC', 'DESC'], default: 'ASC' },
+    sortPredicate: { type: 'string', optional: true },
     jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
   },
   cache: {
-    keys: ['containerUri', 'accept', 'filters', 'doNotIncludeResources', 'jsonContext', 'webId', '#webId']
+    keys: [
+      'containerUri',
+      'filters',
+      'doNotIncludeResources',
+      'maxPerPage',
+      'page',
+      'sortOrder',
+      'sortPredicate',
+      'jsonContext',
+      'webId',
+      '#webId'
+    ]
   },
   async handler(ctx) {
-    const { containerUri, filters, doNotIncludeResources, jsonContext } = ctx.params;
-    let { webId } = ctx.params;
-    // @ts-expect-error
-    webId = webId || ctx.meta.webId || 'anon';
+    const {
+      containerUri,
+      accept,
+      filters,
+      doNotIncludeResources,
+      maxPerPage,
+      page,
+      sortOrder,
+      sortPredicate,
+      jsonContext
+    } = ctx.params;
+    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const { accept } = {
-      ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
-      ...ctx.params
-    };
+    await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Read', webId });
 
-    if (accept !== MIME_TYPES.JSON)
-      throw new Error(`LDP containers can only be returned with JSON-LD format at the moment.`);
+    if (accept && accept !== MIME_TYPES.JSON)
+      throw new Error(`The ldp.container.get action now only support JSON-LD. Provided: ${accept}`);
 
-    let containerResults = await ctx.call('triplestore.query', {
+    let containerResults: any = await ctx.call('triplestore.query', {
       query: `
         ${await ctx.call('ontologies.getRdfPrefixes')}
         CONSTRUCT  {
           <${containerUri}> ?p ?o .
         }
+        FROM <${getSlugFromUri(containerUri)}>
         WHERE {
           <${containerUri}> ?p ?o .
           MINUS { <${containerUri}> ldp:contains ?o } .
@@ -52,25 +70,36 @@ const Schema = {
     });
 
     if (Object.keys(containerResults).length === 1 && containerResults['@context']) {
-      throw new MoleculerError(
-        // @ts-expect-error
-        `Container not found ${containerUri} (webId ${webId} / dataset ${ctx.meta.dataset})`,
-        404,
-        'NOT_FOUND'
-      );
+      throw new MoleculerError(`Container not found ${containerUri}`, 404, 'NOT_FOUND');
     }
 
     if (!doNotIncludeResources) {
       const filtersQuery = buildFiltersQuery(filters);
 
-      const resourcesResults = await ctx.call('triplestore.query', {
+      const limitQuery = maxPerPage
+        ? `
+          LIMIT ${maxPerPage}
+          OFFSET ${(page - 1) * maxPerPage}
+        `
+        : '';
+
+      // Transform the prefixed predicate to a full URI if necessary
+      const expandedSortPredicate =
+        sortPredicate && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortPredicate }));
+
+      const resourcesResults: any = await ctx.call('triplestore.query', {
         query: `
           ${await ctx.call('ontologies.getRdfPrefixes')}
           SELECT ?s1
           WHERE {
-            <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
-            ${filtersQuery.where}
+            GRAPH <${getSlugFromUri(containerUri)}> {
+              <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
+            }
+            ${filtersQuery}
+            ${sortPredicate ? `GRAPH ?g1 { ?s1 <${expandedSortPredicate}> ?sortValue }` : ''}
           }
+          ${sortPredicate ? `ORDER BY ${sortOrder}(?sortValue)` : ''}
+          ${limitQuery}
         `,
         accept,
         webId
@@ -78,18 +107,19 @@ const Schema = {
 
       const resourcesUris = resourcesResults?.map((node: any) => node.s1.value);
 
+      const { controlledActions }: Registration = await ctx.call('ldp.registry.getByUri', { containerUri });
+
       // Request each resources (in parallel)
       containerResults['http://www.w3.org/ns/ldp#contains'] = await Promise.all(
         arrayOf(resourcesUris).flatMap(async resourceUri => {
           try {
             // We pass the accept/jsonContext parameters only if they are explicit
-            const resource = await ctx.call(
-              'ldp.resource.get',
+            const resource: any = await ctx.call(
+              controlledActions?.get || 'ldp.resource.get',
               cleanUndefined({
                 resourceUri,
                 webId,
-                jsonContext,
-                accept
+                jsonContext
               })
             );
 
@@ -116,7 +146,7 @@ const Schema = {
       );
     }
 
-    let compactResults = await ctx.call('jsonld.parser.compact', {
+    let compactResults: any = await ctx.call('jsonld.parser.compact', {
       input: containerResults,
       context: jsonContext || (await ctx.call('jsonld.context.get'))
     });

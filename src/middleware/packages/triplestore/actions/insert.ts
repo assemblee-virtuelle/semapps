@@ -1,22 +1,10 @@
-import urlJoin from 'url-join';
-import { MIME_TYPES } from '@semapps/mime-types';
-import { ActionSchema } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
-const Schema = {
+const InsertAction = {
   visibility: 'public',
   params: {
     resource: {
-      type: 'multi',
-      // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
-      rules: [{ type: 'string' }, { type: 'object' }]
-    },
-    contentType: {
-      type: 'string',
-      optional: true
-    },
-    webId: {
-      type: 'string',
-      optional: true
+      type: 'object'
     },
     graphName: {
       type: 'string',
@@ -28,41 +16,34 @@ const Schema = {
     }
   },
   async handler(ctx) {
-    const { resource, contentType, graphName } = ctx.params;
-    // @ts-expect-error
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-    let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
+    const { resource, graphName } = ctx.params;
+    let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
-    const rdf =
-      contentType === MIME_TYPES.JSON
-        ? await ctx.call('jsonld.parser.toRDF', {
-            input: resource,
-            options: {
-              format: 'application/n-quads'
-            }
-          })
-        : resource;
+    // Convert JSON-LD to N-Quads
+    const rdf = await ctx.call('jsonld.parser.toRDF', {
+      input: resource,
+      options: {
+        format: 'application/n-quads'
+      }
+    });
 
     if (!dataset) throw new Error(`No dataset defined for triplestore insert: ${rdf}`);
     if (dataset !== '*' && !(await ctx.call('triplestore.dataset.exist', { dataset })))
       throw new Error(`The dataset ${dataset} doesn't exist`);
 
     // Handle wildcard
-    const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
+    const datasets: string[] = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
     for (dataset of datasets) {
       if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
-      await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
-        body: graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
-        headers: {
-          'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': webId,
-          Authorization: this.Authorization
-        }
-      });
+
+      // TODO Test if named graph exists in the dataset
+
+      const query = graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`;
+
+      await this.settings.adapter.update(dataset, query);
     }
   }
 } satisfies ActionSchema;
 
-export default Schema;
+export default InsertAction;

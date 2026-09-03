@@ -1,8 +1,7 @@
 import urlJoin from 'url-join';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-import { ActionSchema } from 'moleculer';
-
 import { Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 
 const { MoleculerError } = Errors;
 
@@ -10,12 +9,10 @@ export const action = {
   visibility: 'public',
   params: {
     groupSlug: { type: 'string', optional: true, min: 1, trim: true },
-    groupUri: { type: 'string', optional: true, trim: true },
-    webId: { type: 'string', optional: true }
+    groupUri: { type: 'string', optional: true, trim: true }
   },
   async handler(ctx) {
     let { groupUri, groupSlug } = ctx.params;
-    const webId = ctx.params.webId || ctx.meta.webId;
 
     if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
     // @ts-expect-error TS(2345): Argument of type 'TypeFromSchemaParam<{ type: "str... Remove this comment to see the full error message
@@ -25,12 +22,12 @@ export const action = {
       query: sanitizeSparqlQuery`
         PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         ASK WHERE { 
-          GRAPH <${this.settings.graphName}> {
+          GRAPH <${await ctx.call('triplestore.dataset.getWacGraph')}> {
             <${groupUri}> a vcard:Group .
           } 
         }
       `,
-      webId
+      webId: 'system'
     });
   }
 } satisfies ActionSchema;

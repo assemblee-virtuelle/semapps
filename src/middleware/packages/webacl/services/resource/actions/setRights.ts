@@ -1,7 +1,8 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import urlJoin from 'url-join';
 
-import { ActionSchema } from 'moleculer';
+import { Errors } from 'moleculer';
+import type { ActionSchema } from 'moleculer';
 import {
   getAclUriFromResourceUri,
   convertBodyToTriples,
@@ -10,31 +11,31 @@ import {
   FULL_FOAF_AGENT
 } from '../../../utils.ts';
 
-import { Errors } from 'moleculer';
-
 const { MoleculerError } = Errors;
 
-export const api = async function api(this: any, ctx: any) {
-  const contentType = ctx.meta.headers['content-type'];
-  let { slugParts } = ctx.params;
+export const api = {
+  async handler(ctx) {
+    const contentType = ctx.meta.headers['content-type'];
+    let { username, slugParts } = ctx.params;
 
-  if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
-    throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
+    if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
+      throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
-  const newRights = await convertBodyToTriples(ctx.meta.body, contentType);
-  // @ts-expect-error
-  if (newRights.length === 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
+    const newRights = await convertBodyToTriples(ctx.meta.rawBody, contentType);
+    // @ts-expect-error TS(18046): 'newRights' is of type 'unknown'.
+    if (newRights.length === 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
 
-  // This is the root container
-  if (!slugParts || slugParts.length === 0) slugParts = ['/'];
+    // This is the root container
+    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
-  await ctx.call('webacl.resource.setRights', {
-    resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-    newRights
-  });
+    await ctx.call('webacl.resource.setRights', {
+      resourceUri: urlJoin(this.settings.baseUrl, username, ...slugParts),
+      newRights
+    });
 
-  ctx.meta.$statusCode = 204;
-};
+    ctx.meta.$statusCode = 204;
+  }
+} satisfies ActionSchema;
 
 export const action = {
   visibility: 'public',
@@ -42,25 +43,21 @@ export const action = {
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
     // newRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: false; min: numbe... Remove this comment to see the full error message
     newRights: { type: 'array', optional: false, min: 1 }
     // minimum is one right : We cannot leave a resource without rights.
   },
   async handler(ctx) {
     let { webId, newRights, resourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
-    // check that the user has Control perm.
-    // TODO: bypass this check if user is 'system' (use system as a super-admin) ?
-    const { control } = await ctx.call('webacl.resource.hasRights', {
-      resourceUri,
-      rights: { control: true },
+    await ctx.call('permissions.check', {
+      uri: resourceUri,
+      type: isContainer ? 'container' : 'resource',
+      mode: 'acl:Control',
       webId
     });
-    if (!control) throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
 
     // filter out all the newRights that are not for the resource
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
@@ -69,13 +66,7 @@ export const action = {
     if (newRights.length === 0)
       throw new MoleculerError('The rights cannot be changed because they are incorrect', 400, 'BAD_REQUEST');
 
-    const currentPerms = await this.getExistingPerms(
-      ctx,
-      resourceUri,
-      this.settings.baseUrl,
-      this.settings.graphName,
-      isContainer
-    );
+    const currentPerms = await this.getExistingPerms(ctx, resourceUri, this.settings.baseUrl, isContainer);
 
     // find the difference between newRights and currentPerms. add only what is not existent yet. and remove those that are not needed anymore
     const differenceAdd = newRights.filter(
@@ -115,8 +106,9 @@ export const action = {
     }
 
     // we do the 2 calls in one, so it is in the same transaction, and will rollback in case of failure.
+    const wacGraphName = await ctx.call('triplestore.dataset.getWacGraph');
     await ctx.call('triplestore.update', {
-      query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }; DELETE DATA { GRAPH <${this.settings.graphName}> { ${deleteRequest} } }`,
+      query: `INSERT DATA { GRAPH <${wacGraphName}> { ${addRequest} } }; DELETE DATA { GRAPH <${wacGraphName}> { ${deleteRequest} } }`,
       webId: 'system'
     });
 
@@ -147,7 +139,6 @@ export const action = {
     const returnValues = {
       uri: resourceUri,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset,
       created: false,
       isContainer,
@@ -157,7 +148,9 @@ export const action = {
       addDefaultPublicRead,
       removeDefaultPublicRead
     };
+
     ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
+
     return returnValues;
   }
 } satisfies ActionSchema;

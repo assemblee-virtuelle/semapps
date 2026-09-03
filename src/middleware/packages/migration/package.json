@@ -5,8 +5,17 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
+    "@semapps/auth": "1.2.0",
     "@semapps/ldp": "1.2.0",
-    "@semapps/webacl": "1.2.0"
+    "@semapps/middlewares": "1.2.0",
+    "@semapps/webacl": "1.2.0",
+    "moleculer-web": "^0.10.0-beta1",
+    "sparqljson-parse": "^1.5.1",
+    "url-join": "^4.0.1",
+    "ioredis": "^4.27.0"
+  },
+  "devDependencies": {
+    "@types/ioredis": "^4.27.0"
   },
   "publishConfig": {
     "access": "public",

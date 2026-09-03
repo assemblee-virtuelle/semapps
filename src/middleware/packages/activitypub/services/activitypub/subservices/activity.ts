@@ -1,10 +1,9 @@
 // @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
 import { Errors as E } from 'moleculer-web';
 import { ControlledContainerMixin } from '@semapps/ldp';
-import { MIME_TYPES } from '@semapps/mime-types';
-import { ServiceSchema } from 'moleculer';
+import type { ServiceSchema } from 'moleculer';
 import setRightsHandler from './activity-handlers/setRightsHandler.ts';
-import { objectCurrentToId, objectIdToCurrent, arrayOf } from '../../../utils.ts';
+import { arrayOf } from '../../../utils.ts';
 import { PUBLIC_URI, FULL_ACTIVITY_TYPES } from '../../../constants.ts';
 import ActivitiesHandlerMixin from '../../../mixins/activities-handler.ts';
 
@@ -12,15 +11,12 @@ const ActivityService = {
   name: 'activitypub.activity' as const,
   mixins: [ControlledContainerMixin, ActivitiesHandlerMixin],
   settings: {
-    baseUri: null,
-    podProvider: false,
+    baseUrl: null,
     // ControlledContainerMixin settings
     path: '/as/activity',
-    acceptedTypes: Object.values(FULL_ACTIVITY_TYPES),
-    accept: MIME_TYPES.JSON,
+    types: Object.values(FULL_ACTIVITY_TYPES),
     permissions: {},
     newResourcesPermissions: {},
-    readOnly: true,
     excludeFromMirror: true,
     activateTombstones: false,
     controlledActions: {
@@ -47,8 +43,8 @@ const ActivityService = {
 
         for (const predicates of ['to', 'bto', 'cc', 'bcc']) {
           if (activity[predicates]) {
-            for (const recipient of arrayOf(activity[predicates])) {
-              switch (recipient) {
+            for (const recipientUri of arrayOf(activity[predicates])) {
+              switch (recipientUri) {
                 // Skip public URI
                 case PUBLIC_URI:
                 case 'as:Public':
@@ -59,9 +55,9 @@ const ActivityService = {
                 case actor.followers:
                   // Ignore remote followers list
                   // TODO Fetch remote followers list ?
-                  if (recipient.startsWith(this.settings.baseUri)) {
+                  if (this.isLocalActor(recipientUri)) {
                     const collection = await ctx.call('activitypub.collection.get', {
-                      resourceUri: recipient,
+                      resourceUri: recipientUri,
                       webId: activity.actor
                     });
                     if (collection && collection.items) output.push(...arrayOf(collection.items));
@@ -70,7 +66,7 @@ const ActivityService = {
 
                 // Simple actor URI
                 default:
-                  output.push(recipient);
+                  output.push(recipientUri);
                   break;
               }
             }
@@ -103,7 +99,7 @@ const ActivityService = {
   },
   methods: {
     isLocalActor(uri) {
-      return uri.startsWith(this.settings.baseUri);
+      return uri.startsWith(this.settings.baseUrl);
     }
   },
   hooks: {
@@ -112,14 +108,6 @@ const ActivityService = {
         if (typeof ctx.params.resourceUri === 'object') {
           ctx.params.resourceUri = ctx.params.resourceUri.id || ctx.params.resourceUri['@id'];
         }
-      },
-      create(ctx) {
-        ctx.params.resource = objectIdToCurrent(ctx.params.resource);
-      }
-    },
-    after: {
-      get(ctx, res) {
-        return objectCurrentToId(res);
       }
     }
   },
