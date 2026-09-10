@@ -1,5 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-import { Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Errors } = moleculer;
 import type { ServiceSchema } from 'moleculer';
 import ControlledContainerMixin from './controlled-container.ts';
 import { delay } from '../utils.ts';

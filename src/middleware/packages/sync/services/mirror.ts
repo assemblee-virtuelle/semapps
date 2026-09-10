@@ -5,7 +5,8 @@ import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import type { ServiceSchema } from 'moleculer';
 import SynchronizerService from './synchronizer.ts';
 
-import { Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Errors } = moleculer;
 
 const { MoleculerError } = Errors;
 

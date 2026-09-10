@@ -1,8 +1,10 @@
+// @ts-expect-error
+import jsonldSignatures from 'jsonld-signatures';
 import { arrayOf, deepStrictEqual } from '../utils/utils.ts';
 
 const {
   purposes: { AuthenticationProofPurpose }
-} = require('jsonld-signatures');
+} = jsonldSignatures;
 
 /**
  * Create an instance of this class when verifying capability VC presentations using

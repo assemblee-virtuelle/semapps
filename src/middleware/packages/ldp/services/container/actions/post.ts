@@ -2,7 +2,8 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import type { ActionSchema } from 'moleculer';
 import { cleanUndefined } from '../../../utils.ts';
 
-import { Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Errors } = moleculer;
 
 const { MoleculerError } = Errors;
 

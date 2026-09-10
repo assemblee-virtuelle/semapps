@@ -2,7 +2,8 @@
 import Negotiator from 'negotiator';
 import { MIME_TYPES, TYPES_REPO } from './constants.ts';
 
-import { Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Errors } = moleculer;
 
 const { MoleculerError } = Errors;
 

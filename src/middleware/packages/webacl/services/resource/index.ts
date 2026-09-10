@@ -1,5 +1,7 @@
 import urlJoin from 'url-join';
-import { defineAction, Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { defineAction } = moleculer;
+const { Errors } = moleculer;
 import type { ServiceSchema } from 'moleculer';
 import * as addRights from './actions/addRights.ts';
 import * as awaitReadRight from './actions/awaitReadRight.ts';

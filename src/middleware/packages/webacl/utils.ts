@@ -5,7 +5,8 @@ import { Parser } from 'n3';
 import streamifyString from 'streamify-string';
 import rdfparseModule from 'rdf-parse';
 
-import { Context, Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Context, Errors } = moleculer;
 
 const { MoleculerError } = Errors;
 

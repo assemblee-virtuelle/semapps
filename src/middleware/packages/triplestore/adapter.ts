@@ -3,7 +3,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
-import { frame } from 'jsonld';
+import jsonld from 'jsonld';
 import { sanitizeSparqlUri, sanitizeSparqlString } from './utils.ts';
 
 class TripleStoreAdapter {
@@ -86,7 +86,7 @@ class TripleStoreAdapter {
         dataset: this.dataset
       })
       .then((result: any) => {
-        return frame(result, {
+        return jsonld.frame(result, {
           // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
           '@context': { '@vocab': this.ontology }
         });
@@ -130,7 +130,7 @@ class TripleStoreAdapter {
         dataset: this.dataset
       })
       .then((result: any) => {
-        return frame(result, {
+        return jsonld.frame(result, {
           // @ts-expect-error TS(2339): Property 'ontology' does not exist on type 'Triple... Remove this comment to see the full error message
           '@context': { '@vocab': this.ontology },
           '@id': _id

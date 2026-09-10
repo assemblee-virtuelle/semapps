@@ -1,4 +1,6 @@
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'json... Remove this comment to see the full error message
+// @ts-expect-error
+import jsonldSignatures from 'jsonld-signatures';
+// @ts-expect-error
 import jsigs from 'jsonld-signatures';
 
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
@@ -14,7 +16,7 @@ import { KEY_TYPES } from '../constants.ts';
 
 const {
   purposes: { AssertionProofPurpose }
-} = require('jsonld-signatures');
+} = jsonldSignatures;
 
 /**
  * Data integrity service for signing objects using the [VC data integrity spec](https://www.w3.org/TR/vc-data-integrity/).

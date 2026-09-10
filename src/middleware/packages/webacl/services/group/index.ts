@@ -1,5 +1,6 @@
 import urlJoin from 'url-join';
-import { defineAction } from 'moleculer';
+import moleculer from 'moleculer';
+const { defineAction } = moleculer;
 import type { ServiceSchema } from 'moleculer';
 import * as createAction from './actions/create.ts';
 import * as deleteAction from './actions/delete.ts';

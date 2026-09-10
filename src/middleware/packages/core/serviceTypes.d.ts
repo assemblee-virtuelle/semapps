@@ -1,4 +1,5 @@
-import { Context } from 'moleculer';
+import moleculer from 'moleculer';
+const { Context } = moleculer;
 import type { ServiceSettingSchema } from 'moleculer';
 
 export interface CoreServiceSettings extends ServiceSettingSchema {

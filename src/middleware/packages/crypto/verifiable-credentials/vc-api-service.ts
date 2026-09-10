@@ -1,7 +1,7 @@
 import { parseHeader, negotiateAccept, parseJson } from '@semapps/middlewares';
 import path from 'node:path';
 import type { ServiceSchema } from 'moleculer';
-import { VC_API_PATH } from '../constants';
+import { VC_API_PATH } from '../constants.ts';
 
 const middlewares = [parseHeader, parseJson, negotiateAccept];
 

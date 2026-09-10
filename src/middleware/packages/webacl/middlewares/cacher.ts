@@ -1,4 +1,5 @@
-import { Cachers } from 'moleculer';
+import moleculer from 'moleculer';
+const { Cachers } = moleculer;
 
 let cacher: any;
 

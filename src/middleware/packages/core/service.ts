@@ -1,6 +1,7 @@
 import path from 'path';
-// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
-import ApiGatewayService, { Errors as E } from 'moleculer-web';
+import ApiGatewayService from 'moleculer-web';
+
+const E = ApiGatewayService.Errors;
 import { ActivityPubService, FULL_ACTOR_TYPES } from '@semapps/activitypub';
 import { JsonLdService } from '@semapps/jsonld';
 import { LdpService, DocumentTaggerMixin } from '@semapps/ldp';

@@ -15,7 +15,8 @@ import {
 } from '../../../utils.ts';
 
 const { quad } = DataFactory;
-import { Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Errors } = moleculer;
 
 const { MoleculerError } = Errors;
 

@@ -3,7 +3,8 @@ import DbService from 'moleculer-db';
 import { TripleStoreAdapter } from '@semapps/triplestore';
 import type { ServiceSchema } from 'moleculer';
 
-import { Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Errors } = moleculer;
 
 const { MoleculerError, ServiceSchemaError } = Errors;
 

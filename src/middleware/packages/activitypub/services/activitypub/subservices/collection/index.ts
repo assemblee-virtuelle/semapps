@@ -1,12 +1,13 @@
 import { ControlledContainerMixin, arrayOf, getDatasetFromUri } from '@semapps/ldp';
 import { MIME_TYPES } from '@semapps/mime-types';
 import { sanitizeSparqlQuery } from '@semapps/triplestore';
-// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
-import { Errors as E } from 'moleculer-web';
+import moleculerWeb from 'moleculer-web';
+const E = moleculerWeb.Errors;
 import type { ServiceSchema } from 'moleculer';
 import getAction from './actions/get.ts';
 
-import { Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Errors } = moleculer;
 
 const { MoleculerError } = Errors;
 

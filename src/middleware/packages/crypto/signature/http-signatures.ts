@@ -1,10 +1,12 @@
 import { createSign, createHash } from 'crypto';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'http... Remove this comment to see the full error message
-import { parseRequest, verifySignature } from 'http-signature';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'http... Remove this comment to see the full error message
-import { createAuthzHeader, createSignatureString } from 'http-signature-header';
-// @ts-expect-error TS(2614): Module '"moleculer-web"' has no exported member 'E... Remove this comment to see the full error message
-import { Errors as E } from 'moleculer-web';
+// @ts-expect-error
+import httpSignature from 'http-signature';
+const { parseRequest, verifySignature } = httpSignature;
+// @ts-expect-error
+import httpSignatureHeader from 'http-signature-header';
+const { createAuthzHeader, createSignatureString } = httpSignatureHeader;
+import moleculerWeb from 'moleculer-web';
+const E = moleculerWeb.Errors;
 import type { ServiceSchema } from 'moleculer';
 import { KEY_TYPES } from '../constants.ts';
 import { arrayOf } from '../utils/utils.ts';

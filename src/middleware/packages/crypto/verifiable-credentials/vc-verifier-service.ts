@@ -1,4 +1,6 @@
-// @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
+// @ts-expect-error
+import jsonldSignatures from 'jsonld-signatures';
+// @ts-expect-error
 import { cryptosuite } from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
@@ -11,7 +13,7 @@ import { arrayOf } from '../utils/utils.ts';
 
 const {
   purposes: { AuthenticationProofPurpose }
-} = require('jsonld-signatures');
+} = jsonldSignatures;
 
 /**
  * Service for verifying and creating Verifiable Presentations

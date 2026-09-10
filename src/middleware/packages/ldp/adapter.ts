@@ -1,6 +1,7 @@
 import urlJoin from 'url-join';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Errors } = moleculer;
 
 const { ServiceSchemaError } = Errors;
 class LdpAdapter {

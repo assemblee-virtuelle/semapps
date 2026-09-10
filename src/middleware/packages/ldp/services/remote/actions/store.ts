@@ -1,6 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
-// @ts-expect-error
-import { Errors as E } from 'moleculer-web';
+import moleculerWeb from 'moleculer-web';
+const E = moleculerWeb.Errors;
 import type { ActionSchema } from 'moleculer';
 import { hasType } from '../../../utils.ts';
 

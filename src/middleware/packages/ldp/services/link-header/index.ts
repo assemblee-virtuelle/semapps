@@ -1,4 +1,5 @@
-import { defineAction } from 'moleculer';
+import moleculer from 'moleculer';
+const { defineAction } = moleculer;
 import type { ServiceSchema } from 'moleculer';
 import getAction from './actions/get.ts';
 import registerAction from './actions/register.ts';

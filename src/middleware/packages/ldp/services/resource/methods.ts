@@ -5,7 +5,8 @@ import rdfparseModule from 'rdf-parse';
 import streamifyString from 'streamify-string';
 import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Errors } = moleculer;
 
 const rdfParser = rdfparseModule.default;
 

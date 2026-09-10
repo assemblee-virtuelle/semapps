@@ -8,7 +8,8 @@ import { parseHeader } from '@semapps/middlewares';
 import type { ServiceSchema } from 'moleculer';
 
 const { quad, namedNode, literal, blankNode } = DataFactory;
-import { Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Errors } = moleculer;
 
 const { MoleculerError } = Errors;
 

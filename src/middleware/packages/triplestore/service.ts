@@ -2,7 +2,8 @@ import { SparqlJsonParser } from 'sparqljson-parse';
 import sparqljsModule from 'sparqljs';
 import fetch from 'node-fetch';
 import { throw403, throw500 } from '@semapps/middlewares';
-import { defineAction } from 'moleculer';
+import moleculer from 'moleculer';
+const { defineAction } = moleculer;
 import type { ServiceSchema } from 'moleculer';
 import countTriplesOfSubject from './actions/countTriplesOfSubject.ts';
 import deleteOrphanBlankNodes from './actions/deleteOrphanBlankNodes.ts';
@@ -14,7 +15,7 @@ import tripleExist from './actions/tripleExist.ts';
 import DatasetService from './subservices/dataset.ts';
 
 const SparqlGenerator = sparqljsModule.Generator;
-import { Errors } from 'moleculer';
+const { Errors } = moleculer;
 
 const { MoleculerError } = Errors;
 

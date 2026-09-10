@@ -1,4 +1,5 @@
-import { Context } from 'moleculer';
+import moleculer from 'moleculer';
+const { Context } = moleculer;
 import type { ServiceSchema, CallingOptions } from 'moleculer';
 
 interface LocalServerSettings {

@@ -2,7 +2,8 @@ import { negotiateTypeMime, MIME_TYPES } from '@semapps/mime-types';
 // @ts-expect-error TS(7016): Could not find a declaration file for module 'busb... Remove this comment to see the full error message
 import Busboy from 'busboy';
 import streams from 'memory-streams';
-import { Errors } from 'moleculer';
+import moleculer from 'moleculer';
+const { Errors } = moleculer;
 
 const { MoleculerError } = Errors;
 

@@ -5,7 +5,7 @@ import sanitizeHtml from 'sanitize-html';
 import googlelibphonenumberModule from 'google-libphonenumber';
 
 const PNF = googlelibphonenumberModule.PhoneNumberFormat;
-const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
+const phoneUtil = googlelibphonenumberModule.PhoneNumberUtil.getInstance();
 
 const convertToIsoString = (str: any) => str && new Date(str).toISOString();
 

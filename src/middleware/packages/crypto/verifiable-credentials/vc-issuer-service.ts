@@ -1,3 +1,5 @@
+// @ts-expect-error
+import jsonldSignatures from 'jsonld-signatures';
 import { MIME_TYPES } from '@semapps/mime-types';
 
 // @ts-expect-error TS(7016): Could not find a declaration file for module '@dig... Remove this comment to see the full error message
@@ -15,7 +17,7 @@ import { KEY_TYPES, credentialsContext } from '../constants.ts';
 
 const {
   purposes: { AssertionProofPurpose }
-} = require('jsonld-signatures');
+} = jsonldSignatures;
 
 /**
  * Service for verifying, reading, and revoking Verifiable Credentials.

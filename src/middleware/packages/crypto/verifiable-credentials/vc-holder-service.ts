@@ -1,3 +1,5 @@
+// @ts-expect-error
+import jsonldSignatures from 'jsonld-signatures';
 import { randomUUID } from 'node:crypto';
 import { MIME_TYPES } from '@semapps/mime-types';
 
@@ -17,7 +19,7 @@ import { KEY_TYPES, credentialsContext } from '../constants.ts';
 
 const {
   purposes: { AuthenticationProofPurpose }
-} = require('jsonld-signatures');
+} = jsonldSignatures;
 
 /**
  * Service for verifying and creating Verifiable Presentations
