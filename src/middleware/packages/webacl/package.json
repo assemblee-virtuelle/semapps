@@ -30,7 +30,7 @@
     "streamify-string": "^1.0.1",
     "url-join": "^4.0.1"
   },
-  "gitHead": "684ba335d0759920f4134f550431b3c3af8e2599",
+  "gitHead": "73643a00cc47f9b8760e7b70c42d32c436162915",
   "engines": {
     "node": ">=22.10.0"
   },

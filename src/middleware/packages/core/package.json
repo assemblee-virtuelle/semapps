@@ -34,5 +34,6 @@
   "scripts": {
     "prepack": "node ../../scripts/switch-main-to-publish.js .",
     "postpack": "node ../../scripts/revert-main-from-publish.js ."
-  }
+  },
+  "gitHead": "73643a00cc47f9b8760e7b70c42d32c436162915"
 }
