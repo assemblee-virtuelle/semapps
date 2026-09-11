@@ -23,7 +23,7 @@
   "peerDependencies": {
     "moleculer": "^0.14.35"
   },
-  "gitHead": "7543b7cc497c87ede3b8341d9c62aaca02c57de2",
+  "gitHead": "a2387e723be0760e50b4ae78afa980c705b0f407",
   "engines": {
     "node": ">=22.10.0"
   },
