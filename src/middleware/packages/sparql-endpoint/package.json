@@ -16,7 +16,7 @@
     "access": "public",
     "main": "./dist/index.js"
   },
-  "gitHead": "8f5c6ff7cbff4b7027dea8ab847af73f2edbb4e1",
+  "gitHead": "7543b7cc497c87ede3b8341d9c62aaca02c57de2",
   "engines": {
     "node": ">=22.10.0"
   },
