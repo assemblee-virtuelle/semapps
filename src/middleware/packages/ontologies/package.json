@@ -25,5 +25,5 @@
     "prepack": "node ../../scripts/switch-main-to-publish.js .",
     "postpack": "node ../../scripts/revert-main-from-publish.js ."
   },
-  "gitHead": "a2387e723be0760e50b4ae78afa980c705b0f407"
+  "gitHead": "b74990601d8775f279ca187dc92701fc138ed2bc"
 }
