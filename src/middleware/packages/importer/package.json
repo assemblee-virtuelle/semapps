@@ -26,5 +26,9 @@
   "main": "./index.ts",
   "peerDependencies": {
     "moleculer": "^0.14.35"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/switch-main-to-publish.js .",
+    "postpack": "node ../../scripts/revert-main-from-publish.js ."
   }
 }

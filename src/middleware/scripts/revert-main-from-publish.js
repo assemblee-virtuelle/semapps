@@ -50,6 +50,19 @@ function isDirectory(p) {
 }
 
 function run() {
+  // A package directory may be passed as an argument, in which case only that one is processed.
+  // This is what the per-package `prepack`/`postpack` hooks use: the switch has to happen while
+  // npm is packing, since `lerna publish` refuses to start on a dirty working tree.
+  const target = process.argv[2];
+  if (target) {
+    const pkgJsonPath = path.resolve(target, 'package.json');
+    const res = processPackageJson(pkgJsonPath);
+    process.stdout.write(
+      `[revert-main-from-publish] ${path.basename(path.dirname(pkgJsonPath))}: ${res.reverted || res.updated ? 'reverted' : `skipped (${res.reason})`}\n`
+    );
+    return;
+  }
+
   if (!isDirectory(PACKAGES_DIR)) {
     throw new Error(`[revert-main-from-publish] packages directory not found: ${PACKAGES_DIR}`);
   }

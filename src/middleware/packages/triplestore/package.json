@@ -28,5 +28,9 @@
     "node": ">=22.10.0"
   },
   "type": "module",
-  "main": "./index.ts"
+  "main": "./index.ts",
+  "scripts": {
+    "prepack": "node ../../scripts/switch-main-to-publish.js .",
+    "postpack": "node ../../scripts/revert-main-from-publish.js ."
+  }
 }

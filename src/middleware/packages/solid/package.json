@@ -36,5 +36,9 @@
   },
   "devDependencies": {
     "@types/rdfjs__data-model": "^2.0.9"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/switch-main-to-publish.js .",
+    "postpack": "node ../../scripts/revert-main-from-publish.js ."
   }
 }

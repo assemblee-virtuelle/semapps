@@ -6,7 +6,7 @@
   "scripts": {
     "build": "lerna exec --concurrency 4 --scope \"@semapps/**\" -- tsc --build",
     "version": "lerna version --force-publish='*' --exact --tag-version-prefix='middleware-v'",
-    "publish": "yarn build; node ./scripts/switch-main-to-publish.js && lerna publish from-package --dist-tag latest; node ./scripts/revert-main-from-publish.js",
+    "publish": "yarn build; lerna publish from-package --dist-tag latest",
     "prettier": "prettier --write '**/*.{js,ts,json}'",
     "link-all": "lerna exec --parallel --scope \"@semapps/**\" -- yarn link",
     "unlink-all": "lerna exec --parallel --scope \"@semapps/**\" -- yarn unlink",
