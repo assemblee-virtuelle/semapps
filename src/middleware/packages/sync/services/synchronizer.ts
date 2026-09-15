@@ -1,4 +1,4 @@
-import { arrayOf } from '@semapps/ldp';
+import { arrayOf, getSlugFromUri } from '@semapps/ldp';
 import { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } from '@semapps/activitypub';
 import type { ServiceSchema } from 'moleculer';
 
@@ -57,6 +57,24 @@ const SynchronizerService = {
         const { origin } = new URL(actorUri);
         return url.startsWith(origin);
       }
+    },
+    // If the cached resource is public, make the cached resource public as well. This is needed
+    // when the resource is added to a collection such as `as:replies`, otherwise only the collection
+    // owner will be able to list the replies, even if the replies are public.
+    async replicatePublicVisibility(ctx, activity, resourceUri, recipientUri) {
+      // WebACL is not enforced on the mirror graph, so there is nothing to replicate there
+      if (!this.settings.mirrorGraph && (await ctx.call('activitypub.activity.isPublic', { activity }))) {
+        await ctx.call(
+          'webacl.resource.addRights',
+          { resourceUri, additionalRights: { anon: { read: true } }, webId: 'system' },
+          {
+            meta: {
+              dataset: this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined,
+              skipObjectsWatcher: true
+            }
+          }
+        );
+      }
     }
   },
   activities: {
@@ -89,6 +107,9 @@ const SynchronizerService = {
                       webId: recipientUri
                     }
               );
+
+              // @ts-expect-error TS(2339): Property 'replicatePublicVisibility' does not exist on type '{ matc...
+              await this.replicatePublicVisibility(ctx, activity, resourceUri, recipientUri);
 
               const type = resource['@type'] || resource.type;
 
@@ -147,6 +168,7 @@ const SynchronizerService = {
         // @ts-expect-error TS(2339): Property 'isValid' does not exist on type '{ match... Remove this comment to see the full error message
         if (await this.isValid(activity, recipientUri)) {
           for (let resource of arrayOf(activity.object)) {
+            const resourceUri = typeof resource === 'string' ? resource : resource['@id'] || resource.id;
             resource = await ctx.call(
               'ldp.remote.store',
               typeof resource === 'string'
@@ -163,6 +185,9 @@ const SynchronizerService = {
                     webId: recipientUri
                   }
             );
+
+            // @ts-expect-error TS(2339): Property 'replicatePublicVisibility' does not exist on type '{ matc...
+            await this.replicatePublicVisibility(ctx, activity, resourceUri, recipientUri);
           }
         }
       }
