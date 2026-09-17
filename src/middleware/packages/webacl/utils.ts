@@ -10,8 +10,11 @@ const { Context, Errors } = moleculer;
 
 const { MoleculerError } = Errors;
 
+// rdf-parse is CJS with `exports.default`. Loaded natively as ESM, the default import is the whole
+// `module.exports` (so the parser sits under `.default`), but when this package is required from CJS
+// (e.g. moleculer-runner under tsx), the esbuild interop already unwraps `.default` for us.
 // @ts-expect-error TS(2339): Property 'default' does not exist on type 'RdfPars... Remove this comment to see the full error message
-const rdfParser = rdfparseModule.default;
+const rdfParser = rdfparseModule.default ?? rdfparseModule;
 
 const RESOURCE_CONTAINERS_QUERY = (resource: any) => `SELECT ?container
   WHERE { ?container ldp:contains <${resource}> . }`;

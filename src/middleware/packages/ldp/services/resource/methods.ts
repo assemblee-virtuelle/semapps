@@ -8,7 +8,9 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import moleculer from 'moleculer';
 const { Errors } = moleculer;
 
-const rdfParser = rdfparseModule.default;
+// See the same line in @semapps/webacl's utils.ts: the parser is under `.default` when loaded as ESM,
+// but already unwrapped when required from CJS (moleculer-runner under tsx).
+const rdfParser = rdfparseModule.default ?? rdfparseModule;
 
 const { MoleculerError } = Errors;
 

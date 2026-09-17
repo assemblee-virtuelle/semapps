@@ -4,9 +4,9 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "build": "lerna exec --concurrency 4 --scope \"@semapps/**\" -- tsc --build",
+    "build": "lerna exec --no-bail --concurrency 4 --scope \"@semapps/**\" -- tsc --build",
     "version": "lerna version --force-publish='*' --exact --tag-version-prefix='middleware-v'",
-    "publish": "yarn build; lerna publish from-package --dist-tag latest",
+    "publish": "yarn build --force; node scripts/check-dist-fresh.js && lerna publish from-package --dist-tag latest",
     "prettier": "prettier --write '**/*.{js,ts,json}'",
     "link-all": "lerna exec --parallel --scope \"@semapps/**\" -- yarn link",
     "unlink-all": "lerna exec --parallel --scope \"@semapps/**\" -- yarn unlink",
