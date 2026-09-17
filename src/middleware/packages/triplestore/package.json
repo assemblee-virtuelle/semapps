@@ -1,12 +1,12 @@
 {
   "name": "@semapps/triplestore",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Triple store module for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/middlewares": "1.2.2",
-    "@semapps/mime-types": "1.2.2",
+    "@semapps/middlewares": "1.2.3",
+    "@semapps/mime-types": "1.2.3",
     "jsonld": "^3.3.2",
     "negotiator": "^0.6.2",
     "node-fetch": "^2.6.6",
