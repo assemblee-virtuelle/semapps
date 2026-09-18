@@ -14,15 +14,16 @@
 #   limitations under the License.
 
 
-#FROM alpine:3.4
-#RUN apk add --update openjdk8-jre pwgen bash wget ca-certificates && rm -rf /var/cache/apk/*
-FROM openjdk:8-jre-alpine
+# openjdk:8-jre-alpine was removed from Docker Hub; Amazon Corretto is the only
+# maintained Java 8 Alpine image published for both amd64 and arm64.
+FROM amazoncorretto:8-alpine-jre
 RUN apk add --update nodejs npm pwgen bash curl ca-certificates procps && rm -rf /var/cache/apk/*
 
 MAINTAINER Niko PLP <info@parlepeuple.fr>
 
-# GCO: 2025.11.18 (Tuning Gco) 
-#ENV JAVA_MX_RAM="4G"
+# Heap sizing. By default the JVM sizes its heap from the container memory
+# limit (see the sed below), so ALWAYS set a memory limit on the container.
+# Set JVM_ARGS (e.g. "-Xmx2g") to override the defaults entirely.
 
 # Update below according to https://jena.apache.org/download/ and
 # corresponding *.tar.gz.sha512 from https://www.apache.org/dist/jena/binaries/
@@ -57,8 +58,17 @@ RUN     curl -sSL --fail $ASF_ARCHIVE/jena/binaries/apache-jena-fuseki-$FUSEKI_V
 
 RUN chmod 755  /jena-fuseki/fuseki-server
 
-# GCO: 2025.11.18 (Tuning Gco) RUN sed -i 's/JVM_ARGS=${JVM_ARGS:--Xmx4G}/JVM_ARGS=${JVM_ARGS:--Xmx${JAVA_MX_RAM}}\nexport LOG4J_FORMAT_MSG_NO_LOOKUPS=true/g' /jena-fuseki/fuseki-server 
-RUN sed -i 's/JVM_ARGS=${JVM_ARGS:--Xmx4G}/JVM_ARGS=${JVM_ARGS: -XX:+UseContainerSupport -XX:InitialRAMPercentage=50.0 -XX:MaxRAMPercentage=80.0}\nexport LOG4J_FORMAT_MSG_NO_LOOKUPS=true/g' /jena-fuseki/fuseki-server 
+# Replace the hard-coded -Xmx4G with container-aware defaults:
+# - MaxRAMPercentage=65: the heap is capped at 65% of the container limit, the
+#   rest is left for metaspace, threads, GC overhead and TDB2 memory-mapped files
+#   (with -Xmx alone, the process routinely exceeds the container limit and gets
+#   OOM-killed).
+# - ExitOnOutOfMemoryError: exit cleanly (and let Docker restart the container)
+#   instead of hanging in an endless GC loop.
+# Note: `${JVM_ARGS:-default}` must be written without a space after the colon,
+# otherwise it is a substring expansion and yields an empty string.
+RUN sed -i 's/JVM_ARGS=${JVM_ARGS:--Xmx4G}/JVM_ARGS=${JVM_ARGS:--XX:+UseContainerSupport -XX:InitialRAMPercentage=25.0 -XX:MaxRAMPercentage=65.0 -XX:+ExitOnOutOfMemoryError}\nexport LOG4J_FORMAT_MSG_NO_LOOKUPS=true/g' /jena-fuseki/fuseki-server \
+    && grep -q 'MaxRAMPercentage' /jena-fuseki/fuseki-server
 
 RUN echo "$JENA_SHA512  jena.tar.gz" > jena.tar.gz.sha512
 
