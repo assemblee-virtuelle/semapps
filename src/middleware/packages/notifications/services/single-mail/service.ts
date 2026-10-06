@@ -95,7 +95,7 @@ const SingleMailNotificationsService = {
     async queueMail(ctx, key, payload) {
       payload.template = 'single-mail';
       if (this.createJob) {
-        return this.createJob('sendMail', key, payload);
+        return this.createJob('sendMail', key, payload, { removeOnComplete: 10000, removeOnFail: 10000 });
       }
       await this.actions.send(payload, { parentCtx: ctx });
     }
