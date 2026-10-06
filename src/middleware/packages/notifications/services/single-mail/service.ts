@@ -95,7 +95,13 @@ const SingleMailNotificationsService = {
     async queueMail(ctx, key, payload) {
       payload.template = 'single-mail';
       if (this.createJob) {
-        return this.createJob('sendMail', key, payload, { removeOnComplete: 10000, removeOnFail: 10000 });
+        return this.createJob('sendMail', key, payload, {
+          // Try again if the mail server is unavailable: after 1 minute and until ~1 hour later
+          attempts: 6,
+          backoff: { type: 'exponential', delay: 60000 },
+          removeOnComplete: 10000,
+          removeOnFail: 10000
+        });
       }
       await this.actions.send(payload, { parentCtx: ctx });
     }
