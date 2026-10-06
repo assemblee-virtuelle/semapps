@@ -4,6 +4,10 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import type { ServiceSchema } from 'moleculer';
 import matchActivity from '../../../utils/matchActivity.ts';
 
+// Bull 3 (used by moleculer-bull 0.2) only accepts a boolean or a number for removeOnComplete/removeOnFail:
+// a { age } object is ignored and every job is kept forever. Keep the last 10000 jobs of each queue.
+const queueOptions = { removeOnComplete: 10000, removeOnFail: 10000 };
+
 /**
  * Allow any service to process activities just after they are posted to the inbox or outbox.
  * It uses a jobs queue so that it is easy to watch and debug results
@@ -39,12 +43,7 @@ const ActivitypubSideEffectsSchema = {
       async handler(ctx) {
         const { activity } = ctx.params;
 
-        const job = await this.createJob(
-          'processOutbox',
-          activity.id,
-          { activity },
-          { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
-        );
+        const job = await this.createJob('processOutbox', activity.id, { activity }, queueOptions);
 
         await job.finished();
       }
@@ -58,12 +57,7 @@ const ActivitypubSideEffectsSchema = {
       async handler(ctx) {
         const { activity, recipients } = ctx.params;
 
-        const job = await this.createJob(
-          'processInbox',
-          activity.id,
-          { activity, recipients },
-          { removeOnComplete: { age: 259200 } } // Keep completed jobs for 3 days
-        );
+        const job = await this.createJob('processInbox', activity.id, { activity, recipients }, queueOptions);
 
         await job.finished();
       }

@@ -44,7 +44,12 @@ const WebhooksService = {
         }
 
         if (this.createJob) {
-          this.createJob('webhooks', webhook.action, { data, user: webhook.user });
+          this.createJob(
+            'webhooks',
+            webhook.action,
+            { data, user: webhook.user },
+            { removeOnComplete: 10000, removeOnFail: 10000 }
+          );
         } else {
           // If no queue service is defined, run webhook immediately
           return await this.actions[webhook.action]({ data, user: webhook.user }, { parentCtx: ctx });
