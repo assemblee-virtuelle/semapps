@@ -22,6 +22,19 @@ const queueOptions =
         backoff: { type: 'exponential', delay: '180000' }
       };
 
+// Each local recipient is processed in a job of its own, so that a failure (e.g. the triplestore restarting)
+// is retried for this recipient only. Try again after 30 seconds and until ~8 hours later.
+const localQueueOptions =
+  process.env.NODE_ENV === 'test'
+    ? {}
+    : {
+        attempts: 10,
+        backoff: { type: 'exponential', delay: 30000 },
+        // Bull 3 (used by moleculer-bull 0.2) only accepts a boolean or a number here
+        removeOnComplete: 10000,
+        removeOnFail: 10000
+      };
+
 const OutboxService = {
   name: 'activitypub.outbox' as const,
   mixins: [AwaitActivityMixin],
@@ -170,8 +183,15 @@ const OutboxService = {
 
         // Post to local recipients
         if (localRecipients.length > 0) {
-          // Call directly (but without waiting)
-          this.localPost(localRecipients, activity);
+          if (this.createJob && process.env.NODE_ENV !== 'test') {
+            // One job per recipient, retried in case of failure
+            for (const recipientUri of localRecipients) {
+              this.createJob('localPost', recipientUri, { recipientUri, activity }, localQueueOptions);
+            }
+          } else {
+            // Call directly (but without waiting)
+            this.localPost(localRecipients, activity);
+          }
         }
 
         return activity;
@@ -194,8 +214,6 @@ const OutboxService = {
     },
     // TODO put this in the activitypub.inbox service
     async localPost(recipients, activityToPost) {
-      // Leave the capability separate because we don't want to store it.
-      const { capability, ...activity } = activityToPost;
       const success = [];
       const failures = [];
 
@@ -210,65 +228,7 @@ const OutboxService = {
 
       for (const recipientUri of recipients) {
         try {
-          const account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
-          if (!account) throw new Error(`No account found with webId ${recipientUri}`);
-
-          const dataset = this.settings.podProvider ? account.username : undefined;
-
-          const recipientInbox = await this.broker.call(
-            'activitypub.actor.getCollectionUri',
-            {
-              actorUri: recipientUri,
-              predicate: 'inbox',
-              webId: 'system'
-            },
-            { meta: { dataset } }
-          );
-
-          if (activity.id && !activity.id.includes('#')) {
-            // Attach activity to the inbox of the recipient
-            await this.broker.call(
-              'activitypub.collection.add',
-              {
-                collectionUri: recipientInbox,
-                item: activity
-              },
-              { meta: { dataset } }
-            );
-
-            if (this.settings.podProvider) {
-              // Store the activity in the dataset of the recipient
-              await this.broker.call('ldp.remote.store', {
-                resource: objectIdToCurrent(activity),
-                mirrorGraph: false, // Store in default graph as activity may not be public
-                keepInSync: false, // Activities are immutable
-                webId: recipientUri,
-                dataset
-              });
-
-              await this.broker.call(
-                'activitypub.activity.attach',
-                {
-                  resourceUri: activity.id,
-                  webId: recipientUri
-                },
-                { meta: { dataset } }
-              );
-            }
-          } else {
-            // If the activity is transient, pass the full object
-            // This will be used in particular for Solid notifications
-            // which will send the full activity to the listeners
-            this.broker.emit(
-              'activitypub.collection.added',
-              {
-                collectionUri: recipientInbox,
-                item: activity
-              },
-              { meta: { webId: null, dataset: null } }
-            );
-          }
-
+          await this.addToLocalInbox(recipientUri, activityToPost);
           success.push(recipientUri);
         } catch (e) {
           // @ts-expect-error TS(18046): 'e' is of type 'unknown'.
@@ -280,9 +240,102 @@ const OutboxService = {
       this.broker.emit('activitypub.inbox.received', { activity: activityToPost, recipients, local: true });
 
       return { success, failures };
+    },
+    /**
+     * Post an activity to a single local actor, from a localPost job. Unlike localPost (used when there
+     * is no jobs queue, and in tests), any failure is thrown, so that the job is retried.
+     */
+    async localPostToRecipient(recipientUri, activityToPost) {
+      // Throws if a processor failed (e.g. the announced object could not be cached)
+      await this.broker.call('activitypub.side-effects.processInbox', {
+        activity: activityToPost,
+        recipients: [recipientUri]
+      });
+
+      await this.addToLocalInbox(recipientUri, activityToPost);
+
+      this.broker.emit('activitypub.inbox.received', {
+        activity: activityToPost,
+        recipients: [recipientUri],
+        local: true
+      });
+    },
+    async addToLocalInbox(recipientUri, activityToPost) {
+      // Leave the capability separate because we don't want to store it.
+      const { capability, ...activity } = activityToPost;
+
+      const account = await this.broker.call('auth.account.findByWebId', { webId: recipientUri });
+      if (!account) throw new Error(`No account found with webId ${recipientUri}`);
+
+      const dataset = this.settings.podProvider ? account.username : undefined;
+
+      const recipientInbox = await this.broker.call(
+        'activitypub.actor.getCollectionUri',
+        {
+          actorUri: recipientUri,
+          predicate: 'inbox',
+          webId: 'system'
+        },
+        { meta: { dataset } }
+      );
+
+      if (activity.id && !activity.id.includes('#')) {
+        // Attach activity to the inbox of the recipient
+        await this.broker.call(
+          'activitypub.collection.add',
+          {
+            collectionUri: recipientInbox,
+            item: activity
+          },
+          { meta: { dataset } }
+        );
+
+        if (this.settings.podProvider) {
+          // Store the activity in the dataset of the recipient
+          await this.broker.call('ldp.remote.store', {
+            resource: objectIdToCurrent(activity),
+            mirrorGraph: false, // Store in default graph as activity may not be public
+            keepInSync: false, // Activities are immutable
+            webId: recipientUri,
+            dataset
+          });
+
+          await this.broker.call(
+            'activitypub.activity.attach',
+            {
+              resourceUri: activity.id,
+              webId: recipientUri
+            },
+            { meta: { dataset } }
+          );
+        }
+      } else {
+        // If the activity is transient, pass the full object
+        // This will be used in particular for Solid notifications
+        // which will send the full activity to the listeners
+        this.broker.emit(
+          'activitypub.collection.added',
+          {
+            collectionUri: recipientInbox,
+            item: activity
+          },
+          { meta: { webId: null, dataset: null } }
+        );
+      }
     }
   },
   queues: {
+    localPost: {
+      name: '*',
+      // One at a time, to spare the triplestore when an activity is sent to many local actors
+      concurrency: 1,
+      async process(job: any) {
+        const { recipientUri, activity } = job.data;
+        // @ts-expect-error TS(2339): Property 'localPostToRecipient' does not exist on type '{ name: string; ... Remove this comment to see the full error message
+        await this.localPostToRecipient(recipientUri, activity);
+        return { recipientUri };
+      }
+    },
     remotePost: {
       name: '*',
       // @ts-expect-error TS(7023): 'process' implicitly has return type 'any' because... Remove this comment to see the full error message
