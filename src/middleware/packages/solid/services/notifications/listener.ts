@@ -31,7 +31,25 @@ const SolidNotificationsListenerSchema = {
 
     // Retrieve all active listeners
     const results = await this.actions.list({});
-    this.listeners = results.rows;
+    this.listeners = [];
+
+    // Keep only one listener per resource and action. Duplicates may have been registered in the past
+    // (e.g. by an instance started while the listeners were not readable), and each of them would
+    // transfer every notification again. Once removed, their webhook returns a 404 and the provider
+    // deletes the corresponding channel.
+    for (const listener of results.rows) {
+      const isDuplicate = this.listeners.some(
+        (l: any) => l.resourceUri === listener.resourceUri && l.actionName === listener.actionName
+      );
+      if (isDuplicate) {
+        this.logger.warn(
+          `Removing duplicate listener ${listener.webhookUrl} for ${listener.resourceUri} (${listener.actionName})`
+        );
+        await this.actions.remove({ id: listener['@id'] });
+      } else {
+        this.listeners.push(listener);
+      }
+    }
 
     const { pathname: basePath } = new URL(this.settings.baseUrl);
 
@@ -76,7 +94,7 @@ const SolidNotificationsListenerSchema = {
               this.logger.warn(
                 `Channel ${existingListener.channelUri} doesn't exist anymore. Registering a new channel...`
               );
-              this.actions.remove({ id: existingListener['@id'] }, { parentCtx: ctx });
+              await this.actions.remove({ id: existingListener['@id'] }, { parentCtx: ctx });
               this.listeners = this.listeners.filter((l: any) => l['@id'] !== existingListener['@id']);
             } else {
               throw e;
