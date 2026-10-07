@@ -7,6 +7,11 @@ import { fileURLToPath } from 'url';
 
 // @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// The templates are at the root of the package, but this file also runs from dist/ (one level deeper)
+const templateFolder = path.join(
+  __dirname,
+  __dirname.includes(`${path.sep}dist${path.sep}`) ? '../../templates' : '../templates'
+);
 
 const AuthMailSchema = {
   name: 'auth.mail' as const,
@@ -16,7 +21,7 @@ const AuthMailSchema = {
       locale: 'en',
       frontUrl: null
     },
-    templateFolder: path.join(__dirname, '../templates'),
+    templateFolder,
     from: null,
     transport: null
   },
