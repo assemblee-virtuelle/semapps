@@ -66,6 +66,85 @@ const buildFiltersQuery = (filters: any) => {
   return { where };
 };
 
+// Prevent SPARQL injection when an IRI comes from the outside world (it is inserted between <>)
+const isValidIri = (value: any) => typeof value === 'string' && /^[a-z][a-z0-9+.-]*:[^\s<>"{}|\\^`]+$/i.test(value);
+
+// Escape a string to be used as a SPARQL literal (between double quotes)
+const escapeSparqlString = (value: string) =>
+  value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+
+const ACCENTS_CLASSES: Record<string, string> = {
+  a: '[aàáâãäå]',
+  c: '[cç]',
+  e: '[eèéêë]',
+  i: '[iìíîï]',
+  n: '[nñ]',
+  o: '[oòóôõöø]',
+  u: '[uùúûü]',
+  y: '[yýÿ]'
+};
+
+/**
+ * Build a SPARQL filter keeping the resources (?s1) with a literal containing the given keywords,
+ * case-insensitive and accent-insensitive (SPARQL has no function to remove accents, so we use a regex).
+ * The predicates must be full URIs, which have been validated with isValidIri.
+ */
+const buildSearchQuery = (keywords?: string, predicates?: string[]) => {
+  if (!keywords) return '';
+  const pattern = keywords
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .toLowerCase()
+    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // Escape regex special characters
+    .replace(/[a-z]/g, letter => ACCENTS_CLASSES[letter] || letter);
+  return `
+    FILTER EXISTS {
+      ${predicates?.length ? `VALUES ?searchPredicate { ${predicates.map(p => `<${p}>`).join(' ')} }` : ''}
+      ?s1 ?searchPredicate ?searchValue .
+      FILTER(isLiteral(?searchValue) && REGEX(STR(?searchValue), "${escapeSparqlString(pattern)}", "i"))
+    }
+  `;
+};
+
+/**
+ * Build a SPARQL filter keeping the resources (?s1) located at less than `radius` km of the given point,
+ * using the vcard:hasGeo/vcard:latitude/vcard:longitude predicates. Resources without location are kept.
+ * The distance is computed with the haversine formula, using the XPath math functions supported by Jena.
+ */
+const buildNearQuery = (near?: { latitude: number; longitude: number; radius: number }) => {
+  if (!near) return '';
+  if (![near.latitude, near.longitude, near.radius].every(n => typeof n === 'number' && Number.isFinite(n))) {
+    throw new Error('The latitude, longitude and radius must be numbers');
+  }
+  // Use parenthesis so that negative numbers can be used in the expressions
+  const [latitude, longitude, radius] = [near.latitude, near.longitude, near.radius].map(n => `(${n})`);
+  const geoPattern = `
+    ?s1 <http://www.w3.org/2006/vcard/ns#hasGeo> ?nearGeo .
+    ?nearGeo <http://www.w3.org/2006/vcard/ns#latitude> ?nearLatitude ;
+      <http://www.w3.org/2006/vcard/ns#longitude> ?nearLongitude .
+  `;
+  const math = (fn: string) => `<http://www.w3.org/2005/xpath-functions/math#${fn}>`;
+  const rad = `${math('pi')}() / 180`;
+  const lat = '<http://www.w3.org/2001/XMLSchema#double>(?nearLatitude)';
+  const lon = '<http://www.w3.org/2001/XMLSchema#double>(?nearLongitude)';
+  return `
+    FILTER(
+      NOT EXISTS { ${geoPattern} } ||
+      EXISTS {
+        ${geoPattern}
+        BIND(${math('sin')}((${lat} - ${latitude}) * ${rad} / 2) AS ?nearSinLat)
+        BIND(${math('sin')}((${lon} - ${longitude}) * ${rad} / 2) AS ?nearSinLon)
+        FILTER(
+          12742 * ${math('asin')}(${math('sqrt')}(
+            ?nearSinLat * ?nearSinLat +
+            ${math('cos')}(${latitude} * ${rad}) * ${math('cos')}(${lat} * ${rad}) * ?nearSinLon * ?nearSinLon
+          )) <= ${radius}
+        )
+      }
+    )
+  `;
+};
+
 const isObject = (value: any) => typeof value === 'object' && !Array.isArray(value) && value !== null;
 const getSlugFromUri = (uri: any) => uri.match(new RegExp(`.*/(.*)`))[1];
 
@@ -174,6 +253,10 @@ const waitForResource = async (delayMs: any, fieldNames: any, maxTries: any, cal
 export {
   buildBlankNodesQuery,
   buildFiltersQuery,
+  buildSearchQuery,
+  buildNearQuery,
+  isValidIri,
+  escapeSparqlString,
   isURL,
   isURI,
   isObject,

@@ -31,6 +31,25 @@ Delete all the resources attached to a container
 | `containerUri` | `String` | **required**        | URI of the container to clear |
 | `webId`        | `String` | Logged user's webId | User doing the action         |
 
+### `count`
+
+Count the resources of a container, with the same permissions as the `get` action
+
+##### Parameters
+
+| Property           | Type     | Default             | Description              |
+| ------------------ | -------- | ------------------- | ------------------------ |
+| `containerUri`     | `String` | **required**        | URI of container         |
+| `filters`          | `Object` |                     | Same as the `get` action |
+| `search`           | `String` |                     | Same as the `get` action |
+| `searchPredicates` | `Array`  |                     | Same as the `get` action |
+| `near`             | `Object` |                     | Same as the `get` action |
+| `webId`            | `String` | Logged user's webId | User doing the action    |
+
+##### Return
+
+The number of resources
+
 ### `create`
 
 - Create a new LDP container
@@ -99,6 +118,9 @@ Get the LDP container with all its resources (which are dereferenced)
 | `containerUri`          | `String`            | **required**        | URI of container                                   |
 | `accept`                | `String`            | **required**        | Type to return                                     |
 | `filters`               | `Object`            |                     | Key/value with predicates and value                |
+| `search`                | `String`            |                     | Only keep resources containing these keywords (1)  |
+| `searchPredicates`      | `Array`             |                     | Only search in these predicates (URI or prefixed)  |
+| `near`                  | `Object`            |                     | Only keep resources near a point (2)               |
 | `doNotIncludeResources` | `Boolean`           | false               | If true, does not return the contained resources   |
 | `maxPerPage`            | `Number`            |                     | If set, only return this number of resources       |
 | `page`                  | `Number`            | 1                   | If paging is activated, the page to return         |
@@ -108,6 +130,12 @@ Get the LDP container with all its resources (which are dereferenced)
 | `webId`                 | `String`            | Logged user's webId | User doing the action                              |
 
 You can also pass parameters defined in the [container options](index.md#container-options).
+
+(1) The search is case-insensitive and accent-insensitive, and is done in all the literals of the resources (not in
+their blank nodes), unless `searchPredicates` is provided.
+
+(2) An object with `latitude`, `longitude` and `radius` (in km). Resources whose `vcard:hasGeo` (with `vcard:latitude`
+and `vcard:longitude`) is further than `radius` are left out. Resources without location are kept.
 
 ##### Return
 

@@ -28,6 +28,43 @@ export default async function get(this: any, ctx: any) {
         ...ctx.meta.headers
       };
 
+      // Filters passed through the query string. They are kept in the paging links.
+      const { q: search, 'q-predicate': searchPredicates, near: nearParam, radius: radiusParam } = ctx.params;
+      const filtersQueryString = new URLSearchParams();
+      if (search !== undefined) {
+        if (typeof search !== 'string') throw new MoleculerError('Invalid q param', 400, 'BAD_REQUEST');
+        filtersQueryString.append('q', search);
+      }
+      for (const predicate of searchPredicates ? [].concat(searchPredicates) : []) {
+        if (typeof predicate !== 'string') throw new MoleculerError('Invalid q-predicate param', 400, 'BAD_REQUEST');
+        filtersQueryString.append('q-predicate', predicate);
+      }
+      let near: { latitude: number; longitude: number; radius: number } | undefined;
+      if (nearParam !== undefined || radiusParam !== undefined) {
+        const [latitude, longitude] = typeof nearParam === 'string' ? nearParam.split(',').map(Number) : [];
+        const radius = typeof radiusParam === 'string' ? Number(radiusParam) : NaN;
+        if (![latitude, longitude, radius].every(Number.isFinite)) {
+          throw new MoleculerError(
+            'The near (latitude,longitude) and radius (km) params are required',
+            400,
+            'BAD_REQUEST'
+          );
+        }
+        near = { latitude, longitude, radius };
+        filtersQueryString.append('near', nearParam);
+        filtersQueryString.append('radius', radiusParam);
+      }
+      const filtersParams = cleanUndefined({
+        search: search || undefined,
+        searchPredicates: search && searchPredicates ? [].concat(searchPredicates) : undefined,
+        near
+      });
+      const pageUri = (pageNumber: number) => {
+        const queryString = new URLSearchParams(filtersQueryString);
+        queryString.append('page', `${pageNumber}`);
+        return `${uri}?${queryString.toString()}`;
+      };
+
       let doNotIncludeResources = false;
       let maxPerPage: number | undefined;
       let sortPredicate: string | undefined;
@@ -51,7 +88,7 @@ export default async function get(this: any, ctx: any) {
           if (!page) {
             // If paging is requested but no page number is provided, redirect to the first page
             ctx.meta.$statusCode = 303;
-            ctx.meta.$location = `${uri}?page=1`;
+            ctx.meta.$location = pageUri(1);
             ctx.meta.$responseHeaders = { 'Content-Length': 0 };
             return;
           }
@@ -59,14 +96,14 @@ export default async function get(this: any, ctx: any) {
           page = parseInt(page, 10);
           if (!(page >= 1)) throw new MoleculerError('Invalid page number', 400, 'BAD_REQUEST');
 
-          const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri: uri });
-          const numPages = Math.ceil(resourcesUris.length / maxPerPage);
+          const count = await ctx.call('ldp.container.count', { containerUri: uri, ...filtersParams });
+          const numPages = Math.ceil(count / maxPerPage);
 
           links.push({ uri: 'http://www.w3.org/ns/ldp#Page', rel: 'type' });
-          links.push({ uri: `${uri}?page=1`, rel: 'first' });
-          if (numPages > page) links.push({ uri: `${uri}?page=${page + 1}`, rel: 'next' });
-          if (page > 1) links.push({ uri: `${uri}?page=${page - 1}`, rel: 'prev' });
-          if (numPages > 1) links.push({ uri: `${uri}?page=${numPages}`, rel: 'last' });
+          links.push({ uri: pageUri(1), rel: 'first' });
+          if (numPages > page) links.push({ uri: pageUri(page + 1), rel: 'next' });
+          if (page > 1) links.push({ uri: pageUri(page - 1), rel: 'prev' });
+          if (numPages > 1) links.push({ uri: pageUri(numPages), rel: 'last' });
         }
       }
 
@@ -77,6 +114,7 @@ export default async function get(this: any, ctx: any) {
           accept,
           jsonContext: parseJson(ctx.meta.headers?.jsonldcontext),
           doNotIncludeResources,
+          ...filtersParams,
           maxPerPage,
           page: maxPerPage ? page : undefined,
           sortPredicate,

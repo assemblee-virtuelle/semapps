@@ -1,6 +1,7 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import type { ActionSchema } from 'moleculer';
-import { buildFiltersQuery, isContainer, cleanUndefined, arrayOf } from '../../../utils.ts';
+import { isContainer, isValidIri, cleanUndefined, arrayOf } from '../../../utils.ts';
+import resourcesFiltersParams from '../resources-filters-params.ts';
 
 import moleculer from 'moleculer';
 const { Errors } = moleculer;
@@ -17,6 +18,7 @@ const Schema = {
     filters: { type: 'object', optional: true },
     // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     doNotIncludeResources: { type: 'boolean', default: false },
+    ...resourcesFiltersParams,
     maxPerPage: { type: 'number', optional: true },
     page: { type: 'number', default: 1 },
     sortOrder: { type: 'enum', values: ['ASC', 'DESC'], default: 'ASC' },
@@ -29,6 +31,9 @@ const Schema = {
       'containerUri',
       'accept',
       'filters',
+      'search',
+      'searchPredicates',
+      'near',
       'doNotIncludeResources',
       'maxPerPage',
       'page',
@@ -40,8 +45,7 @@ const Schema = {
     ]
   },
   async handler(ctx) {
-    const { containerUri, filters, doNotIncludeResources, maxPerPage, page, sortOrder, sortPredicate, jsonContext } =
-      ctx.params;
+    const { containerUri, doNotIncludeResources, maxPerPage, page, sortOrder, sortPredicate, jsonContext } = ctx.params;
     let { webId } = ctx.params;
     // @ts-expect-error
     webId = webId || ctx.meta.webId || 'anon';
@@ -79,14 +83,14 @@ const Schema = {
     }
 
     if (!doNotIncludeResources) {
-      const filtersQuery = buildFiltersQuery(filters);
+      const filtersQuery = await this.buildResourcesFiltersQuery(ctx);
 
       // Transform the prefixed predicate to a full URI if necessary
       const expandedSortPredicate =
         sortPredicate && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortPredicate }));
 
       // The predicate may come from a HTTP header, so make sure it cannot be used for SPARQL injection
-      if (expandedSortPredicate && !/^[a-z][a-z0-9+.-]*:[^\s<>"{}|\\^`]+$/i.test(expandedSortPredicate)) {
+      if (expandedSortPredicate && !isValidIri(expandedSortPredicate)) {
         throw new MoleculerError('Invalid sort predicate', 400, 'BAD_REQUEST');
       }
 
@@ -106,7 +110,7 @@ const Schema = {
           SELECT ?s1 ${sortPredicate ? '(MIN(?value) AS ?sortValue)' : ''}
           WHERE {
             <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
-            ${filtersQuery.where}
+            ${filtersQuery}
             ${sortPredicate ? `OPTIONAL { ?s1 <${expandedSortPredicate}> ?value }` : ''}
           }
           ${sortPredicate ? 'GROUP BY ?s1' : ''}
