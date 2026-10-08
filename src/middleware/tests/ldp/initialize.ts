@@ -45,6 +45,10 @@ const containers = [
   {
     path: '/files',
     permissions
+  },
+  {
+    path: '/projects',
+    permissions
   }
 ];
 

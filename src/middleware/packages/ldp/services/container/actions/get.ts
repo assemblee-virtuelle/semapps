@@ -17,14 +17,31 @@ const Schema = {
     filters: { type: 'object', optional: true },
     // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     doNotIncludeResources: { type: 'boolean', default: false },
+    maxPerPage: { type: 'number', optional: true },
+    page: { type: 'number', default: 1 },
+    sortOrder: { type: 'enum', values: ['ASC', 'DESC'], default: 'ASC' },
+    sortPredicate: { type: 'string', optional: true },
     // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
     jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
   },
   cache: {
-    keys: ['containerUri', 'accept', 'filters', 'doNotIncludeResources', 'jsonContext', 'webId', '#webId']
+    keys: [
+      'containerUri',
+      'accept',
+      'filters',
+      'doNotIncludeResources',
+      'maxPerPage',
+      'page',
+      'sortOrder',
+      'sortPredicate',
+      'jsonContext',
+      'webId',
+      '#webId'
+    ]
   },
   async handler(ctx) {
-    const { containerUri, filters, doNotIncludeResources, jsonContext } = ctx.params;
+    const { containerUri, filters, doNotIncludeResources, maxPerPage, page, sortOrder, sortPredicate, jsonContext } =
+      ctx.params;
     let { webId } = ctx.params;
     // @ts-expect-error
     webId = webId || ctx.meta.webId || 'anon';
@@ -64,14 +81,37 @@ const Schema = {
     if (!doNotIncludeResources) {
       const filtersQuery = buildFiltersQuery(filters);
 
+      // Transform the prefixed predicate to a full URI if necessary
+      const expandedSortPredicate =
+        sortPredicate && (await ctx.call('jsonld.parser.expandPredicate', { predicate: sortPredicate }));
+
+      // The predicate may come from a HTTP header, so make sure it cannot be used for SPARQL injection
+      if (expandedSortPredicate && !/^[a-z][a-z0-9+.-]*:[^\s<>"{}|\\^`]+$/i.test(expandedSortPredicate)) {
+        throw new MoleculerError('Invalid sort predicate', 400, 'BAD_REQUEST');
+      }
+
+      // Resources without the sort predicate are kept, and put at the end whatever the sort order.
+      // Without sort predicate, we still sort by URI so that pages are stable.
+      const orderQuery = sortPredicate
+        ? `ORDER BY (!BOUND(?sortValue)) ${sortOrder}(?sortValue) ?s1`
+        : maxPerPage
+          ? 'ORDER BY ?s1'
+          : '';
+
+      const limitQuery = maxPerPage ? `LIMIT ${maxPerPage} OFFSET ${(page - 1) * maxPerPage}` : '';
+
       const resourcesResults = await ctx.call('triplestore.query', {
         query: `
           ${await ctx.call('ontologies.getRdfPrefixes')}
-          SELECT ?s1
+          SELECT ?s1 ${sortPredicate ? '(MIN(?value) AS ?sortValue)' : ''}
           WHERE {
             <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
             ${filtersQuery.where}
+            ${sortPredicate ? `OPTIONAL { ?s1 <${expandedSortPredicate}> ?value }` : ''}
           }
+          ${sortPredicate ? 'GROUP BY ?s1' : ''}
+          ${orderQuery}
+          ${limitQuery}
         `,
         accept,
         webId

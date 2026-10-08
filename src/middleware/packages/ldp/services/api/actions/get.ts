@@ -10,11 +10,13 @@ const { MoleculerError } = Errors;
 export default async function get(this: any, ctx: any) {
   try {
     const { username, slugParts } = ctx.params;
+    let { page } = ctx.params;
 
     const uri = this.getUriFromSlugParts(slugParts, username);
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
     let res;
+    const links = [];
 
     if (types.includes('http://www.w3.org/ns/ldp#Container')) {
       /*
@@ -26,9 +28,47 @@ export default async function get(this: any, ctx: any) {
         ...ctx.meta.headers
       };
 
-      // See https://www.w3.org/TR/ldp/#prefer-parameters
-      const doNotIncludeResources =
-        ctx.meta.headers?.prefer === 'return=representation; include="http://www.w3.org/ns/ldp#PreferMinimalContainer"';
+      let doNotIncludeResources = false;
+      let maxPerPage: number | undefined;
+      let sortPredicate: string | undefined;
+      let sortOrder: string | undefined;
+
+      // See https://www.w3.org/TR/ldp/#prefer-parameters and https://www.w3.org/TR/ldp-paging/
+      const prefer: string | undefined = ctx.meta.headers?.prefer;
+      if (prefer) {
+        doNotIncludeResources = prefer.includes('include="http://www.w3.org/ns/ldp#PreferMinimalContainer"');
+
+        let regexResults = /max-member-count="(\d+)"/.exec(prefer);
+        maxPerPage = regexResults?.[1] ? parseInt(regexResults[1], 10) || undefined : undefined;
+
+        regexResults = /sort-predicate="([^"]+)"/.exec(prefer);
+        sortPredicate = regexResults?.[1];
+
+        regexResults = /sort-order="(ASC|asc|DESC|desc)"/.exec(prefer);
+        sortOrder = regexResults?.[1] ? regexResults[1].toUpperCase() : 'ASC';
+
+        if (maxPerPage) {
+          if (!page) {
+            // If paging is requested but no page number is provided, redirect to the first page
+            ctx.meta.$statusCode = 303;
+            ctx.meta.$location = `${uri}?page=1`;
+            ctx.meta.$responseHeaders = { 'Content-Length': 0 };
+            return;
+          }
+
+          page = parseInt(page, 10);
+          if (!(page >= 1)) throw new MoleculerError('Invalid page number', 400, 'BAD_REQUEST');
+
+          const resourcesUris = await ctx.call('ldp.container.getUris', { containerUri: uri });
+          const numPages = Math.ceil(resourcesUris.length / maxPerPage);
+
+          links.push({ uri: 'http://www.w3.org/ns/ldp#Page', rel: 'type' });
+          links.push({ uri: `${uri}?page=1`, rel: 'first' });
+          if (numPages > page) links.push({ uri: `${uri}?page=${page + 1}`, rel: 'next' });
+          if (page > 1) links.push({ uri: `${uri}?page=${page - 1}`, rel: 'prev' });
+          if (numPages > 1) links.push({ uri: `${uri}?page=${numPages}`, rel: 'last' });
+        }
+      }
 
       res = await ctx.call(
         controlledActions?.list || 'ldp.container.get',
@@ -36,13 +76,17 @@ export default async function get(this: any, ctx: any) {
           containerUri: uri,
           accept,
           jsonContext: parseJson(ctx.meta.headers?.jsonldcontext),
-          doNotIncludeResources
+          doNotIncludeResources,
+          maxPerPage,
+          page: maxPerPage ? page : undefined,
+          sortPredicate,
+          sortOrder: sortPredicate ? sortOrder : undefined
         })
       );
 
-      if (doNotIncludeResources) {
+      if (doNotIncludeResources || maxPerPage || sortPredicate) {
         if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
-        ctx.meta.$responseHeaders['Preference-Applied'] = 'return=representation';
+        ctx.meta.$responseHeaders['Preference-Applied'] = prefer;
       }
 
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
@@ -110,7 +154,7 @@ export default async function get(this: any, ctx: any) {
     }
 
     if (!ctx.meta.$responseHeaders) ctx.meta.$responseHeaders = {};
-    ctx.meta.$responseHeaders.Link = await ctx.call('ldp.link-header.get', { uri });
+    ctx.meta.$responseHeaders.Link = await ctx.call('ldp.link-header.get', { uri, additionalLinks: links });
 
     // Hack to make our servers work with Mastodon servers, which except a special profile
     if (ctx.meta.$responseType === 'application/ld+json')

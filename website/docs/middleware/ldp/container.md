@@ -100,6 +100,10 @@ Get the LDP container with all its resources (which are dereferenced)
 | `accept`                | `String`            | **required**        | Type to return                                     |
 | `filters`               | `Object`            |                     | Key/value with predicates and value                |
 | `doNotIncludeResources` | `Boolean`           | false               | If true, does not return the contained resources   |
+| `maxPerPage`            | `Number`            |                     | If set, only return this number of resources       |
+| `page`                  | `Number`            | 1                   | If paging is activated, the page to return         |
+| `sortPredicate`         | `String`            |                     | Sort resources by this predicate (URI or prefixed) |
+| `sortOrder`             | `String`            | "ASC"               | Sort order: ascending (ASC) or descending (DESC)   |
 | `jsonContext`           | `Object`or `String` |                     | JSON-LD context to use when compacting the results |
 | `webId`                 | `String`            | Logged user's webId | User doing the action                              |
 

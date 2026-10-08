@@ -65,7 +65,9 @@ export const fetchServer = (url: any, options = {}) => {
     // @ts-expect-error TS(2339): Property 'body' does not exist on type '{}'.
     body: options.body,
     // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
-    headers: options.headers
+    headers: options.headers,
+    // @ts-expect-error TS(2339): Property 'redirect' does not exist on type '{}'.
+    redirect: options.redirect
   })
     .then(response =>
       response.text().then(text => ({
