@@ -54,6 +54,9 @@ const Schema = {
       graphName
     });
 
+    // Clear the cache before returning, even if no event is emitted
+    await this.invalidateStored(resourceUri);
+
     const returnValues = {
       resourceUri,
       oldData,

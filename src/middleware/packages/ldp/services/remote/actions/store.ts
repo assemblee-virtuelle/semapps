@@ -95,6 +95,9 @@ const Schema = {
       dataset
     });
 
+    // Clear the cache before returning, even if no event is emitted, so that the stored resource is never stale
+    await this.invalidateStored(resourceUri);
+
     // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit(
