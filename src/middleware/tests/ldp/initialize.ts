@@ -52,7 +52,7 @@ const containers = [
   }
 ];
 
-const initialize = async () => {
+const initialize = async (activateCache = CONFIG.ACTIVATE_CACHE) => {
   await clearDataset(CONFIG.MAIN_DATASET);
 
   const uploadsPath = pathJoin(__dirname, '../uploads');
@@ -62,7 +62,7 @@ const initialize = async () => {
 
   const broker = new ServiceBroker({
     // @ts-expect-error TS(2322): Type '{ name: string; created(broker: any): void; ... Remove this comment to see the full error message
-    middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+    middlewares: [CacherMiddleware(activateCache), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
       options: {

@@ -36,6 +36,11 @@ const LdpRemoteSchema = {
     }
   },
   methods: {
+    async invalidateStored(resourceUri: string) {
+      if (this.broker.cacher) {
+        await this.broker.cacher.clean(`ldp.remote.getStored:${resourceUri}|**`);
+      }
+    },
     async proxyAvailable() {
       const services = await this.broker.call('$node.services');
       return services.some((s: any) => s.name === 'signature.proxy');

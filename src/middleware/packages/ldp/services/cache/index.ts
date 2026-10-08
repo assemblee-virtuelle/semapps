@@ -26,6 +26,7 @@ const LdpCacheSchema = {
           const { resourceUri, dataset } = ctx.params;
           await this.broker.cacher.clean(`ldp.resource.get:${resourceUri}**`);
           await this.broker.cacher.clean(`ldp.resource.getTypes:${resourceUri}**`);
+          await this.broker.cacher.clean(`ldp.remote.getStored:${resourceUri}|**`);
 
           // Also invalidate the cache of the containers containing the resource
           // For deleted resources, no container will be found (containers will be invalidated through the ldp.resource.detached event)

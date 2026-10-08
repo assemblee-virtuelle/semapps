@@ -21,6 +21,14 @@ const Schema = {
     },
     webId: { type: 'string', optional: true }
   },
+  cache: {
+    // The same remote resource may be stored in several datasets (Pod provider config), and the permissions
+    // are checked by the triplestore query, so the webId and the dataset must be part of the cache key.
+    // The cache is cleared by ldp.remote.store and ldp.remote.delete (and ldp.cache.invalidateResource).
+    // The TTL is a safety net in case a stored remote resource is modified directly in the triplestore.
+    keys: ['resourceUri', 'accept', 'jsonContext', 'webId', '#webId', '#dataset'],
+    ttl: 60 * 60 * 24
+  },
   async handler(ctx) {
     const { resourceUri, jsonContext } = ctx.params;
     // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
