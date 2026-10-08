@@ -8,11 +8,8 @@ const Schema = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     resource: { type: 'object', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     keepInSync: { type: 'boolean', default: false },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     mirrorGraph: { type: 'boolean', default: false },
     webId: { type: 'string', optional: true },
     dataset: { type: 'string', optional: true }
@@ -98,7 +95,6 @@ const Schema = {
     // Clear the cache before returning, even if no event is emitted, so that the stored resource is never stale
     await this.invalidateStored(resourceUri);
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit(
         'ldp.remote.stored',

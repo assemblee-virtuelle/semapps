@@ -18,7 +18,6 @@ const WebaclSchema = {
     const { baseUrl, graphName, podProvider, superAdmins } = this.settings;
 
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "webacl.resource"; settings: { baseU... Remove this comment to see the full error message
       mixins: [WebAclResourceService],
       settings: {
         baseUrl,
@@ -28,7 +27,6 @@ const WebaclSchema = {
     });
 
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "webacl.group"; settings: { baseUrl:... Remove this comment to see the full error message
       mixins: [WebAclGroupService],
       settings: {
         baseUrl,

@@ -10,7 +10,6 @@ const Schema = {
   },
   async handler(ctx) {
     const { uri, type, mode } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     // If no authorizers have been registered, assume user can access everything

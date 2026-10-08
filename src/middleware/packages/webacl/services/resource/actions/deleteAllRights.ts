@@ -24,7 +24,6 @@ export const action = {
 
     ctx.emit(
       'webacl.resource.deleted',
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       { uri: resourceUri, dataset: ctx.meta.dataset, isContainer },
       { meta: { webId: null, dataset: null } }
     );

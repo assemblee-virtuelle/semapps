@@ -18,11 +18,9 @@ const TypeRegistrationsSchema = {
     register: {
       visibility: 'public',
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
         types: { type: 'array' },
         containerUri: { type: 'string' },
         webId: { type: 'string' },
-        // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
         isPrivate: { type: 'boolean', default: false }
       },
       async handler(ctx) {
@@ -296,13 +294,11 @@ const TypeRegistrationsSchema = {
   events: {
     'ldp.container.created': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri, options, webId } = ctx.params;
 
         if (options?.typeIndex) {
           await ctx.call('type-indexes.waitForIndexCreation', { type: options.typeIndex, webId });
 
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.register(
             {
               types: arrayOf(options?.acceptedTypes),

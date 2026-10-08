@@ -10,7 +10,6 @@ const { MoleculerError } = Errors;
 const Schema = {
   visibility: 'public',
   params: {
-    // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
     resource: {
       type: 'object'
     },
@@ -29,7 +28,6 @@ const Schema = {
   async handler(ctx) {
     let { resource, contentType, body } = ctx.params;
     let { webId } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
     let newData;
 
@@ -40,7 +38,6 @@ const Schema = {
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri }))
       throw new MoleculerError(
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         `Remote resource ${resourceUri} cannot be modified (dataset: ${ctx.meta.dataset})`,
         403,
         'FORBIDDEN'
@@ -134,7 +131,6 @@ const Schema = {
         }
       );
 
-      // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
       if (!ctx.meta.skipEmitEvent) {
         ctx.emit(
           'ldp.resource.updated',
@@ -143,7 +139,6 @@ const Schema = {
             oldData,
             newData,
             webId,
-            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             dataset: ctx.meta.dataset
           },
           {

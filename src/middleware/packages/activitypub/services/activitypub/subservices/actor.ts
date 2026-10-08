@@ -20,7 +20,6 @@ const ActorService = {
       async handler(ctx) {
         const { actorUri, webId } = ctx.params;
         // If dataset is not in the meta, assume that actor is remote
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         if (ctx.meta.dataset && !(await ctx.call('ldp.remote.isRemote', { resourceUri: actorUri }))) {
           try {
             // Don't return immediately the promise, or we won't be able to catch errors
@@ -194,7 +193,6 @@ const ActorService = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         if (this.isActor(newData)) {
           await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
@@ -206,7 +204,6 @@ const ActorService = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
         if (this.isActor(oldData)) {
           await ctx.call('keys.deleteAllKeysForWebId', { webId: resourceUri });
@@ -216,9 +213,7 @@ const ActorService = {
 
     'auth.registered': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
         await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       }
     }

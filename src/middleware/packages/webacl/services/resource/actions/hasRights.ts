@@ -103,7 +103,6 @@ export const action = {
     rights: {
       type: 'object',
       optional: true,
-      // @ts-expect-error TS(2353): Object literal may only specify known properties, ... Remove this comment to see the full error message
       strict: true,
       props: {
         read: { type: 'boolean', optional: true },
@@ -124,7 +123,6 @@ export const action = {
   },
   async handler(ctx) {
     let { resourceUri, webId, rights } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
     rights = rights || {};
     if (Object.keys(rights).length === 0) rights = { read: true, write: true, append: true, control: true };

@@ -87,7 +87,6 @@ const KeysService = {
       },
       async handler(ctx) {
         const { keyType } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
 
         // Get the key container, to search by type.
@@ -158,17 +157,13 @@ const KeysService = {
     getMultikey: {
       params: {
         webId: { type: 'string' },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
         keyType: { type: 'string', default: KEY_TYPES.ED25519 },
         /** Add the secret key to the key object, if not set (or the public key id is provided), it will be removed. */
-        // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
         withPrivateKey: { type: 'boolean', default: false }
       },
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { keyId, keyType, withPrivateKey, webId = ctx.meta.webId } = ctx.params;
 
         // Get key from parameters, id (URI) or the one associated with the webId (in that priority).
@@ -338,7 +333,6 @@ const KeysService = {
       params: {
         webId: { type: 'string' },
         keyId: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true }
       },
       async handler(ctx) {
@@ -428,12 +422,10 @@ const KeysService = {
     publishPublicKeyLocally: {
       params: {
         keyId: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
         const privateKeyUri = ctx.params.keyId || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
         const keyObject =
@@ -472,13 +464,11 @@ const KeysService = {
     delete: {
       params: {
         resourceUri: { type: 'string', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         webId: { type: 'string', optional: true }
       },
       async handler(ctx) {
         const resourceUri = ctx.params.resourceUri || ctx.params.keyObject?.id || ctx.params.keyObject?.['@id'];
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const webId = ctx.params.webId || ctx.meta.webId;
         const keyObject =
           ctx.params.keyObject || (await ctx.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId }));
@@ -570,7 +560,6 @@ const KeysService = {
      */
     getPublicKeyObject: {
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         keyObject: { type: 'object', optional: true },
         keyId: { type: 'string', optional: true }
       },
@@ -652,7 +641,6 @@ const KeysService = {
 
     'auth.registered': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
         if (!this.isMigrated) {
@@ -681,7 +669,6 @@ const KeysService = {
         // Create, publish and attach keys to the webId.
         await Promise.all([
           this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.RSA }, { parentCtx: ctx }),
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           this.actions.createKeyForActor({ webId, attachToWebId: true, keyType: KEY_TYPES.ED25519 }, { parentCtx: ctx })
         ]);
       }

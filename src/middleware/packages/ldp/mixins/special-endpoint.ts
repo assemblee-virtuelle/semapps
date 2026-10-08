@@ -80,14 +80,12 @@ const Schema = {
 
     endpointGet: {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = ctx.meta.headers?.accept;
 
         return await ctx.call(
           'ldp.resource.get',
           {
             resourceUri: this.endpointUrl,
-            // @ts-expect-error
             accept: ctx.meta.headers?.accept,
             webId: 'system'
           },

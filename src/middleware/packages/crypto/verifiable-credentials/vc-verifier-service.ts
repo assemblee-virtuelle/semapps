@@ -47,9 +47,7 @@ const VCPresentationService = {
             issuer: { type: 'string', optional: true },
             validFrom: { type: 'string', optional: true },
             validUntil: { type: 'string', optional: true },
-            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             credentialSubject: { type: 'object' },
-            // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
             proof: { type: 'multi', optional: true, rules: [{ type: 'object' }, { type: 'array', items: 'object' }] }
           }
         },
@@ -57,7 +55,6 @@ const VCPresentationService = {
           type: 'object',
           default: {},
           params: {
-            // @ts-expect-error TS(2322): Type '{ type: "string"; default: string; }' is not... Remove this comment to see the full error message
             proofPurpose: { type: 'string', default: 'assertionMethod' }
           }
         }
@@ -91,7 +88,6 @@ const VCPresentationService = {
      */
     verifyPresentation: {
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         verifiablePresentation: { type: 'object' },
         options: {
           type: 'object',
@@ -100,13 +96,10 @@ const VCPresentationService = {
             challenge: { type: 'string', optional: true },
             domain: { type: 'string', optional: true },
             proofPurpose: { type: 'string', optional: true },
-            // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
             unsignedPresentation: { type: 'boolean', default: false }
           }
         },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         credentialPurpose: { type: 'object', optional: true },
-        // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
         presentationPurpose: { type: 'object', optional: true }
       },
       async handler(ctx) {
@@ -161,13 +154,11 @@ const VCPresentationService = {
      */
     verifyCapabilityPresentation: {
       params: {
-        // @ts-expect-error TS(2322): Type '{ type: "object"; }' is not assignable to ty... Remove this comment to see the full error message
         verifiablePresentation: { type: 'object' },
         options: {
           type: 'object',
           default: {},
           params: {
-            // @ts-expect-error TS(2322): Type '{ type: "number"; default: number; }' is not... Remove this comment to see the full error message
             maxChainLength: { type: 'number', default: 2 },
             challenge: { type: 'string', optional: true },
             domain: { type: 'string', optional: true }

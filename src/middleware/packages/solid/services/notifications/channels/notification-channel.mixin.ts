@@ -5,7 +5,6 @@ import { SpecialEndpointMixin, ControlledContainerMixin, getDatasetFromUri, arra
 import { ACTIVITY_TYPES } from '@semapps/activitypub';
 import { MIME_TYPES } from '@semapps/mime-types';
 import rdf from '@rdfjs/data-model';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidV4 } from 'uuid';
 import moment from 'moment';
 import type { ServiceSchema } from 'moleculer';
@@ -83,7 +82,6 @@ const Schema = {
         const type = ctx.params.type || ctx.params['@type'];
         const topic = ctx.params.topic || ctx.params['notify:topic'];
         const sendToParam = ctx.params.sendTo || ctx.params['notify:sendTo'];
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const { webId } = ctx.meta;
 
         // TODO: Use ldo objects; This will only check for the json type and not parse json-ld variants...
@@ -143,7 +141,6 @@ const Schema = {
         this.channels.push(channel);
         this.onChannelCreated(channel);
 
-        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = 'application/ld+json';
         return this.actions.get(
           {
@@ -171,7 +168,6 @@ const Schema = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.CREATE, newData['dc:modified']);
       }
@@ -179,7 +175,6 @@ const Schema = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, newData } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, newData['dc:modified']);
       }
@@ -187,7 +182,6 @@ const Schema = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.UPDATE, await this.getModified(resourceUri));
       }
@@ -195,7 +189,6 @@ const Schema = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri } = ctx.params;
         this.onResourceEvent(resourceUri, ACTIVITY_TYPES.DELETE, new Date().toISOString());
       }
@@ -203,7 +196,6 @@ const Schema = {
 
     'ldp.container.attached': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri, resourceUri } = ctx.params;
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.ADD);
       }
@@ -211,7 +203,6 @@ const Schema = {
 
     'ldp.container.detached': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri, resourceUri } = ctx.params;
         this.onContainerOrCollectionEvent(containerUri, resourceUri, ACTIVITY_TYPES.REMOVE);
       }
@@ -219,7 +210,6 @@ const Schema = {
 
     'activitypub.collection.added': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'O... Remove this comment to see the full error message
         const { collectionUri, itemUri, item } = ctx.params;
         // Mastodon sometimes send unfetchable activities (like `Accept` activities)
         // In this case, we receive the activity as `item` and `itemUri` is undefined
@@ -230,9 +220,7 @@ const Schema = {
 
     'activitypub.collection.removed': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'collectionUri' does not exist on type 'O... Remove this comment to see the full error message
         const { collectionUri, itemUri } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'onContainerOrCollectionEvent' does not e... Remove this comment to see the full error message
         this.onContainerOrCollectionEvent(collectionUri, itemUri, ACTIVITY_TYPES.REMOVE);
       }
     }

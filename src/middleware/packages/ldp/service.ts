@@ -37,7 +37,6 @@ const LdpSchema = {
     } = this.settings;
 
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "ldp.container"; settings: { baseUrl... Remove this comment to see the full error message
       mixins: [LdpContainerService],
       settings: {
         baseUrl,
@@ -62,7 +61,6 @@ const LdpSchema = {
     });
 
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "ldp.remote"; mixins: any[]; setting... Remove this comment to see the full error message
       mixins: [LdpRemoteService],
       settings: {
         baseUrl,
@@ -72,7 +70,6 @@ const LdpSchema = {
     });
 
     this.broker.createService({
-      // @ts-expect-error TS(2322): Type '{ name: "ldp.registry"; settings: { baseUrl:... Remove this comment to see the full error message
       mixins: [LdpRegistryService],
       settings: {
         baseUrl,

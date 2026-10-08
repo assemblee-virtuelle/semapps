@@ -9,7 +9,6 @@ const { MoleculerError } = Errors;
 const Schema = {
   visibility: 'public',
   params: {
-    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
     resource: 'object',
     webId: {
       type: 'string',
@@ -21,7 +20,6 @@ const Schema = {
   },
   async handler(ctx) {
     let { resource, contentType, body } = ctx.params;
-    // @ts-expect-error
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const resourceUri = resource.id || resource['@id'];
 
@@ -88,11 +86,9 @@ const Schema = {
       resourceUri,
       newData,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
     }

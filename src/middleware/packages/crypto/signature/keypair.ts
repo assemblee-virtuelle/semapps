@@ -239,7 +239,6 @@ const SignatureService = {
   events: {
     'auth.registered': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
         if (this.isMigrated) {
           return;
@@ -252,7 +251,6 @@ const SignatureService = {
 
     'keys.migration.migrated': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'isMigrated' does not exist on type 'Serv... Remove this comment to see the full error message
         this.isMigrated = true;
       }
     }

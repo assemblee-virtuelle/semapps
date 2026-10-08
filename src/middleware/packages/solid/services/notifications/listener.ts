@@ -2,7 +2,6 @@ import path from 'path';
 import urlJoin from 'url-join';
 import fetch from 'node-fetch';
 import LinkHeader from 'http-link-header';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
 import DbService from 'moleculer-db';
 import { parseHeader, negotiateContentType, parseJson } from '@semapps/middlewares';
@@ -179,7 +178,6 @@ const SolidNotificationsListenerSchema = {
           } catch (e) {
             // Ignore errors that the actions may generate (otherwise 404 errors will be considered as non-existing webhooks)
           }
-          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = 200;
         } else {
           throw new MoleculerError(`No webhook found with URL ${webhookUrl}`, 404, 'NOT_FOUND');

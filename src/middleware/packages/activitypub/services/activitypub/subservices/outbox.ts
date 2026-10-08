@@ -74,17 +74,14 @@ const OutboxService = {
         }
 
         // Ensure logged user is posting to his own outbox
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
           throw new E.UnAuthorizedError(
             'UNAUTHORIZED',
-            // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
             `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`
           );
         }
 
         if (this.settings.podProvider) {
-          // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
           ctx.meta.dataset = getSlugFromUri(actorUri);
         }
 
@@ -95,7 +92,6 @@ const OutboxService = {
         // Wrap object in Create activity, if necessary
         activity = await ctx.call('activitypub.object.wrap', { activity });
 
-        // @ts-expect-error TS(2339): Property 'doNotProcessObject' does not exist on ty... Remove this comment to see the full error message
         if (!ctx.meta.doNotProcessObject && transient !== true) {
           // Process object create, update or delete
           // and return an activity with the object ID

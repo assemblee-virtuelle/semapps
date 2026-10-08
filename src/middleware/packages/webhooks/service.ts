@@ -59,7 +59,6 @@ const WebhooksService = {
 
     generate: {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         const userUri = ctx.meta.webId || ctx.params.userUri;
         const { action } = ctx.params;
 

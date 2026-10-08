@@ -123,7 +123,6 @@ const GroupsManagerSchema = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, oldData } = ctx.params;
         // @ts-expect-error TS(2339): Property 'isUser' does not exist on type 'ServiceE... Remove this comment to see the full error message
         if (this.isUser(oldData)) {

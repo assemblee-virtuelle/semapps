@@ -15,7 +15,6 @@ const Schema = {
     accept: { type: 'string', optional: true },
     jsonContext: {
       type: 'multi',
-      // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
       optional: true
     },
@@ -32,7 +31,6 @@ const Schema = {
   },
   async handler(ctx) {
     const { resourceUri, aclVerified, jsonContext } = ctx.params;
-    // @ts-expect-error
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (await ctx.call('ldp.remote.isRemote', { resourceUri })) {

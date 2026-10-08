@@ -59,7 +59,6 @@ const AuthLocalService = {
         const { username, email, password, ...rest } = ctx.params;
 
         // This is going to get in our way otherwise when waiting for completions.
-        // @ts-expect-error TS(2339): Property 'skipObjectsWatcher' does not exist on ty... Remove this comment to see the full error message
         ctx.meta.skipObjectsWatcher = true;
 
         let accountData = await ctx.call('auth.account.create', {
@@ -109,11 +108,8 @@ const AuthLocalService = {
 
     logout: {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 302;
-        // @ts-expect-error TS(2339): Property '$location' does not exist on type '{}'.
         ctx.meta.$location = ctx.params.redirectUrl || this.settings.formUrl;
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
         ctx.emit('auth.disconnected', { webId: ctx.meta.webId });
       }
     },
@@ -127,9 +123,7 @@ const AuthLocalService = {
               formUrl.searchParams.set(key, value);
             }
           }
-          // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
           ctx.meta.$statusCode = 302;
-          // @ts-expect-error TS(2339): Property '$location' does not exist on type '{}'.
           ctx.meta.$location = formUrl.toString();
         } else {
           throw new Error('No formUrl defined in auth.local settings');

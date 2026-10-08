@@ -24,7 +24,6 @@ const LdpRemoteSchema = {
     getGraph: getGraphAction,
     getNetwork: getNetworkAction,
     getStored: getStoredAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     isRemote: isRemoteAction,
     store: storeAction,
 

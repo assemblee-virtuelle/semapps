@@ -31,7 +31,6 @@ const LdpResourceSchema = {
     awaitCreateComplete: awaitCreateCompleteAction,
     create: createAction,
     delete: deleteAction,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ resourceUri: { type: "string"... Remove this comment to see the full error message
     exist: existAction,
     generateId: generateIdAction,
     get: getAction,

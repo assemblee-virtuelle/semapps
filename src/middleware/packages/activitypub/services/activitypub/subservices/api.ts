@@ -52,7 +52,6 @@ const ApiService = {
     inbox: {
       async handler(ctx) {
         const { actorSlug, ...activity } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'requestUrl' does not exist on type '{}'.
         const { requestUrl } = ctx.meta;
         const { origin } = new URL(this.settings.baseUri);
 
@@ -61,7 +60,6 @@ const ApiService = {
           ...activity
         });
 
-        // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 202;
       }
     },
@@ -69,7 +67,6 @@ const ApiService = {
     outbox: {
       async handler(ctx) {
         let { actorSlug, ...activity } = ctx.params;
-        // @ts-expect-error TS(2339): Property 'requestUrl' does not exist on type '{}'.
         const { requestUrl } = ctx.meta;
         const { origin } = new URL(this.settings.baseUri);
 
@@ -78,15 +75,12 @@ const ApiService = {
           ...activity
         });
 
-        // @ts-expect-error TS(2339): Property '$responseHeaders' does not exist on type... Remove this comment to see the full error message
         ctx.meta.$responseHeaders = {
           Location: activity.id || activity['@id'],
           'Content-Length': 0
         };
         // We need to set this also here (in addition to above) or we get a Moleculer warning
-        // @ts-expect-error TS(2339): Property '$location' does not exist on type '{}'.
         ctx.meta.$location = activity.id || activity['@id'];
-        // @ts-expect-error TS(2339): Property '$statusCode' does not exist on type '{}'... Remove this comment to see the full error message
         ctx.meta.$statusCode = 201;
       }
     }
@@ -94,7 +88,6 @@ const ApiService = {
   events: {
     'ldp.registry.registered': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'container' does not exist on type 'Optio... Remove this comment to see the full error message
         const { container } = ctx.params;
         const { pathname: basePath } = new URL(this.settings.baseUri);
         const resourcesWithContainerPath = await this.broker.call('ldp.getSetting', {
@@ -106,7 +99,6 @@ const ApiService = {
           arrayOf(container.acceptedTypes).some(type => Object.values(FULL_ACTOR_TYPES).includes(type))
         ) {
           await ctx.call('api.addRoute', {
-            // @ts-expect-error TS(2339): Property 'getBoxesRoute' does not exist on type 'S... Remove this comment to see the full error message
             route: this.getBoxesRoute(path.join(basePath, `${container.fullPath}/:actorSlug`))
           });
         }

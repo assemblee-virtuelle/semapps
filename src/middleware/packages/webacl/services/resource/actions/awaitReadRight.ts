@@ -23,7 +23,6 @@ export const action = {
             if (rights.read === true) {
               if (interval) clearInterval(interval);
               resolve(true);
-              // @ts-expect-error TS(18048): 'timeout' is possibly 'undefined'.
             } else if (i * 1000 >= timeout) {
               if (interval) clearInterval(interval);
               resolve(false);

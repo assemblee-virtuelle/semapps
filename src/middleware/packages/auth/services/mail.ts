@@ -5,7 +5,6 @@ import MailService from 'moleculer-mail';
 import type { ServiceSchema } from 'moleculer';
 import { fileURLToPath } from 'url';
 
-// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // The templates are at the root of the package, but this file also runs from dist/ (one level deeper)
 const templateFolder = path.join(

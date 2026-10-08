@@ -223,11 +223,9 @@ export const action = {
   },
   async handler(ctx) {
     let { resourceUri, webId, accept, skipResourceCheck } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     accept = accept || MIME_TYPES.TURTLE;
-    // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
     ctx.meta.$responseType = accept;
 
     const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));

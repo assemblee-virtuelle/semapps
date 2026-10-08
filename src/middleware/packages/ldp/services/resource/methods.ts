@@ -1,5 +1,4 @@
 import fs from 'fs';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'byte... Remove this comment to see the full error message
 import bytes from 'bytes';
 import rdfparseModule from 'rdf-parse';
 import streamifyString from 'streamify-string';

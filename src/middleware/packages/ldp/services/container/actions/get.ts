@@ -16,14 +16,12 @@ const Schema = {
     accept: { type: 'string', optional: true },
     // @ts-expect-error TS(2322): Type '{ type: "object"; optional: true; }' is not ... Remove this comment to see the full error message
     filters: { type: 'object', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     doNotIncludeResources: { type: 'boolean', default: false },
     ...resourcesFiltersParams,
     maxPerPage: { type: 'number', optional: true },
     page: { type: 'number', default: 1 },
     sortOrder: { type: 'enum', values: ['ASC', 'DESC'], default: 'ASC' },
     sortPredicate: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; }' is not assignable to typ... Remove this comment to see the full error message
     jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
   },
   cache: {
@@ -47,7 +45,6 @@ const Schema = {
   async handler(ctx) {
     const { containerUri, doNotIncludeResources, maxPerPage, page, sortOrder, sortPredicate, jsonContext } = ctx.params;
     let { webId } = ctx.params;
-    // @ts-expect-error
     webId = webId || ctx.meta.webId || 'anon';
 
     const { accept } = {
@@ -75,7 +72,6 @@ const Schema = {
 
     if (Object.keys(containerResults).length === 1 && containerResults['@context']) {
       throw new MoleculerError(
-        // @ts-expect-error
         `Container not found ${containerUri} (webId ${webId} / dataset ${ctx.meta.dataset})`,
         404,
         'NOT_FOUND'

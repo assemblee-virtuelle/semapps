@@ -43,13 +43,11 @@ export const action = {
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
     // newRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: false; min: numbe... Remove this comment to see the full error message
     newRights: { type: 'array', optional: false, min: 1 }
     // minimum is one right : We cannot leave a resource without rights.
   },
   async handler(ctx) {
     let { webId, newRights, resourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     webId = webId || ctx.meta.webId || 'anon';
 
     const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
@@ -148,7 +146,6 @@ export const action = {
     const returnValues = {
       uri: resourceUri,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset,
       created: false,
       isContainer,

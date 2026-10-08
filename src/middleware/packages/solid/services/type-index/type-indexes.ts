@@ -20,7 +20,6 @@ const TypeIndexesSchema = {
   dependencies: ['ontologies'],
   created() {
     this.broker.createService({
-      // @ts-expect-error TS(2345): Argument of type '{ mixins: { name: "type-registra... Remove this comment to see the full error message
       mixins: [TypeRegistrationsService]
     });
   },
@@ -201,7 +200,6 @@ const TypeIndexesSchema = {
   events: {
     'auth.registered': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'webId' does not exist on type 'Optionali... Remove this comment to see the full error message
         const { webId } = ctx.params;
 
         // Wait until the /solid/type-index container has been created for the user

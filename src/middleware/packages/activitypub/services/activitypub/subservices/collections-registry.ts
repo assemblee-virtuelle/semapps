@@ -267,7 +267,6 @@ const CollectionsRegistryService = {
   events: {
     'ldp.resource.created': {
       async handler(ctx) {
-        // @ts-expect-error
         const { resourceUri, newData, webId } = ctx.params;
         const collections = this.getCollectionsByType(newData.type || newData['@type']);
         for (const collection of collections) {
@@ -289,7 +288,6 @@ const CollectionsRegistryService = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
-        // @ts-expect-error
         const { resourceUri, newData, oldData, webId } = ctx.params;
         // Check if we need to create collection only if the type has changed
         if (this.hasTypeChanged(oldData, newData)) {
@@ -314,7 +312,6 @@ const CollectionsRegistryService = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
-        // @ts-expect-error
         const { resourceUri, triplesAdded, webId } = ctx.params;
         if (triplesAdded) {
           for (const triple of triplesAdded) {
@@ -342,11 +339,9 @@ const CollectionsRegistryService = {
 
     'ldp.resource.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'oldData' does not exist on type 'Optiona... Remove this comment to see the full error message
         const { oldData } = ctx.params;
         const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
         for (const collection of collections) {
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.deleteCollection(
             { objectUri: oldData.id || oldData['@id'], collection },
             { parentCtx: ctx }

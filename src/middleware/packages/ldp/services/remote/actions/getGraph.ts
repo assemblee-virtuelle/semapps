@@ -19,12 +19,10 @@ const Schema = {
     }
     exist = await ctx.call('triplestore.tripleExist', {
       triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
-      // @ts-expect-error TS(2339): Property 'mirrorGraphName' does not exist on type '... Remove this comment to see the full error message
       graphName: this.settings.mirrorGraphName
     });
 
     if (exist) {
-      // @ts-expect-error TS(2339): Property 'mirrorGraphName' does not exist on type '... Remove this comment to see the full error message
       return this.settings.mirrorGraphName;
     }
     return false;

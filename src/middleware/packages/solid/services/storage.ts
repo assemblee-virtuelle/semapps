@@ -36,7 +36,6 @@ const SolidStorageSchema = {
           secure: true
         });
 
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         ctx.meta.dataset = username;
 
         // Create the storage root container so that the LdpRegistryService can create the default containers

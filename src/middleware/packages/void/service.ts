@@ -352,7 +352,6 @@ const VoidSchema = {
           scalar += serversMap[serverUrl].length;
         }
 
-        // @ts-expect-error TS(2339): Property '$responseType' does not exist on type '{... Remove this comment to see the full error message
         ctx.meta.$responseType = accept;
 
         // TODO use Etag instead to keep track of changes in VOID
@@ -367,7 +366,6 @@ const VoidSchema = {
 
     api_get: {
       handler: async function api(ctx) {
-        // @ts-expect-error TS(2339): Property 'headers' does not exist on type '{}'.
         let { accept } = ctx.meta.headers;
         if (accept.includes('*/*')) accept = MIME_TYPES.JSON;
         else if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)

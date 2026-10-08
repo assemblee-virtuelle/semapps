@@ -10,7 +10,6 @@ const Schema = {
   },
   async handler(ctx) {
     const { resourceUri, acceptTombstones } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let exist = await ctx.call('triplestore.tripleExist', {
@@ -23,14 +22,12 @@ const Schema = {
       exist = await ctx.call('triplestore.tripleExist', {
         triple: rdf.quad(rdf.namedNode(resourceUri), rdf.variable('p'), rdf.variable('s')),
         webId,
-        // @ts-expect-error TS(2339): Property 'mirrorGraphName' does not exist on type '... Remove this comment to see the full error message
         graphName: this.settings.mirrorGraphName
       });
     }
 
     // If resource exists but we don't want tombstones, check the resource type
     if (exist && !acceptTombstones) {
-      // @ts-expect-error TS(2339): Property 'getTypes' does not exist on type '... Remove this comment to see the full error message
       const types = await this.actions.getTypes({ resourceUri }, { parentCtx: ctx });
       if (types.includes('https://www.w3.org/ns/activitystreams#Tombstone')) return false;
     }

@@ -6,7 +6,6 @@ import { isURL } from '../../../utils.ts';
 const Schema = {
   visibility: 'public',
   params: {
-    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
     resourceType: 'string'
   },
   async handler(ctx) {

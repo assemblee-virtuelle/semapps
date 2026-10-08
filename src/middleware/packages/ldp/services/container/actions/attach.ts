@@ -16,7 +16,6 @@ const Schema = {
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const isRemoteContainer = await ctx.call('ldp.remote.isRemote', { resourceUri: containerUri });
@@ -42,11 +41,9 @@ const Schema = {
       containerUri,
       resourceUri,
       webId,
-      // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
       dataset: ctx.meta.dataset
     };
 
-    // @ts-expect-error
     if (!isRemoteContainer && !ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.container.attached', returnValues, { meta: { webId: null, dataset: null } });
     }

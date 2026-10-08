@@ -28,12 +28,10 @@ const Schema = {
     containerUri: {
       type: 'string'
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToAdd: {
       type: 'array',
       optional: true
     },
-    // @ts-expect-error TS(2322): Type '{ type: "array"; optional: true; }' is not a... Remove this comment to see the full error message
     triplesToRemove: {
       type: 'array',
       optional: true
@@ -45,7 +43,6 @@ const Schema = {
   },
   async handler(ctx) {
     const { containerUri, triplesToAdd, triplesToRemove } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'webId' does not exist on type '{}'.
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const resourcesAdded = [];
     const resourcesRemoved = [];
@@ -119,11 +116,9 @@ const Schema = {
         }
       }
     }
-    // @ts-expect-error TS(2339): Property 'skipEmitEvent' does not exist on type '{... Remove this comment to see the full error message
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit(
         'ldp.container.patched',
-        // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
         { containerUri, resourcesAdded, resourcesRemoved, dataset: ctx.meta.dataset },
         { meta: { webId: null, dataset: null } }
       );

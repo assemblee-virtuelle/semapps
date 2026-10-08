@@ -1,6 +1,4 @@
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'spea... Remove this comment to see the full error message
 import createSlug from 'speakingurl';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'uuid... Remove this comment to see the full error message
 import { v4 as uuidv4 } from 'uuid';
 import urlJoin from 'url-join';
 import type { ActionSchema } from 'moleculer';
@@ -8,10 +6,8 @@ import type { ActionSchema } from 'moleculer';
 const Schema = {
   visibility: 'public',
   params: {
-    // @ts-expect-error TS(2322): Type 'string' is not assignable to type 'Parameter... Remove this comment to see the full error message
     containerUri: 'string',
     slug: { type: 'string', optional: true },
-    // @ts-expect-error TS(2322): Type '{ type: "boolean"; default: false; }' is not... Remove this comment to see the full error message
     isContainer: { type: 'boolean', default: false }
   },
   async handler(ctx) {
@@ -29,8 +25,7 @@ const Schema = {
     if ((!this.settings.resourcesWithContainerPath || !containerUri) && !isContainer) {
       // Use the root container URI
       containerUri = this.settings.podProvider
-        ? // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
-          await ctx.call('solid-storage.getUrl', { webId: urlJoin(this.settings.baseUrl, ctx.meta.dataset) })
+        ? await ctx.call('solid-storage.getUrl', { webId: urlJoin(this.settings.baseUrl, ctx.meta.dataset) })
         : this.settings.baseUrl;
     }
 

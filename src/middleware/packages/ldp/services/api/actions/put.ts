@@ -29,7 +29,6 @@ export default {
         body
       });
       ctx.meta.$statusCode = 204;
-      // @ts-expect-error
       ctx.meta.$responseHeaders = {
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
         'Content-Length': 0

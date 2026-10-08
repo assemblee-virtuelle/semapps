@@ -36,7 +36,6 @@ const WebaclGroupSchema = {
     api_getGroups: getGroupsAction.api,
     getMembers: getMembersAction.action,
     api_getMembers: getMembersAction.api,
-    // @ts-expect-error TS(2322): Type 'ActionSchema<{ groupSlug: { type: "string"; ... Remove this comment to see the full error message
     removeMember: removeMemberAction.action,
     api_removeMember: removeMemberAction.api
   },

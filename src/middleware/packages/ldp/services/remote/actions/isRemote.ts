@@ -9,7 +9,6 @@ const Schema = {
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
-    // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
     const dataset = ctx.params.dataset || ctx.meta.dataset;
 
     if (!urlJoin(resourceUri, '/').startsWith(this.settings.baseUrl)) {

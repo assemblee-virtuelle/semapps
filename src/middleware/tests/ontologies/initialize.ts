@@ -8,7 +8,6 @@ import { fileURLToPath } from 'url';
 import * as CONFIG from '../config.ts';
 import { clearDataset } from '../utils.ts';
 
-// @ts-expect-error TS(1470): The 'import.meta' meta-property is not allowed in ... Remove this comment to see the full error message
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default async (cacher: any) => {
@@ -44,7 +43,6 @@ export default async (cacher: any) => {
   });
 
   broker.createService({
-    // @ts-expect-error TS(2322): Type '{ name: "triplestore"; settings: { url: null... Remove this comment to see the full error message
     mixins: [TripleStoreService],
     settings: {
       url: CONFIG.SPARQL_ENDPOINT,

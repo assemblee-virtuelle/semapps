@@ -50,7 +50,6 @@ const LdpCacheSchema = {
   events: {
     'ldp.resource.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
         await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
@@ -58,7 +57,6 @@ const LdpCacheSchema = {
 
     'ldp.resource.updated': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
         await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
@@ -66,7 +64,6 @@ const LdpCacheSchema = {
 
     'ldp.resource.patched': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
         await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
@@ -74,7 +71,6 @@ const LdpCacheSchema = {
 
     'ldp.container.attached': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri } = ctx.params;
         await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
       }
@@ -82,7 +78,6 @@ const LdpCacheSchema = {
 
     'ldp.container.patched': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri } = ctx.params;
         await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
       }
@@ -90,7 +85,6 @@ const LdpCacheSchema = {
 
     'ldp.container.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri } = ctx.params;
         await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
       }
@@ -98,7 +92,6 @@ const LdpCacheSchema = {
 
     'ldp.container.detached': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'containerUri' does not exist on type 'Op... Remove this comment to see the full error message
         const { containerUri } = ctx.params;
         await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
       }
@@ -106,7 +99,6 @@ const LdpCacheSchema = {
 
     'ldp.remote.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
         await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
@@ -114,7 +106,6 @@ const LdpCacheSchema = {
 
     'ldp.remote.stored': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'resourceUri' does not exist on type 'Opt... Remove this comment to see the full error message
         const { resourceUri, dataset } = ctx.params;
         await this.actions.invalidateResource({ resourceUri, dataset }, { parentCtx: ctx });
       }
@@ -123,7 +114,6 @@ const LdpCacheSchema = {
     'webacl.resource.updated': {
       // Invalidate cache also when ACL rights are changed
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'uri' does not exist on type 'Optionalize... Remove this comment to see the full error message
         const { uri, isContainer, dataset } = ctx.params;
         if (isContainer) {
           await this.actions.invalidateContainer({ containerUri: uri }, { parentCtx: ctx });
@@ -135,12 +125,10 @@ const LdpCacheSchema = {
 
     'webacl.resource.deleted': {
       async handler(ctx) {
-        // @ts-expect-error TS(2339): Property 'uri' does not exist on type 'Optionalize... Remove this comment to see the full error message
         const { uri, isContainer, dataset } = ctx.params;
         if (isContainer) {
           await this.actions.invalidateContainer({ containerUri: uri }, { parentCtx: ctx });
         } else {
-          // @ts-expect-error TS(2339): Property 'actions' does not exist on type 'Service... Remove this comment to see the full error message
           await this.actions.invalidateResource({ resourceUri: uri, dataset }, { parentCtx: ctx });
         }
       }

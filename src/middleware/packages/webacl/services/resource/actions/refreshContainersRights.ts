@@ -51,7 +51,6 @@ export const action = {
             isContainer: true,
             removePublicRead,
             removeDefaultPublicRead,
-            // @ts-expect-error TS(2339): Property 'dataset' does not exist on type '{}'.
             dataset: ctx.meta.dataset
           },
           { meta: { webId: null, dataset: null } }
