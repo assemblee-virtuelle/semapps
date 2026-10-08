@@ -4,10 +4,11 @@ import type { ActionSchema } from 'moleculer';
 const Schema = {
   visibility: 'public',
   params: {
-    uri: { type: 'string' }
+    uri: { type: 'string' },
+    additionalLinks: { type: 'array', optional: true }
   },
   async handler(ctx) {
-    const { uri } = ctx.params;
+    const { uri, additionalLinks } = ctx.params;
     const linkHeader = new LinkHeader();
 
     for (const actionName of this.registeredActionNames) {
@@ -28,6 +29,12 @@ const Schema = {
         for (const link of links) {
           linkHeader.set(link);
         }
+      }
+    }
+
+    if (additionalLinks) {
+      for (const link of additionalLinks) {
+        linkHeader.set(link);
       }
     }
 

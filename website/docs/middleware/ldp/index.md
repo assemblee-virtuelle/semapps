@@ -106,6 +106,21 @@ These catch-all routes are automatically added to the `ApiGateway` service.
 
 > Note: If the `readOnly` container option is set (see above), only `GET` routes are added.
 
+### Paging and sorting containers
+
+When fetching a container, the following [Prefer](https://www.w3.org/TR/ldp/#prefer-parameters) parameters can be used:
+
+```
+Prefer: return=representation; max-member-count="20"; sort-predicate="vcard:given-name"; sort-order="ASC"
+```
+
+- `include="http://www.w3.org/ns/ldp#PreferMinimalContainer"`: do not return the contained resources.
+- `max-member-count`: enable [paging](https://www.w3.org/TR/ldp-paging/). If no `?page=N` is added to the container URI, the server redirects to the first page (303). The `Link` header includes the `first`, `last`, `prev` and `next` pages (when they exist), as well as a `http://www.w3.org/ns/ldp#Page` type.
+- `sort-predicate`: sort resources by this predicate (full URI, or prefixed if the ontology is registered). Resources without this predicate come last.
+- `sort-order`: `ASC` (default) or `DESC`.
+
+The `Preference-Applied` header repeats the `Prefer` header when one of these parameters was applied.
+
 ## Redirecting to a frontend app
 
 When a browser visits the URL of an LDP resource, for example https://data.yourserver.com/users/alice, with an `Accept`
