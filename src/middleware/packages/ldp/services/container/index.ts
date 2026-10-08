@@ -16,7 +16,18 @@ import getUrisAction from './actions/getUris.ts';
 import includesAction from './actions/includes.ts';
 import postAction from './actions/post.ts';
 import patchAction from './actions/patch.ts';
-import { getDatasetFromUri } from '../../utils.ts';
+import countAction from './actions/count.ts';
+import {
+  getDatasetFromUri,
+  arrayOf,
+  buildFiltersQuery,
+  buildSearchQuery,
+  buildNearQuery,
+  isValidIri
+} from '../../utils.ts';
+
+const { Errors } = moleculer;
+const { MoleculerError } = Errors;
 
 const LdpContainerSchema = {
   name: 'ldp.container' as const,
@@ -28,6 +39,7 @@ const LdpContainerSchema = {
   dependencies: ['triplestore', 'jsonld'],
   actions: {
     attach: attachAction,
+    count: countAction,
     clear: clearAction,
     create: createAction,
     createAndAttach: createAndAttachAction,
@@ -43,6 +55,29 @@ const LdpContainerSchema = {
     isEmpty: isEmptyAction,
     post: postAction,
     patch: patchAction
+  },
+  methods: {
+    // Build the SPARQL query filtering the resources (?s1) with the resourcesFiltersParams
+    async buildResourcesFiltersQuery(ctx: any) {
+      const { filters, search, searchPredicates, near } = ctx.params;
+
+      let searchPredicatesUris: string[] | undefined;
+      if (search && searchPredicates) {
+        searchPredicatesUris = await Promise.all(
+          arrayOf(searchPredicates).map(predicate => ctx.call('jsonld.parser.expandPredicate', { predicate }))
+        );
+        // The predicates may come from the query string, so make sure they cannot be used for SPARQL injection
+        if (!searchPredicatesUris!.every(isValidIri)) {
+          throw new MoleculerError('Invalid search predicate', 400, 'BAD_REQUEST');
+        }
+      }
+
+      return `
+        ${buildFiltersQuery(filters).where}
+        ${buildSearchQuery(search, searchPredicatesUris)}
+        ${buildNearQuery(near)}
+      `;
+    }
   },
   hooks: {
     before: {

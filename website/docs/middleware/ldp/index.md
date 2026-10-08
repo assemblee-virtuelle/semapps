@@ -121,6 +121,18 @@ Prefer: return=representation; max-member-count="20"; sort-predicate="vcard:give
 
 The `Preference-Applied` header repeats the `Prefer` header when one of these parameters was applied.
 
+### Filtering containers
+
+Resources of a container can be filtered with these query string parameters:
+
+- `q`: only keep resources containing these keywords (case-insensitive and accent-insensitive).
+- `q-predicate`: only search the keywords in this predicate (full URI, or prefixed if the ontology is registered). It can be repeated.
+- `near` and `radius`: only keep resources whose `vcard:hasGeo` is less than `radius` km from the point (for example `near=48.8566,2.3522&radius=10`). Resources without location are kept.
+
+For example: `GET /places?q=helene&near=48.8566,2.3522&radius=10`
+
+These parameters can be used with paging and sorting. In this case, they are kept in the `Link` header and in the redirection to the first page.
+
 ## Redirecting to a frontend app
 
 When a browser visits the URL of an LDP resource, for example https://data.yourserver.com/users/alice, with an `Accept`
