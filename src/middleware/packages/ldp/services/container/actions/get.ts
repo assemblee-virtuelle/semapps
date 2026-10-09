@@ -114,7 +114,10 @@ const Schema = {
           ${limitQuery}
         `,
         accept,
-        webId
+        // Without WebACL checks: Fuseki checks the permissions triple by triple, which made this query take up to
+        // several minutes on big containers (56 ms without). The permissions are checked below by ldp.resource.get,
+        // and the resources that can't be read are left out. Only URIs are returned by this query.
+        webId: 'system'
       });
 
       const resourcesUris = resourcesResults?.map((node: any) => node.s1.value);
