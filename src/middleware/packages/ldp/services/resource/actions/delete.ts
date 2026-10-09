@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { MIME_TYPES } from '@semapps/mime-types';
 import type { ActionSchema } from 'moleculer';
+import { buildDeleteResourceQuery } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -32,14 +33,25 @@ const Schema = {
       }
     );
 
+    // Delete the triples of the resource itself with the user's webId, so that Fuseki checks the permissions
+    // (if they are missing, the whole update is refused and nothing is deleted)
     await ctx.call('triplestore.update', {
       query: `
-        DELETE
+        DELETE {
+          <${resourceUri}> ?p1 ?o1 .
+        }
         WHERE {
           <${resourceUri}> ?p1 ?o1 .
+          FILTER(!isBLANK(?o1))
         }
       `,
       webId
+    });
+
+    // Then delete its blank nodes. This is done as system, because Fuseki's permissions can't be checked on them.
+    await ctx.call('triplestore.update', {
+      query: buildDeleteResourceQuery(resourceUri),
+      webId: 'system'
     });
 
     // We must detach the resource from the containers after deletion, otherwise the permissions may fail
@@ -63,8 +75,6 @@ const Schema = {
       webId,
       dataset: ctx.meta.dataset
     };
-
-    ctx.call('triplestore.deleteOrphanBlankNodes');
 
     if (!ctx.meta.skipEmitEvent) {
       ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null } });

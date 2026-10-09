@@ -2,7 +2,7 @@ import { MIME_TYPES } from '@semapps/mime-types';
 import moleculerWeb from 'moleculer-web';
 const E = moleculerWeb.Errors;
 import type { ActionSchema } from 'moleculer';
-import { hasType } from '../../../utils.ts';
+import { hasType, buildDeleteResourceQuery } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -63,21 +63,9 @@ const Schema = {
 
     // Delete the existing cached resource (if it exists)
     await ctx.call('triplestore.update', {
-      query: `
-        DELETE
-        WHERE { 
-          ${graphName ? `GRAPH <${graphName}> {` : ''}
-            <${resourceUri}> ?p1 ?o1 .
-          ${graphName ? '}' : ''}
-        }
-      `,
+      query: buildDeleteResourceQuery(resourceUri, graphName),
       webId: 'system',
       dataset
-    });
-
-    ctx.call('triplestore.deleteOrphanBlankNodes', {
-      dataset,
-      graphName
     });
 
     if (keepInSync) {
