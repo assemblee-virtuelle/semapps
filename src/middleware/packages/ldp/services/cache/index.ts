@@ -1,5 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import type { ServiceSchema } from 'moleculer';
+import { cleanCacheByUri } from '../../utils.ts';
 
 const LdpCacheSchema = {
   name: 'ldp.cache' as const,
@@ -24,9 +25,9 @@ const LdpCacheSchema = {
       async handler(ctx) {
         if (this.broker.cacher) {
           const { resourceUri, dataset } = ctx.params;
-          await this.broker.cacher.clean(`ldp.resource.get:${resourceUri}**`);
-          await this.broker.cacher.clean(`ldp.resource.getTypes:${resourceUri}**`);
-          await this.broker.cacher.clean(`ldp.remote.getStored:${resourceUri}|**`);
+          await cleanCacheByUri(this.broker.cacher, 'ldp.resource.get', resourceUri);
+          await cleanCacheByUri(this.broker.cacher, 'ldp.resource.getTypes', resourceUri);
+          await cleanCacheByUri(this.broker.cacher, 'ldp.remote.getStored', resourceUri);
 
           // Also invalidate the cache of the containers containing the resource
           // For deleted resources, no container will be found (containers will be invalidated through the ldp.resource.detached event)
@@ -41,8 +42,8 @@ const LdpCacheSchema = {
       async handler(ctx) {
         if (this.broker.cacher) {
           const { containerUri } = ctx.params;
-          await this.broker.cacher.clean(`ldp.container.get:${containerUri}**`);
-          await this.broker.cacher.clean(`ldp.resource.getTypes:${containerUri}**`);
+          await cleanCacheByUri(this.broker.cacher, 'ldp.container.get', containerUri);
+          await cleanCacheByUri(this.broker.cacher, 'ldp.resource.getTypes', containerUri);
         }
       }
     }

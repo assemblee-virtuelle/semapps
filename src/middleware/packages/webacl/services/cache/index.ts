@@ -1,4 +1,5 @@
 import type { ServiceSchema } from 'moleculer';
+import { cleanCacheByUri } from '@semapps/ldp';
 
 const WebaclCacheSchema = {
   name: 'webacl.cache' as const,
@@ -9,8 +10,13 @@ const WebaclCacheSchema = {
       async handler(ctx) {
         if (this.broker.cacher) {
           const { uri, specificUriOnly } = ctx.params;
-          await this.broker.cacher.clean(`webacl.resource.getRights:${uri}${specificUriOnly ? '|**' : '**'}`);
-          await this.broker.cacher.clean(`webacl.resource.hasRights:${uri}${specificUriOnly ? '|**' : '**'}`);
+          if (specificUriOnly) {
+            await cleanCacheByUri(this.broker.cacher, 'webacl.resource.getRights', uri);
+            await cleanCacheByUri(this.broker.cacher, 'webacl.resource.hasRights', uri);
+          } else {
+            await this.broker.cacher.clean(`webacl.resource.getRights:${uri}**`);
+            await this.broker.cacher.clean(`webacl.resource.hasRights:${uri}**`);
+          }
         }
       }
     },
