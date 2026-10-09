@@ -1,4 +1,5 @@
 import type { ActionSchema } from 'moleculer';
+import { buildDeleteResourceQuery } from '../../../utils.ts';
 
 const Schema = {
   visibility: 'public',
@@ -31,14 +32,7 @@ const Schema = {
     const oldData = await this.actions.getStored({ resourceUri, webId }, { parentCtx: ctx });
 
     await ctx.call('triplestore.update', {
-      query: `
-        DELETE
-        WHERE { 
-          ${graphName ? `GRAPH <${graphName}> {` : ''}
-            <${resourceUri}> ?p1 ?o1 .
-          ${graphName ? '}' : ''}
-        }
-      `,
+      query: buildDeleteResourceQuery(resourceUri, graphName),
       webId: 'system'
     });
 
@@ -47,10 +41,6 @@ const Schema = {
     for (const containerUri of containers) {
       await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
     }
-
-    ctx.call('triplestore.deleteOrphanBlankNodes', {
-      graphName
-    });
 
     // Clear the cache before returning, even if no event is emitted
     await this.invalidateStored(resourceUri);

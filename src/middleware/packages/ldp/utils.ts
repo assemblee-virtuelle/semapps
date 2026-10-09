@@ -39,6 +39,24 @@ const buildBlankNodesQuery = (depth: any) => {
   return { construct, where };
 };
 
+/**
+ * SPARQL update deleting a resource with its blank nodes (on the same depth as ldp.resource.get), so that it
+ * leaves no orphan blank nodes. This avoids triplestore.deleteOrphanBlankNodes, which scans the whole dataset.
+ */
+const buildDeleteResourceQuery = (resourceUri: string, graphName?: string, depth = 4) => {
+  const { construct, where } = buildBlankNodesQuery(depth);
+  const inGraph = (pattern: string) => (graphName ? `GRAPH <${graphName}> { ${pattern} }` : pattern);
+  return `
+    DELETE {
+      ${inGraph(construct)}
+    }
+    WHERE {
+      BIND(<${resourceUri}> AS ?s1) .
+      ${inGraph(where)}
+    }
+  `;
+};
+
 const isURL = (value: any) => (typeof value === 'string' || value instanceof String) && value.startsWith('http');
 
 /** If the value starts with `http` or `urn:` */
@@ -265,6 +283,7 @@ const waitForResource = async (delayMs: any, fieldNames: any, maxTries: any, cal
 
 export {
   buildBlankNodesQuery,
+  buildDeleteResourceQuery,
   buildFiltersQuery,
   buildSearchQuery,
   buildNearQuery,
