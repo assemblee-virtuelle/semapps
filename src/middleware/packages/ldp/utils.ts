@@ -145,6 +145,19 @@ const buildNearQuery = (near?: { latitude: number; longitude: number; radius: nu
   `;
 };
 
+/**
+ * Delete the keys cached by an action for a given URI, whatever the other key params.
+ * With the SemApps CacherMiddleware, an index is used, which avoids scanning the whole cache.
+ */
+const cleanCacheByUri = async (cacher: any, actionName: string, uri: string) => {
+  if (!cacher) return;
+  if (typeof cacher.cleanByUri === 'function') {
+    await cacher.cleanByUri(actionName, uri);
+  } else {
+    await cacher.clean([`${actionName}:${uri}`, `${actionName}:${uri}|**`]);
+  }
+};
+
 const isObject = (value: any) => typeof value === 'object' && !Array.isArray(value) && value !== null;
 const getSlugFromUri = (uri: any) => uri.match(new RegExp(`.*/(.*)`))[1];
 
@@ -255,6 +268,7 @@ export {
   buildFiltersQuery,
   buildSearchQuery,
   buildNearQuery,
+  cleanCacheByUri,
   isValidIri,
   escapeSparqlString,
   isURL,

@@ -8,6 +8,7 @@ import getNetworkAction from './actions/getNetwork.ts';
 import getStoredAction from './actions/getStored.ts';
 import isRemoteAction from './actions/isRemote.ts';
 import storeAction from './actions/store.ts';
+import { cleanCacheByUri } from '../../utils.ts';
 
 const LdpRemoteSchema = {
   name: 'ldp.remote' as const,
@@ -36,9 +37,7 @@ const LdpRemoteSchema = {
   },
   methods: {
     async invalidateStored(resourceUri: string) {
-      if (this.broker.cacher) {
-        await this.broker.cacher.clean(`ldp.remote.getStored:${resourceUri}|**`);
-      }
+      await cleanCacheByUri(this.broker.cacher, 'ldp.remote.getStored', resourceUri);
     },
     async proxyAvailable() {
       const services = await this.broker.call('$node.services');
