@@ -21,6 +21,10 @@ const DatasetService = {
     fusekiBase: null
   },
   started() {
+    // Datasets known to exist. Every triplestore action checks that its dataset exists, so without this cache each
+    // SPARQL query was preceded by an HTTP request to Fuseki. Only positive answers are cached, and a dataset is
+    // removed from the cache when it is deleted through the delete action.
+    this.existingDatasets = new Set();
     this.headers = {
       Authorization: `Basic ${Buffer.from(`${this.settings.user}:${this.settings.password}`).toString('base64')}`
     };
@@ -77,10 +81,15 @@ const DatasetService = {
     exist: {
       async handler(ctx) {
         const { dataset } = ctx.params;
+        if (this.existingDatasets.has(dataset)) return true;
         const response = await fetch(urlJoin(this.settings.url, '$/datasets/', dataset), {
           headers: this.headers
         });
-        return response.status === 200;
+        if (response.status === 200) {
+          this.existingDatasets.add(dataset);
+          return true;
+        }
+        return false;
       }
     },
 
@@ -165,6 +174,8 @@ const DatasetService = {
         if (!response.ok) {
           throw new Error(`Failed to delete dataset ${dataset}: ${response.statusText}`);
         }
+
+        this.existingDatasets.delete(dataset);
 
         // If this is a secure dataset, we need to delete stuff manually.
         if (isSecure) {
