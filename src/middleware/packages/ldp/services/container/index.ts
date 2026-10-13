@@ -34,7 +34,8 @@ const LdpContainerSchema = {
   settings: {
     baseUrl: null,
     podProvider: false,
-    mirrorGraphName: null
+    mirrorGraphName: null,
+    resourcesFetchConcurrency: 5
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {

@@ -281,6 +281,23 @@ const waitForResource = async (delayMs: any, fieldNames: any, maxTries: any, cal
   throw new Error(`Waiting for resource failed. No results after ${maxTries} tries`);
 };
 
+/**
+ * Like Promise.all(items.map(fn)), but with at most `concurrency` calls running at the same time.
+ * The results are returned in the same order as the items.
+ */
+const mapWithConcurrency = async <T, R>(items: T[], concurrency: number, fn: (item: T) => Promise<R>) => {
+  const results: R[] = new Array(items.length);
+  let next = 0;
+  const workers = Array.from({ length: Math.min(Math.max(concurrency, 1), items.length) }, async () => {
+    while (next < items.length) {
+      const i = next++;
+      results[i] = await fn(items[i]);
+    }
+  });
+  await Promise.all(workers);
+  return results;
+};
+
 export {
   buildBlankNodesQuery,
   buildDeleteResourceQuery,
@@ -312,5 +329,6 @@ export {
   regexPrefix,
   regexProtocolAndHostAndPort,
   waitForResource,
-  arrayOf
+  arrayOf,
+  mapWithConcurrency
 };

@@ -1,6 +1,6 @@
 import { MIME_TYPES } from '@semapps/mime-types';
 import type { ActionSchema } from 'moleculer';
-import { isContainer, isValidIri, cleanUndefined, arrayOf } from '../../../utils.ts';
+import { isContainer, isValidIri, cleanUndefined, arrayOf, mapWithConcurrency } from '../../../utils.ts';
 import resourcesFiltersParams from '../resources-filters-params.ts';
 
 import moleculer from 'moleculer';
@@ -122,9 +122,12 @@ const Schema = {
 
       const resourcesUris = resourcesResults?.map((node: any) => node.s1.value);
 
-      // Request each resources (in parallel)
-      containerResults['http://www.w3.org/ns/ldp#contains'] = await Promise.all(
-        arrayOf(resourcesUris).flatMap(async resourceUri => {
+      // Request each resources, a few at a time. Fetching them all in parallel was not faster, as the time is mostly
+      // spent in this process, and it overloaded Fuseki when it had to check the permissions (with a non-system webId)
+      const resources = await mapWithConcurrency(
+        arrayOf(resourcesUris),
+        this.settings.resourcesFetchConcurrency,
+        async (resourceUri: string) => {
           try {
             // We pass the accept/jsonContext parameters only if they are explicit
             const resource = await ctx.call(
@@ -156,8 +159,9 @@ const Schema = {
             if (e.name !== 'MoleculerError') throw e;
           }
           return [];
-        })
+        }
       );
+      containerResults['http://www.w3.org/ns/ldp#contains'] = resources.flat();
     }
 
     let compactResults = await ctx.call('jsonld.parser.compact', {

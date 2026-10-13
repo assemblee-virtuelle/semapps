@@ -19,6 +19,8 @@ const LdpSchema = {
     defaultContainerOptions: {},
     preferredViewForResource: null,
     resourcesWithContainerPath: true,
+    // Number of resources fetched at the same time by ldp.container.get
+    resourcesFetchConcurrency: 5,
     binary: {
       maxSize: '50Mb'
     }
@@ -33,6 +35,7 @@ const LdpSchema = {
       mirrorGraphName,
       preferredViewForResource,
       resourcesWithContainerPath,
+      resourcesFetchConcurrency,
       binary
     } = this.settings;
 
@@ -41,7 +44,8 @@ const LdpSchema = {
       settings: {
         baseUrl,
         podProvider,
-        mirrorGraphName
+        mirrorGraphName,
+        resourcesFetchConcurrency
       },
       hooks: this.schema.hooksContainer || {}
     });
