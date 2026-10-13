@@ -48,7 +48,8 @@ const JsonldDocumentLoaderSchema = {
       cache.set(contextFile.uri, {
         contextUrl: null,
         documentUrl: contextFile.uri,
-        document: contextJson
+        document: contextJson,
+        tag: 'static'
       });
     }
   },
@@ -72,6 +73,10 @@ const JsonldDocumentLoaderSchema = {
         if (typeof context.document === 'string') {
           context.document = JSON.parse(context.document);
         }
+        // Remote contexts are kept in cache and never reloaded, so we can tell jsonld.js they are static.
+        // Otherwise jsonld.js calls this document loader and processes the context again on every operation.
+        // The local context is not tagged, as it is modified when ontologies are registered.
+        context.tag = 'static';
         cache.set(url, context);
         return context;
       }
