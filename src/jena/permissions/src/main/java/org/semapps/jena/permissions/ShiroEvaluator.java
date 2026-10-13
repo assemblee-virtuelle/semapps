@@ -239,8 +239,11 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	//private static final String AGENTCLASS_PUBLIC = "foaf:Agent";
 	//private static final String AGENTCLASS_ANYUSER = "acl:AuthenticatedAgent";
 	private static final String QUERY_MODE2 = "UNION { ?auth acl:mode %s }";
-	private static final String QUERY_ACCESSTO = "acl:accessTo ?resource .\n";
-	private static final String QUERY_DEFAULT = "acl:default ?resource .\n";
+	// The pattern on the resource must come first: the ACL graph is queried with the generic ARQ engine, which keeps
+	// the order of the patterns when they have the same weight. Starting with acl:agent ?agent would go through all the
+	// authorizations of the agent (thousands on a Pod) for every resource checked.
+	private static final String QUERY_ACCESSTO = "?auth acl:accessTo ?resource .\n";
+	private static final String QUERY_DEFAULT = "?auth acl:default ?resource .\n";
 
 	private void prepareNss(ParameterizedSparqlString nss, String query) {
 		nss.setCommandText(query);
@@ -252,9 +255,9 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	"SELECT ?auth\n" +
 	"WHERE {\n" +
 	"{ \n" +
-	" ?auth a acl:Authorization ;\n" +
-	" acl:agentClass foaf:Agent ;\n" +
 	" %s" +
+	" ?auth a acl:Authorization ;\n" +
+	" acl:agentClass foaf:Agent .\n" +
 	"} \n" +
 	"{ \n" +
 	" { ?auth acl:mode %s } %s\n" +
@@ -265,8 +268,8 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	"SELECT ?auth\n" +
 	"WHERE {\n" +
 	"{ \n" +
-	" ?auth a acl:Authorization ;\n" +
 	" %s" +
+	" ?auth a acl:Authorization .\n" +
 	"} { { ?auth acl:agentClass foaf:Agent } UNION { ?auth acl:agentClass acl:AuthenticatedAgent } }\n" +
 	"{ \n" +
 	" { ?auth acl:mode %s } %s\n" +
@@ -289,9 +292,9 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	"SELECT ?auth\n" +
 	"WHERE {\n" +
 	"{ \n" +
-	" ?auth a acl:Authorization ;\n" +
-	" acl:agent ?agent ;\n" +
 	" %s" +
+	" ?auth a acl:Authorization ;\n" +
+	" acl:agent ?agent .\n" +
 	"} \n" +
 	"{ \n" +
 	" { ?auth acl:mode %s } %s\n" +
@@ -340,8 +343,8 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	"SELECT ?auth\n" +
 	"WHERE {\n" +
 	"{ \n" +
-	" ?auth a acl:Authorization ;\n" +
 	" %s" +
+	" ?auth a acl:Authorization .\n" +
 	"} { %s } \n" +
 	"{ \n" +
 	" { ?auth acl:mode %s } %s\n" +
