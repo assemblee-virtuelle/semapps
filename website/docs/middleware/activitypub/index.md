@@ -88,7 +88,7 @@ The [Bull](https://github.com/OptimalBits/bull) task manager will queue the task
 
 ### Create actors on account creations
 
-An ActivityPub actor is automatically created when a `auth.registered` event is detected.
+An ActivityPub actor is automatically created when a `webid.created` event is detected.
 
 By default, it will:
 

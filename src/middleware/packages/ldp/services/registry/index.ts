@@ -37,15 +37,15 @@ const LdpRegistrySchema = {
     }
   },
   events: {
-    'auth.registered': {
+    'webid.created': {
       async handler(ctx) {
-        const { webId, accountData } = ctx.params;
+        const { webId } = ctx.params;
         // We want to add user's containers only in Pod provider config
 
         if (this.settings.podProvider) {
           const storageUrl: string = await ctx.call('solid-storage.getUrl', { webId });
 
-          const registeredContainers = await this.actions.list({ dataset: accountData.username }, { parentCtx: ctx });
+          const registeredContainers = await this.actions.list({}, { parentCtx: ctx });
 
           // Go through each registered container.
           for (const options of Object.values(registeredContainers)) {

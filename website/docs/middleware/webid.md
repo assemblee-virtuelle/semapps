@@ -4,11 +4,9 @@ title: WebID
 
 This service allows you to create and view WebID-conform profiles.
 
-
 ## Dependencies
 
 - [LdpService](ldp)
-
 
 ## Install
 
@@ -31,15 +29,13 @@ module.exports = {
 
 > Note: the users' container must be set through the LdpService
 
-
 ## Settings
 
 | Property         | Type      | Default                                | Description                                      |
-|------------------|-----------|----------------------------------------|--------------------------------------------------|
+| ---------------- | --------- | -------------------------------------- | ------------------------------------------------ |
 | `baseUrl`        | `String`  | **required** if `podProvider` is true  | Base URL of the instance                         |
 | `usersContainer` | `String`  | **required** if `podProvider` is false | URI of the container where WebIDs will be stored |
 | `podProvider`    | `Boolean` | false                                  | Set to true if you are setting up a POD provider |
-
 
 ## Actions
 
@@ -48,8 +44,9 @@ The following service actions are available:
 ### `create`
 
 ##### Parameters
+
 | Property     | Type     | Default                         | Description    |
-|--------------|----------|---------------------------------|----------------|
+| ------------ | -------- | ------------------------------- | -------------- |
 | `email`      | `string` | **required**                    | Email address  |
 | `nick`       | `string` | First part of the email address | Nickname       |
 | `name`       | `string` | name                            | Name           |
@@ -57,14 +54,15 @@ The following service actions are available:
 | `homepage`   | `string` | null                            | User's website |
 
 ##### Return
-`Object` - Created profile
 
+`Object` - Created profile
 
 ### `edit`
 
 ##### Parameters
+
 | Property     | Type     | Default                      | Description    |
-|--------------|----------|------------------------------|----------------|
+| ------------ | -------- | ---------------------------- | -------------- |
 | `userId`     | `string` | The webId of the logged user | User's slug    |
 | `email`      | `string` | null                         | Email address  |
 | `nick`       | `string` | null                         | Nickname       |
@@ -73,19 +71,20 @@ The following service actions are available:
 | `homepage`   | `string` | null                         | User's website |
 
 ##### Return
-`Object` - Modified profile
 
+`Object` - Modified profile
 
 ### `view`
 
 ##### Parameters
-| Property  | Type     | Default                      | Description  |
-|-----------|----------|------------------------------|--------------|
-| `userId`  | `string` | The webId of the logged user | User's slug  |
+
+| Property | Type     | Default                      | Description |
+| -------- | -------- | ---------------------------- | ----------- |
+| `userId` | `string` | The webId of the logged user | User's slug |
 
 ##### Return
-`Object` - User's profile
 
+`Object` - User's profile
 
 ## Events
 
@@ -93,8 +92,11 @@ The following events are emitted.
 
 ### `webid.created`
 
-Sent after a new profile is created.
+Sent after a new WebID (user or group) is created.
 
-##### Parameters
+##### Payload
 
-`Object` - Created profile
+| Property    | Type     | Description       |
+| ----------- | -------- | ----------------- |
+| `webId`     | `String` | URI of the WebID  |
+| `webIdData` | `Object` | Data of the WebID |

@@ -237,7 +237,7 @@ const SignatureService = {
     }
   },
   events: {
-    'auth.registered': {
+    'webid.created': {
       async handler(ctx) {
         const { webId } = ctx.params;
         if (this.isMigrated) {
