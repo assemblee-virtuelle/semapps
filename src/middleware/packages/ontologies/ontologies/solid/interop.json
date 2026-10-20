@@ -123,6 +123,9 @@
     "interop:hasSpecialRight": {
       "@type": "@id"
     },
+    "interop:extendsRole": {
+      "@type": "@id"
+    },
     "interop:delegationOfGrant": {
       "@type": "@id"
     },
