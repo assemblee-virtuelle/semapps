@@ -114,7 +114,7 @@ const Schema = {
     }
   },
   events: {
-    'auth.registered': {
+    'webid.created': {
       async handler(ctx) {
         if (this.settings.podProvider) {
           const { webId } = ctx.params;
