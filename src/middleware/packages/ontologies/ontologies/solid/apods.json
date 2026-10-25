@@ -27,7 +27,13 @@
     "apods:groupInvitations": {
       "@type": "@id"
     },
-    "apods:invitations": {
+    "apods:pendingInvitations": {
+      "@type": "@id"
+    },
+    "apods:joinRequests": {
+      "@type": "@id"
+    },
+    "apods:joinPolicy": {
       "@type": "@id"
     },
     "apods:rejectedContacts": {
