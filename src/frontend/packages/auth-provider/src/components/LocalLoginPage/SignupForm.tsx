@@ -149,7 +149,7 @@ const FormContent = ({
         fullWidth
         disabled={loading}
         validate={[required(translate('auth.required.identifier')), minLength(2)]}
-        format={value =>
+        parse={value =>
           value
             ? createSlug(value, {
                 lang: locale || 'fr',

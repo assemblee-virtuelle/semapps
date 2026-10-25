@@ -1903,7 +1903,7 @@ const $87a1f23cb4681f00$var$FormContent = ({ passwordScorer: passwordScorer = (0
                     (0, $4Uj5b$reactadmin.required)(translate('auth.required.identifier')),
                     (0, $4Uj5b$reactadmin.minLength)(2)
                 ],
-                format: (value)=>value ? (0, ($parcel$interopDefault($4Uj5b$speakingurl)))(value, {
+                parse: (value)=>value ? (0, ($parcel$interopDefault($4Uj5b$speakingurl)))(value, {
                         lang: locale || 'fr',
                         separator: '_',
                         custom: [

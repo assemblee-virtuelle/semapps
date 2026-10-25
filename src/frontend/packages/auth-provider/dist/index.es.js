@@ -1847,7 +1847,7 @@ const $abd712f6afb101e7$var$FormContent = ({ passwordScorer: passwordScorer = (0
                     (0, $1obPJ$required)(translate('auth.required.identifier')),
                     (0, $1obPJ$minLength)(2)
                 ],
-                format: (value)=>value ? (0, $1obPJ$speakingurl)(value, {
+                parse: (value)=>value ? (0, $1obPJ$speakingurl)(value, {
                         lang: locale || 'fr',
                         separator: '_',
                         custom: [
