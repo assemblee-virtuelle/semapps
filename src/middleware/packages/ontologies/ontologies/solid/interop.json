@@ -111,6 +111,21 @@
     "interop:hasDataInstance": {
       "@type": "@id"
     },
+    "interop:hasRoleRegistry": {
+      "@type": "@id"
+    },
+    "interop:hasRoleRegistration": {
+      "@type": "@id"
+    },
+    "interop:hasMember": {
+      "@type": "@id"
+    },
+    "interop:hasSpecialRight": {
+      "@type": "@id"
+    },
+    "interop:extendsRole": {
+      "@type": "@id"
+    },
     "interop:delegationOfGrant": {
       "@type": "@id"
     },

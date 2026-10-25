@@ -55,7 +55,7 @@ const SolidStorageSchema = {
     }
   },
   events: {
-    'auth.registered': {
+    'webid.created': {
       async handler(ctx) {
         const { webId } = ctx.params;
         this.logger.info('Storage event registration entered. WebId', webId);

@@ -21,6 +21,21 @@
     "apods:ignoredContacts": {
       "@type": "@id"
     },
+    "apods:groups": {
+      "@type": "@id"
+    },
+    "apods:groupInvitations": {
+      "@type": "@id"
+    },
+    "apods:pendingInvitations": {
+      "@type": "@id"
+    },
+    "apods:joinRequests": {
+      "@type": "@id"
+    },
+    "apods:joinPolicy": {
+      "@type": "@id"
+    },
     "apods:rejectedContacts": {
       "@type": "@id"
     },
