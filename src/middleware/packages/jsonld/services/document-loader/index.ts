@@ -34,6 +34,12 @@ const defaultDocumentLoader = !process.versions.bun
 
 const cache = new LRU({ max: 500 });
 
+// Other documents (WebIDs, keys...) may change, e.g. when keys are rotated or an account is recreated
+const DOCUMENTS_MAX_AGE = 60 * 1000;
+
+const isContext = (document: any) =>
+  typeof document === 'object' && document !== null && Object.keys(document).every(key => key === '@context');
+
 const JsonldDocumentLoaderSchema = {
   name: 'jsonld.document-loader' as const,
   settings: {
@@ -73,11 +79,15 @@ const JsonldDocumentLoaderSchema = {
         if (typeof context.document === 'string') {
           context.document = JSON.parse(context.document);
         }
-        // Remote contexts are kept in cache and never reloaded, so we can tell jsonld.js they are static.
-        // Otherwise jsonld.js calls this document loader and processes the context again on every operation.
-        // The local context is not tagged, as it is modified when ontologies are registered.
-        context.tag = 'static';
-        cache.set(url, context);
+        if (isContext(context.document)) {
+          // Remote contexts are kept in cache and never reloaded, so we can tell jsonld.js they are static.
+          // Otherwise jsonld.js calls this document loader and processes the context again on every operation.
+          // The local context is not tagged, as it is modified when ontologies are registered.
+          context.tag = 'static';
+          cache.set(url, context);
+        } else {
+          cache.set(url, context, DOCUMENTS_MAX_AGE);
+        }
         return context;
       }
     },
