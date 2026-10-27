@@ -19,6 +19,9 @@ const configureUserStorage = (): Plugin => ({
       if (user) {
         const newConfig = { ...config };
 
+        // The user's Pod must be the only auth server, otherwise its proxy would not be used
+        Object.values(newConfig.dataServers).forEach(server => delete server.authServer);
+
         newConfig.dataServers[webId] = {
           pod: true,
           default: true,
