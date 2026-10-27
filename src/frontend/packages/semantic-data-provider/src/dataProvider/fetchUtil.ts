@@ -19,9 +19,11 @@ const fetchBase =
 
     const authServerKey = getServerKeyFromType('authServer', dataServers);
     const serverKey = getServerKeyFromUri(url, dataServers);
+    // Other data servers may be declared on the same domain as the auth server (e.g. other Pods)
+    const isAuthServer = !!authServerKey && new URL(url).origin === new URL(dataServers[authServerKey].baseUrl).origin;
 
     const useProxy =
-      serverKey !== authServerKey && // The server is different from the auth server.
+      !isAuthServer && // The server is different from the auth server.
       !!dataServers[authServerKey!]?.proxyUrl && // A proxy URL is configured on the auth server.
       dataServers[serverKey]?.noProxy !== true; // The server does not explicitly disable the proxy.
 
@@ -69,7 +71,7 @@ const fetchBase =
     }
 
     // Add token if the server is the same as the auth server.
-    if (serverKey === authServerKey) {
+    if (isAuthServer) {
       const token = localStorage.getItem('token');
       if (token) headers.set('Authorization', `Bearer ${token}`);
     }
