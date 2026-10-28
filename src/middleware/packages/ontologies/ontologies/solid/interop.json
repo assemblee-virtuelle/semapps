@@ -134,6 +134,21 @@
     },
     "interop:replaces": {
       "@type": "@id"
+    },
+    "interop:groups": {
+      "@type": "@id"
+    },
+    "interop:groupInvitations": {
+      "@type": "@id"
+    },
+    "interop:pendingInvitations": {
+      "@type": "@id"
+    },
+    "interop:joinRequests": {
+      "@type": "@id"
+    },
+    "interop:joinPolicy": {
+      "@type": "@id"
     }
   }
 }
