@@ -126,6 +126,9 @@
     "interop:extendsRole": {
       "@type": "@id"
     },
+    "interop:derivedFromRoleRegistration": {
+      "@type": "@id"
+    },
     "interop:delegationOfGrant": {
       "@type": "@id"
     },
