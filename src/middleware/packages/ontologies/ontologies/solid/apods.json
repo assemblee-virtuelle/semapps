@@ -30,6 +30,9 @@
     "apods:announcers": {
       "@type": "@id"
     },
+    "apods:conversation": {
+      "@type": "@id"
+    },
     "apods:attendees": {
       "@type": "@id"
     },

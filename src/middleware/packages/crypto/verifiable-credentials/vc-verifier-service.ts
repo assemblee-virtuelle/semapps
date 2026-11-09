@@ -30,6 +30,7 @@ const VCPresentationService = {
     this.documentLoader = async (url: any, options: any) => {
       return await this.broker.call('jsonld.document-loader.loadWithCache', { url, options });
     };
+    this.loadVc = (url: string) => this.documentLoader(url, { noCache: true });
   },
 
   actions: {
@@ -65,8 +66,7 @@ const VCPresentationService = {
           options: { proofPurpose = 'assertionMethod' }
         } = ctx.params;
 
-        // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
-        const purpose = new VCPurpose({ term: proofPurpose });
+        const purpose = new VCPurpose({ term: proofPurpose, loadVc: this.loadVc });
 
         const suite = new DataIntegrityProof({
           cryptosuite
@@ -119,7 +119,7 @@ const VCPresentationService = {
           }
 
           // Used to validate verifiable credentials in presentation.
-          const credentialPurpose = ctx.params.credentialPurpose || new VCPurpose();
+          const credentialPurpose = ctx.params.credentialPurpose || new VCPurpose({ loadVc: this.loadVc });
 
           const presentationPurpose =
             ctx.params.presentationPurpose ||
@@ -182,7 +182,7 @@ const VCPresentationService = {
           challenge: challenge || '',
           domain
         });
-        const credentialPurpose = new VCPurpose();
+        const credentialPurpose = new VCPurpose({ loadVc: this.loadVc });
 
         const verificationResult = await this.actions.verifyPresentation({
           ...ctx.params,

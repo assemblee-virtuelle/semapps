@@ -5,6 +5,17 @@ import { CredentialIssuancePurpose } from '@digitalbazaar/vc';
  * VC purpose that is the same as the vc.CredentialIssuancePurpose but checks validFrom and validUntil.
  */
 class VCPurpose extends CredentialIssuancePurpose {
+  loadVc?: (url: string) => Promise<any>;
+
+  /**
+   * @param loadVc Loads the VC without cache, to check it hasn't been revoked. jsonld-signatures
+   *   wraps the document loader in a function that drops its options, so `noCache` can't go through it.
+   */
+  constructor({ loadVc, ...options }: { loadVc?: (url: string) => Promise<any>; [key: string]: any } = {}) {
+    super(options);
+    this.loadVc = loadVc;
+  }
+
   /**
    * Called during proof verification.
    * Super class will check if issuer is the controller of the verification method,
@@ -26,7 +37,7 @@ class VCPurpose extends CredentialIssuancePurpose {
     }
 
     // Validate that VC still exists by fetching it with the document loader and the noCache option.
-    const vc = await documentLoader(document.id, { noCache: true })
+    const vc = await (this.loadVc ? this.loadVc(document.id) : documentLoader(document.id, { noCache: true }))
       .then((res: any) => res.document)
       .catch(() => null);
     if (!vc) {

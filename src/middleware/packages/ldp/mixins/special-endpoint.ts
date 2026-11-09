@@ -33,7 +33,8 @@ const Schema = {
         path: this.settings.endpoint.path,
         bodyParsers: false,
         authorization: false,
-        authentication: false,
+        // Anonymous requests are still accepted, but POST handlers need to know the webId
+        authentication: true,
         aliases
       }
     });
