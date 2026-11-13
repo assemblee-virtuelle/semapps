@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
 import { Configuration, Plugin } from '../types';
-import getContainerFromDataRegistration from '../utils/getContainerFromDataRegistration';
+import fetchDataRegistryContainers from '../utils/fetchDataRegistryContainers';
 
 /**
  * Plugin to add data registrations to the user containers, by fetching the registry set.
@@ -22,24 +22,15 @@ const fetchDataRegistry = (): Plugin => ({
       if (!config.dataServers[webId])
         throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
 
-      const { json: user } = await config.httpClient(webId);
+      const containers = await fetchDataRegistryContainers(webId, config.httpClient);
 
-      if (!user['interop:hasRegistrySet']) throw new Error(`User ${webId} is missing interop:hasRegistrySet`);
-      const { json: registrySet } = await config.httpClient(user['interop:hasRegistrySet']);
-
-      if (!registrySet['interop:hasDataRegistry']) throw new Error(`User ${webId} is missing interop:hasDataRegistry`);
-      const { json: dataRegistry } = await config.httpClient(registrySet['interop:hasDataRegistry']);
-
-      if (dataRegistry['interop:hasDataRegistration']) {
-        const results = await Promise.all(
-          dataRegistry['interop:hasDataRegistration'].map((dataRegistrationUri: string) => {
-            return getContainerFromDataRegistration(dataRegistrationUri, config);
-          })
-        );
-
+      if (containers.length > 0) {
+        const { baseUrl } = config.dataServers[webId];
         const newConfig = { ...config };
 
-        newConfig.dataServers[webId].containers?.push(...results.flat());
+        newConfig.dataServers[webId].containers?.push(
+          ...containers.map(({ uri, ...container }) => ({ ...container, path: uri!.replace(baseUrl, '') }))
+        );
 
         return newConfig;
       }

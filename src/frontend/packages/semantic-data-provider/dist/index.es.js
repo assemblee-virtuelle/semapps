@@ -1005,7 +1005,9 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
         if (!url) throw new Error(`No URL provided on httpClient call`);
         const authServerKey = (0, $aed10b8332b5d58a$export$2e2bcd8739ae039)('authServer', dataServers);
         const serverKey = (0, $2ae722513e522d60$export$2e2bcd8739ae039)(url, dataServers);
-        const useProxy = serverKey !== authServerKey && // The server is different from the auth server.
+        // Other data servers may be declared on the same domain as the auth server (e.g. other Pods)
+        const isAuthServer = !!authServerKey && new URL(url).origin === new URL(dataServers[authServerKey].baseUrl).origin;
+        const useProxy = !isAuthServer && // The server is different from the auth server.
         !!dataServers[authServerKey]?.proxyUrl && // A proxy URL is configured on the auth server.
         dataServers[serverKey]?.noProxy !== true; // The server does not explicitly disable the proxy.
         const headers = new Headers(options.headers);
@@ -1041,7 +1043,7 @@ var $c5031381f4dfc62d$export$2e2bcd8739ae039 = $c5031381f4dfc62d$var$updateMetho
             });
         }
         // Add token if the server is the same as the auth server.
-        if (serverKey === authServerKey) {
+        if (isAuthServer) {
             const token = localStorage.getItem('token');
             if (token) headers.set('Authorization', `Bearer ${token}`);
         }
@@ -1292,52 +1294,9 @@ var $861da9be2c0e62eb$export$2e2bcd8739ae039 = $861da9be2c0e62eb$var$getPrefixFr
 
 
 
-/**
- * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
- */ const $cdd3c71a628eeefe$var$configureUserStorage = ()=>({
-        name: 'configureUserStorage',
-        transformConfig: async (config)=>{
-            const token = localStorage.getItem('token');
-            // If the user is logged in
-            if (token) {
-                const payload = (0, $fj9kP$jwtdecode)(token);
-                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
-                const { json: user } = await config.httpClient(webId);
-                if (user) {
-                    const newConfig = {
-                        ...config
-                    };
-                    newConfig.dataServers[webId] = {
-                        pod: true,
-                        default: true,
-                        authServer: true,
-                        baseUrl: user['pim:storage'] || (0, $fj9kP$urljoin)(webId, 'data'),
-                        sparqlEndpoint: user.endpoints?.['void:sparqlEndpoint'] || (0, $fj9kP$urljoin)(webId, 'sparql'),
-                        proxyUrl: user.endpoints?.proxyUrl,
-                        containers: []
-                    };
-                    if (!newConfig.jsonContext) newConfig.jsonContext = [
-                        'https://www.w3.org/ns/activitystreams',
-                        (0, $fj9kP$urljoin)(new URL(webId).origin, '/.well-known/context.jsonld')
-                    ];
-                    return newConfig;
-                }
-            }
-            // Nothing to change
-            return config;
-        }
-    });
-var $cdd3c71a628eeefe$export$2e2bcd8739ae039 = $cdd3c71a628eeefe$var$configureUserStorage;
 
-
-
-
-
-
-
-
-const $d7a7484a035f15cd$var$getContainerFromDataRegistration = async (dataRegistrationUri, config)=>{
-    const { json: dataRegistration } = await config.httpClient(dataRegistrationUri, {
+const $fc7c1b7c9f4dc3a9$var$fetchContainerFromDataRegistration = async (dataRegistrationUri, httpClient)=>{
+    const { json: dataRegistration } = await httpClient(dataRegistrationUri, {
         headers: new Headers({
             Accept: 'application/ld+json',
             Prefer: 'return=representation; include="http://www.w3.org/ns/ldp#PreferMinimalContainer"'
@@ -1369,11 +1328,8 @@ const $d7a7484a035f15cd$var$getContainerFromDataRegistration = async (dataRegist
             '@container': '@language'
         }
     });
-    const userStorage = (0, $aed10b8332b5d58a$export$2e2bcd8739ae039)('default', config.dataServers);
-    const { baseUrl: baseUrl } = config.dataServers[userStorage];
-    const containerPath = dataRegistration.id.replace(baseUrl, '');
     const container = {
-        path: containerPath,
+        uri: dataRegistration.id,
         shapeTreeUri: shapeTreeUri,
         label: shapeTree.label,
         labelPredicate: shapeTree.describesInstance,
@@ -1388,6 +1344,78 @@ const $d7a7484a035f15cd$var$getContainerFromDataRegistration = async (dataRegist
         container.types = shape?.[0]?.['http://www.w3.org/ns/shacl#targetClass']?.map((node)=>node?.['@id']);
     }
     return container;
+};
+var $fc7c1b7c9f4dc3a9$export$2e2bcd8739ae039 = $fc7c1b7c9f4dc3a9$var$fetchContainerFromDataRegistration;
+
+
+/**
+ * Return the containers of the data registrations of an agent (user, group...), by fetching its registry set
+ */ const $df7dd80ec544c185$var$fetchDataRegistryContainers = async (webId, httpClient)=>{
+    const { json: agent } = await httpClient(webId);
+    if (!agent['interop:hasRegistrySet']) throw new Error(`Agent ${webId} is missing interop:hasRegistrySet`);
+    const { json: registrySet } = await httpClient(agent['interop:hasRegistrySet']);
+    if (!registrySet['interop:hasDataRegistry']) throw new Error(`Agent ${webId} is missing interop:hasDataRegistry`);
+    const { json: dataRegistry } = await httpClient(registrySet['interop:hasDataRegistry']);
+    return Promise.all((0, $cc8adac4b83414eb$export$2e2bcd8739ae039)(dataRegistry['interop:hasDataRegistration']).map((dataRegistrationUri)=>(0, $fc7c1b7c9f4dc3a9$export$2e2bcd8739ae039)(dataRegistrationUri, httpClient)));
+};
+var $df7dd80ec544c185$export$2e2bcd8739ae039 = $df7dd80ec544c185$var$fetchDataRegistryContainers;
+
+
+
+
+/**
+ * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
+ */ const $cdd3c71a628eeefe$var$configureUserStorage = ()=>({
+        name: 'configureUserStorage',
+        transformConfig: async (config)=>{
+            const token = localStorage.getItem('token');
+            // If the user is logged in
+            if (token) {
+                const payload = (0, $fj9kP$jwtdecode)(token);
+                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                const { json: user } = await config.httpClient(webId);
+                if (user) {
+                    const newConfig = {
+                        ...config
+                    };
+                    // The user's Pod must be the only auth server, otherwise its proxy would not be used
+                    Object.values(newConfig.dataServers).forEach((server)=>delete server.authServer);
+                    newConfig.dataServers[webId] = {
+                        pod: true,
+                        default: true,
+                        authServer: true,
+                        baseUrl: user['pim:storage'] || (0, $fj9kP$urljoin)(webId, 'data'),
+                        sparqlEndpoint: user.endpoints?.['void:sparqlEndpoint'] || (0, $fj9kP$urljoin)(webId, 'sparql'),
+                        proxyUrl: user.endpoints?.proxyUrl,
+                        containers: []
+                    };
+                    if (!newConfig.jsonContext) newConfig.jsonContext = [
+                        'https://www.w3.org/ns/activitystreams',
+                        (0, $fj9kP$urljoin)(new URL(webId).origin, '/.well-known/context.jsonld')
+                    ];
+                    return newConfig;
+                }
+            }
+            // Nothing to change
+            return config;
+        }
+    });
+var $cdd3c71a628eeefe$export$2e2bcd8739ae039 = $cdd3c71a628eeefe$var$configureUserStorage;
+
+
+
+
+
+
+
+const $d7a7484a035f15cd$var$getContainerFromDataRegistration = async (dataRegistrationUri, config)=>{
+    const { uri: uri, ...container } = await (0, $fc7c1b7c9f4dc3a9$export$2e2bcd8739ae039)(dataRegistrationUri, config.httpClient);
+    const userStorage = (0, $aed10b8332b5d58a$export$2e2bcd8739ae039)('default', config.dataServers);
+    const { baseUrl: baseUrl } = config.dataServers[userStorage];
+    return {
+        ...container,
+        path: uri.replace(baseUrl, '')
+    };
 };
 var $d7a7484a035f15cd$export$2e2bcd8739ae039 = $d7a7484a035f15cd$var$getContainerFromDataRegistration;
 
@@ -1471,19 +1499,16 @@ var $2c257b4237cb14ca$export$2e2bcd8739ae039 = $2c257b4237cb14ca$var$fetchAppReg
                 const payload = (0, $fj9kP$jwtdecode)(token);
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
                 if (!config.dataServers[webId]) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
-                const { json: user } = await config.httpClient(webId);
-                if (!user['interop:hasRegistrySet']) throw new Error(`User ${webId} is missing interop:hasRegistrySet`);
-                const { json: registrySet } = await config.httpClient(user['interop:hasRegistrySet']);
-                if (!registrySet['interop:hasDataRegistry']) throw new Error(`User ${webId} is missing interop:hasDataRegistry`);
-                const { json: dataRegistry } = await config.httpClient(registrySet['interop:hasDataRegistry']);
-                if (dataRegistry['interop:hasDataRegistration']) {
-                    const results = await Promise.all(dataRegistry['interop:hasDataRegistration'].map((dataRegistrationUri)=>{
-                        return (0, $d7a7484a035f15cd$export$2e2bcd8739ae039)(dataRegistrationUri, config);
-                    }));
+                const containers = await (0, $df7dd80ec544c185$export$2e2bcd8739ae039)(webId, config.httpClient);
+                if (containers.length > 0) {
+                    const { baseUrl: baseUrl } = config.dataServers[webId];
                     const newConfig = {
                         ...config
                     };
-                    newConfig.dataServers[webId].containers?.push(...results.flat());
+                    newConfig.dataServers[webId].containers?.push(...containers.map(({ uri: uri, ...container })=>({
+                            ...container,
+                            path: uri.replace(baseUrl, '')
+                        })));
                     return newConfig;
                 }
             }
@@ -1885,8 +1910,9 @@ var $0c5cccc31d3b196d$export$2e2bcd8739ae039 = $0c5cccc31d3b196d$var$useGetExter
 
 const $487567a146508c4e$var$useGetPrefixFromUri = ()=>{
     const config = (0, $3677b4de74c3d10d$export$2e2bcd8739ae039)();
-    return (0, $fj9kP$useCallback)((uri)=>(0, $861da9be2c0e62eb$export$2e2bcd8739ae039)(uri, config.ontologies), [
-        config?.ontologies
+    // The config is loaded asynchronously
+    return (0, $fj9kP$useCallback)((uri)=>config ? (0, $861da9be2c0e62eb$export$2e2bcd8739ae039)(uri, config.ontologies) : uri, [
+        config
     ]);
 };
 var $487567a146508c4e$export$2e2bcd8739ae039 = $487567a146508c4e$var$useGetPrefixFromUri;
@@ -2192,5 +2218,5 @@ var $11242e90250f263e$exports = {};
 
 
 
-export {$9808be090468fc68$export$2e2bcd8739ae039 as dataProvider, $dcde11998342d30d$export$2e2bcd8739ae039 as buildSparqlQuery, $8ad7b5ebbca2bb3e$export$2e2bcd8739ae039 as buildBlankNodesQuery, $4872a1c30c1fc60e$export$2e2bcd8739ae039 as getUriFromPrefix, $861da9be2c0e62eb$export$2e2bcd8739ae039 as getPrefixFromUri, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $2d5f75df63129ebc$export$2e2bcd8739ae039 as fetchTypeIndexes, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $72db0904d77f0f1e$export$2e2bcd8739ae039 as useCompactPredicate, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $9d2c669bd52faa31$export$2e2bcd8739ae039 as useContainersByTypes, $43097d0b613bd4db$export$2e2bcd8739ae039 as useContainerByUri, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $3677b4de74c3d10d$export$2e2bcd8739ae039 as useDataProviderConfig, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $0c5cccc31d3b196d$export$2e2bcd8739ae039 as useGetExternalLink, $487567a146508c4e$export$2e2bcd8739ae039 as useGetPrefixFromUri, $d8039fd362ad4925$export$2e2bcd8739ae039 as FilterHandler, $207a50667fa8cffa$export$2e2bcd8739ae039 as GroupedReferenceHandler, $1a24ef5e038900c4$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
+export {$9808be090468fc68$export$2e2bcd8739ae039 as dataProvider, $dcde11998342d30d$export$2e2bcd8739ae039 as buildSparqlQuery, $8ad7b5ebbca2bb3e$export$2e2bcd8739ae039 as buildBlankNodesQuery, $4872a1c30c1fc60e$export$2e2bcd8739ae039 as getUriFromPrefix, $861da9be2c0e62eb$export$2e2bcd8739ae039 as getPrefixFromUri, $df7dd80ec544c185$export$2e2bcd8739ae039 as fetchDataRegistryContainers, $cdd3c71a628eeefe$export$2e2bcd8739ae039 as configureUserStorage, $2c257b4237cb14ca$export$2e2bcd8739ae039 as fetchAppRegistration, $91255e144bb55afc$export$2e2bcd8739ae039 as fetchDataRegistry, $2d5f75df63129ebc$export$2e2bcd8739ae039 as fetchTypeIndexes, $a87fd63d8fca0380$export$2e2bcd8739ae039 as fetchVoidEndpoints, $72db0904d77f0f1e$export$2e2bcd8739ae039 as useCompactPredicate, $586fa0ea9d02fa12$export$2e2bcd8739ae039 as useContainers, $9d2c669bd52faa31$export$2e2bcd8739ae039 as useContainersByTypes, $43097d0b613bd4db$export$2e2bcd8739ae039 as useContainerByUri, $35f3e75c86e51f35$export$2e2bcd8739ae039 as useCreateContainerUri, $e5a0eacd756fd1d5$export$2e2bcd8739ae039 as useDataModel, $3a9656756670cb78$export$2e2bcd8739ae039 as useDataModels, $3677b4de74c3d10d$export$2e2bcd8739ae039 as useDataProviderConfig, $4daf4cf698ee4eed$export$2e2bcd8739ae039 as useDataServers, $8dbb0c8c3814e663$export$2e2bcd8739ae039 as useGetCreateContainerUri, $0c5cccc31d3b196d$export$2e2bcd8739ae039 as useGetExternalLink, $487567a146508c4e$export$2e2bcd8739ae039 as useGetPrefixFromUri, $d8039fd362ad4925$export$2e2bcd8739ae039 as FilterHandler, $207a50667fa8cffa$export$2e2bcd8739ae039 as GroupedReferenceHandler, $1a24ef5e038900c4$export$2e2bcd8739ae039 as ReificationArrayInput, $03d52e691e8dc945$export$28772ab4c256e709 as createWsChannel, $03d52e691e8dc945$export$8d60734939c59ced as getOrCreateWsChannel, $03d52e691e8dc945$export$3edfe18db119b920 as createSolidNotificationChannel};
 //# sourceMappingURL=index.es.js.map

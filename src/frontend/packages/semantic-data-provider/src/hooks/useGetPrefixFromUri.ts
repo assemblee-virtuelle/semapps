@@ -5,7 +5,8 @@ import getPrefixFromUri from '../dataProvider/utils/getPrefixFromUri';
 const useGetPrefixFromUri = () => {
   const config = useDataProviderConfig();
 
-  return useCallback((uri: string) => getPrefixFromUri(uri, config!.ontologies), [config?.ontologies]);
+  // The config is loaded asynchronously
+  return useCallback((uri: string) => (config ? getPrefixFromUri(uri, config.ontologies) : uri), [config]);
 };
 
 export default useGetPrefixFromUri;
