@@ -309,7 +309,8 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
             // If the webId is the owner of the Pod, bypass WAC checks
             if (urlJoin(baseUrl, dataset) === webId) {
-              ctx.params.webId = 'system';
+              // On the owner's Pod, the rights of an application are a subset of the owner's rights
+              ctx.params.webId = webId === ctx.meta.webId && ctx.meta.clientId ? ctx.meta.clientId : 'system';
             }
           }
           return next(ctx);
