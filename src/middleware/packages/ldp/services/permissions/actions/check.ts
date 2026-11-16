@@ -14,7 +14,8 @@ const Schema = {
     uri: { type: 'string' },
     type: { type: 'enum', values: ['resource', 'container', 'custom'], default: 'resource' },
     mode: { type: 'enum', values: ['acl:Read', 'acl:Write', 'acl:Append', 'acl:Control'], default: 'acl:Read' },
-    webId: { type: 'string', optional: true }
+    webId: { type: 'string', optional: true },
+    clientId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     if (!(await this.actions.has(ctx.params, { parentCtx: ctx }))) {

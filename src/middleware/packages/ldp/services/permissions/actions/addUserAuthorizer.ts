@@ -1,5 +1,9 @@
 import type { ActionSchema } from 'moleculer';
 
+/**
+ * User authorizers can only grant rights: the first one returning true wins.
+ * When an application acts on behalf of a user, they are called for both of them.
+ */
 const Schema = {
   visibility: 'public',
   params: {
@@ -10,8 +14,8 @@ const Schema = {
   async handler(ctx) {
     const { actionName, priority } = ctx.params;
 
-    this.authorizers.push({ actionName, priority });
-    this.authorizers.sort((a: any, b: any) => a.priority - b.priority);
+    this.userAuthorizers.push({ actionName, priority });
+    this.userAuthorizers.sort((a: any, b: any) => a.priority - b.priority);
   }
 } satisfies ActionSchema;
 
