@@ -16,7 +16,7 @@ const WebAclAuthorizerSchema = {
   },
   dependencies: ['permissions'],
   async started() {
-    await this.broker.call('permissions.addUserAuthorizer', { actionName: `${this.name}.hasPermission` });
+    await this.broker.call('permissions.addAuthorizer', { actionName: `${this.name}.hasPermission` });
   },
   actions: {
     hasPermission: {

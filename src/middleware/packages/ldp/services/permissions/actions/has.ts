@@ -6,28 +6,26 @@ const Schema = {
     uri: { type: 'string' },
     type: { type: 'enum', values: ['resource', 'container', 'custom'], default: 'resource' },
     mode: { type: 'enum', values: ['acl:Read', 'acl:Write', 'acl:Append', 'acl:Control'], default: 'acl:Read' },
-    webId: { type: 'string', optional: true },
-    clientId: { type: 'string', optional: true }
+    webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     const { uri, type, mode } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
+    // If no authorizers have been registered, assume user can access everything
+    if (this.authorizers.length === 0) return true;
+
     if (webId === 'system') return true;
 
-    // An explicit webId doesn't mean the call is internal, so we only ignore the client if it is another user
-    const clientId = ctx.params.clientId ?? (webId === (ctx.meta.webId || 'anon') ? ctx.meta.clientId : undefined);
+    for (const authorizer of this.authorizers) {
+      const result = await ctx.call(authorizer.actionName, { uri, type, mode, webId });
 
-    if (clientId && clientId !== webId) {
-      for (const authorizer of this.clientAuthorizers) {
-        const result = await ctx.call(authorizer.actionName, { uri, type, mode, webId, clientId });
-        if (result !== true) return false;
-      }
-
-      if (!(await this.isUserAuthorized(ctx, { uri, type, mode, webId: clientId }))) return false;
+      // As soon as a guard returns true, stop here.
+      if (result === true) return true;
     }
 
-    return this.isUserAuthorized(ctx, { uri, type, mode, webId });
+    // If no guards returned a positive
+    return false;
   }
 } satisfies ActionSchema;
 
