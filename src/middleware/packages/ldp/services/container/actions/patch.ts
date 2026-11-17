@@ -55,12 +55,6 @@ const Schema = {
     if (!triplesToAdd && !triplesToRemove)
       throw new MoleculerError('No triples to add or to remove', 400, 'BAD_REQUEST');
 
-    if (triplesToRemove) {
-      await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Write', webId });
-    } else {
-      await ctx.call('permissions.check', { uri: containerUri, type: 'container', mode: 'acl:Append', webId });
-    }
-
     if (triplesToAdd) {
       for (const triple of triplesToAdd) {
         checkTripleValidity(triple, containerUri);

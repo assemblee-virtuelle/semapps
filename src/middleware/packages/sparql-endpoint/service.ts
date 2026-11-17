@@ -32,7 +32,7 @@ const SparqlEndpointService = {
           const [account] = await ctx.call('auth.account.find', { query: { username: ctx.params.username } });
           if (!account) throw new Error(`No account found with username ${ctx.params.username}`);
 
-          if (account.webId !== ctx.meta.webId && account.webId !== ctx.meta.impersonatedUser) {
+          if (account.webId !== ctx.meta.webId) {
             throw new Error(`You can only query your own SPARQL endpoint`);
           }
         }

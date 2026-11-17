@@ -17,7 +17,7 @@ const HttpSignatureService = {
   actions: {
     generateSignatureHeaders: {
       async handler(ctx) {
-        const { url, method, body, actorUri } = ctx.params;
+        const { url, method, body, actorUri, onBehalfOf } = ctx.params;
         // TODO: Use new service.
         const [{ privateKeyPem }] = await ctx.call('keys.getOrCreateWebIdKeys', {
           keyType: KEY_TYPES.RSA,
@@ -30,6 +30,11 @@ const HttpSignatureService = {
           // @ts-expect-error TS(2339): Property 'Digest' does not exist on type '{ Date: ... Remove this comment to see the full error message
           headers.Digest = this.buildDigest(body);
           includeHeaders.push('digest');
+        }
+        if (onBehalfOf) {
+          // @ts-expect-error TS(2339)
+          headers['On-Behalf-Of'] = onBehalfOf;
+          includeHeaders.push('on-behalf-of');
         }
 
         // Generate signature string
@@ -71,7 +76,7 @@ const HttpSignatureService = {
        * @param {string} ctx.params.path The path of the request
        * @param {string} ctx.params.method The method of the request
        * @param {object} ctx.params.headers The headers of the request
-       * @returns {Promise<{isValid: boolean, actorUri: string, publicKeyPem: string}>}
+       * @returns {Promise<{isValid: boolean, actorUri: string, publicKeyPem: string, signedHeaders: string[]}>}
        */
       async handler(ctx) {
         const { url, path, method, headers } = ctx.params;
@@ -110,26 +115,15 @@ const HttpSignatureService = {
           })
           .find(({ isValid }: any) => isValid) || { isValid: false, publicKey: null };
 
-        return { isValid: keyValid, actorUri, publicKeyPem };
+        return { isValid: keyValid, actorUri, publicKeyPem, signedHeaders: parsedSignature.params.headers };
       }
     },
 
     authenticate: {
       // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
       async handler(ctx) {
-        const { route, req, res } = ctx.params;
-        if (req.headers.signature) {
-          const { isValid, actorUri } = await this.actions.verifyHttpSignature(
-            { path: req.originalUrl, method: req.method, headers: req.headers },
-            { parentCtx: ctx }
-          );
-          if (isValid) {
-            ctx.meta.webId = actorUri;
-            return Promise.resolve();
-          }
-          ctx.meta.webId = 'anon';
-          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-        }
+        const { req } = ctx.params;
+        if (req.headers.signature) return this.authenticateRequest(ctx, req);
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }
@@ -138,25 +132,25 @@ const HttpSignatureService = {
     authorize: {
       // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
       async handler(ctx) {
-        const { route, req, res } = ctx.params;
-        if (req.headers.signature) {
-          const { isValid, actorUri } = await this.actions.verifyHttpSignature(
-            { path: req.originalUrl, method: req.method, headers: req.headers },
-            { parentCtx: ctx }
-          );
-          if (isValid) {
-            ctx.meta.webId = actorUri;
-            return Promise.resolve();
-          }
-          ctx.meta.webId = 'anon';
-          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-        }
+        const { req } = ctx.params;
+        if (req.headers.signature) return this.authenticateRequest(ctx, req);
         ctx.meta.webId = 'anon';
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
       }
     }
   },
   methods: {
+    async authenticateRequest(ctx, req) {
+      const { isValid, actorUri } = await this.actions.verifyHttpSignature(
+        { path: req.originalUrl, method: req.method, headers: req.headers },
+        { parentCtx: ctx }
+      );
+      if (!isValid) {
+        ctx.meta.webId = 'anon';
+        throw new E.UnAuthorizedError(E.ERR_INVALID_TOKEN);
+      }
+      ctx.meta.webId = actorUri;
+    },
     buildDigest(body) {
       return `SHA-256=${createHash('sha256').update(body).digest('base64')}`;
     }

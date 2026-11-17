@@ -10,10 +10,10 @@ import * as CONFIG from '../config.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const initialize = async () => {
+const initialize = async (cacher: any = CONFIG.ACTIVATE_CACHE) => {
   const broker = new ServiceBroker({
     // @ts-expect-error TS(2322): Type '{ name: string; created(broker: any): void; ... Remove this comment to see the full error message
-    middlewares: [CacherMiddleware(CONFIG.ACTIVATE_CACHE), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+    middlewares: [CacherMiddleware(cacher), WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
       options: {

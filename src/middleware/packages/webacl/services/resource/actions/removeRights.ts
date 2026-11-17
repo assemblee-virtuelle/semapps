@@ -22,11 +22,8 @@ export const action = {
     webId = webId || ctx.meta.webId || 'anon';
 
     if (webId !== 'system') {
-      const { control } = await ctx.call('webacl.resource.hasRights', {
-        resourceUri,
-        rights: { control: true },
-        webId
-      });
+      // Also checks the rights of the application, if any
+      const control = await ctx.call('permissions.has', { uri: resourceUri, mode: 'acl:Control', webId });
       if (!control) throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
     }
 
