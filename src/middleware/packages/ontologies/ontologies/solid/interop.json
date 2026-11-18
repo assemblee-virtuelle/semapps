@@ -152,6 +152,12 @@
     },
     "interop:joinPolicy": {
       "@type": "@id"
+    },
+    "interop:hasPublicAgentRegistration": {
+      "@type": "@id"
+    },
+    "interop:hasConnectedAgentRegistration": {
+      "@type": "@id"
     }
   }
 }
