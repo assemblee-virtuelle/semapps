@@ -3376,6 +3376,16 @@
     jose "^5.1.3"
     uuid "^11.1.0"
 
+"@inrupt/oidc-client-ext@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@inrupt/oidc-client-ext/-/oidc-client-ext-3.1.1.tgz#49ceaae936d63a48bdffc75f8ab06446505b5b47"
+  integrity sha512-vftKD2u5nufZTFkdUDMS3Uxj5xNQwArP11OFaALFkq6/3RwCAhe3lwOv8hNzL7Scv98T+KbAErBM0TwGGrS69g==
+  dependencies:
+    "@inrupt/oidc-client" "^1.11.6"
+    "@inrupt/solid-client-authn-core" "^3.1.1"
+    jose "^5.1.3"
+    uuid "^11.1.0"
+
 "@inrupt/oidc-client@^1.11.6":
   version "1.11.6"
   resolved "https://registry.yarnpkg.com/@inrupt/oidc-client/-/oidc-client-1.11.6.tgz#5b1ba7e84d0ca4da356f44db1ae8056881502027"
@@ -3398,10 +3408,30 @@
     jose "^5.1.3"
     uuid "^11.1.0"
 
+"@inrupt/solid-client-authn-browser@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@inrupt/solid-client-authn-browser/-/solid-client-authn-browser-3.1.1.tgz#ac9661e1e694fedc9443c1de13e2010c4e2429b4"
+  integrity sha512-Wd7TREmvdhTp+Sk88ei3hlg54sG1fNqkkPkuS+2tDBkcsXaViRQAEugVyh5pWRkd1xSFKrEzftb7UYEG4mJ0CQ==
+  dependencies:
+    "@inrupt/oidc-client-ext" "^3.1.1"
+    "@inrupt/solid-client-authn-core" "^3.1.1"
+    events "^3.3.0"
+    jose "^5.1.3"
+    uuid "^11.1.0"
+
 "@inrupt/solid-client-authn-core@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@inrupt/solid-client-authn-core/-/solid-client-authn-core-3.1.0.tgz#18ecec3a4e1dad8c0f7daa53359a499fd8024dee"
   integrity sha512-aoG8RvPBmYXTSqy2uJogpoVGPKsydC4mXNdm63BWCEMZ2QyaSRBjx4R4N6n5N2uy/aoib678Y7U3UtDCLDoFsQ==
+  dependencies:
+    events "^3.3.0"
+    jose "^5.1.3"
+    uuid "^11.1.0"
+
+"@inrupt/solid-client-authn-core@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@inrupt/solid-client-authn-core/-/solid-client-authn-core-3.1.1.tgz#cd4ae6a6f32cb231a922d005034badab88df9c0c"
+  integrity sha512-1oDSQCh/pVtPlTyvLQ2uwHo+hpLJF7izg82tjB+Ge8jqGYwkQyId0BrfncpCk//uJXxgRIcfAQp2MhXYbZo80Q==
   dependencies:
     events "^3.3.0"
     jose "^5.1.3"
