@@ -326,6 +326,8 @@ const $aba124ea15ea8bc6$var$isValidLDPContainer = (container)=>{
 const $aba124ea15ea8bc6$var$isObject = (val)=>{
     return val != null && typeof val === 'object' && !Array.isArray(val);
 };
+// Remove accents and uppercase
+const $aba124ea15ea8bc6$var$normalizeString = (str)=>str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const $aba124ea15ea8bc6$var$fetchContainers = async (containers, params, config)=>{
     const { httpClient: httpClient, jsonContext: jsonContext } = config;
     // Fetch simultaneously all containers
@@ -381,7 +383,7 @@ const $aba124ea15ea8bc6$var$fetchContainers = async (containers, params, config)
                     attributeValue
                 ];
                 return arrayValues.some((value)=>{
-                    if (typeof value === 'string') return value.toLowerCase().normalize('NFD').includes(filters.q.toLowerCase().normalize('NFD'));
+                    if (typeof value === 'string') return $aba124ea15ea8bc6$var$normalizeString(value).includes($aba124ea15ea8bc6$var$normalizeString(filters.q));
                     return false;
                 });
             }
@@ -398,7 +400,7 @@ const $aba124ea15ea8bc6$var$fetchContainers = async (containers, params, config)
                 const arrayValues = Array.isArray(resource[attribute]) ? resource[attribute] : [
                     resource[attribute]
                 ];
-                return arrayValues.some((value)=>typeof value === 'string' && value.includes(filters[attribute]));
+                return arrayValues.some((value)=>typeof value === 'string' && $aba124ea15ea8bc6$var$normalizeString(value).includes($aba124ea15ea8bc6$var$normalizeString(filters[attribute])));
             }
             return false;
         });
