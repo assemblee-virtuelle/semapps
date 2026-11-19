@@ -158,6 +158,9 @@
     },
     "interop:hasConnectedAgentRegistration": {
       "@type": "@id"
+    },
+    "interop:targetStorage": {
+      "@type": "@id"
     }
   }
 }
