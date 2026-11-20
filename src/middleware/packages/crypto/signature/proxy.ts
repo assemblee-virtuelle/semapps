@@ -91,13 +91,14 @@ const ProxyService = {
 
     query: {
       async handler(ctx) {
-        let { url, method, headers, body, actorUri } = ctx.params;
+        let { url, method, headers, body, actorUri, onBehalfOf } = ctx.params;
 
         const signatureHeaders = await ctx.call('signature.generateSignatureHeaders', {
           url,
           method,
           body,
-          actorUri
+          actorUri,
+          onBehalfOf
         });
 
         // Convert Headers object if necessary (otherwise we can't destructure it below)
@@ -150,7 +151,7 @@ const ProxyService = {
     }
   },
   events: {
-    'auth.registered': {
+    'webid.created': {
       async handler(ctx) {
         const { webId } = ctx.params;
         if (this.settings.podProvider) {

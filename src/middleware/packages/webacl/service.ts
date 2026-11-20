@@ -3,6 +3,7 @@ import type { ServiceSchema } from 'moleculer';
 import WebAclResourceService from './services/resource/index.ts';
 import WebAclGroupService from './services/group/index.ts';
 import WebAclCacheService from './services/cache/index.ts';
+import WebAclAuthorizerService from './services/authorizer/index.ts';
 import getRoutes from './routes/getRoutes.ts';
 
 const WebaclSchema = {
@@ -34,6 +35,11 @@ const WebaclSchema = {
         podProvider,
         superAdmins
       }
+    });
+
+    this.broker.createService({
+      mixins: [WebAclAuthorizerService],
+      settings: { podProvider }
     });
 
     // Only create this service if a cacher is defined

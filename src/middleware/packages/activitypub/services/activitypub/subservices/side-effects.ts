@@ -29,6 +29,7 @@ const ActivitypubSideEffectsSchema = {
       async handler(ctx) {
         const { matcher, actionName, boxTypes, key, capabilityGrantMatchFnGenerator, priority = 10 } = ctx.params;
 
+        this.processors = this.processors.filter((p: any) => p.actionName !== actionName || p.key !== key);
         this.processors.push({ matcher, actionName, boxTypes, key, priority, capabilityGrantMatchFnGenerator });
 
         // Sort processors by priority

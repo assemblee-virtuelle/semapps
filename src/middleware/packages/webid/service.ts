@@ -110,7 +110,7 @@ const WebIdService = {
           { parentCtx: ctx }
         );
 
-        ctx.emit('webid.created', webIdData, { meta: { webId: null, dataset: null } });
+        ctx.emit('webid.created', { webId, webIdData }, { meta: { webId: null, dataset: null } });
 
         return webId;
       }

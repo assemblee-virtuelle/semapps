@@ -79,10 +79,7 @@ const VCHolderService = {
           noAnonRead = false
         } = ctx.params;
 
-        const webId =
-          ctx.meta.webId === 'system' && ctx.params.webId
-            ? ctx.params.webId
-            : ctx.meta.impersonatedUser || ctx.meta.webId;
+        const webId = ctx.meta.webId === 'system' && ctx.params.webId ? ctx.params.webId : ctx.meta.webId;
 
         const purpose = new AuthenticationProofPurpose({ term: proofPurpose, challenge, domain });
 

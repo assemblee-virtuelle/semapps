@@ -45,6 +45,7 @@ $parcel$export(module.exports, "buildSparqlQuery", () => $1d6ef12386121fca$expor
 $parcel$export(module.exports, "buildBlankNodesQuery", () => $62e296927bdba02e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "getUriFromPrefix", () => $108795c3831be99f$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "getPrefixFromUri", () => $8c4c0f0b55649ce6$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "fetchDataRegistryContainers", () => $fd32526fd3a31112$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "configureUserStorage", () => $89358cee13a17a31$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "fetchAppRegistration", () => $c512de108ef5d674$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "fetchDataRegistry", () => $cd772adda3024172$export$2e2bcd8739ae039);
@@ -1059,7 +1060,9 @@ var $ceaafb56f75454f0$export$2e2bcd8739ae039 = $ceaafb56f75454f0$var$updateMetho
         if (!url) throw new Error(`No URL provided on httpClient call`);
         const authServerKey = (0, $0a5fcc1f7fc2050f$export$2e2bcd8739ae039)('authServer', dataServers);
         const serverKey = (0, $68523d444fbb0b63$export$2e2bcd8739ae039)(url, dataServers);
-        const useProxy = serverKey !== authServerKey && // The server is different from the auth server.
+        // Other data servers may be declared on the same domain as the auth server (e.g. other Pods)
+        const isAuthServer = !!authServerKey && new URL(url).origin === new URL(dataServers[authServerKey].baseUrl).origin;
+        const useProxy = !isAuthServer && // The server is different from the auth server.
         !!dataServers[authServerKey]?.proxyUrl && // A proxy URL is configured on the auth server.
         dataServers[serverKey]?.noProxy !== true; // The server does not explicitly disable the proxy.
         const headers = new Headers(options.headers);
@@ -1095,7 +1098,7 @@ var $ceaafb56f75454f0$export$2e2bcd8739ae039 = $ceaafb56f75454f0$var$updateMetho
             });
         }
         // Add token if the server is the same as the auth server.
-        if (serverKey === authServerKey) {
+        if (isAuthServer) {
             const token = localStorage.getItem('token');
             if (token) headers.set('Authorization', `Bearer ${token}`);
         }
@@ -1346,52 +1349,9 @@ var $8c4c0f0b55649ce6$export$2e2bcd8739ae039 = $8c4c0f0b55649ce6$var$getPrefixFr
 
 
 
-/**
- * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
- */ const $89358cee13a17a31$var$configureUserStorage = ()=>({
-        name: 'configureUserStorage',
-        transformConfig: async (config)=>{
-            const token = localStorage.getItem('token');
-            // If the user is logged in
-            if (token) {
-                const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
-                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
-                const { json: user } = await config.httpClient(webId);
-                if (user) {
-                    const newConfig = {
-                        ...config
-                    };
-                    newConfig.dataServers[webId] = {
-                        pod: true,
-                        default: true,
-                        authServer: true,
-                        baseUrl: user['pim:storage'] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, 'data'),
-                        sparqlEndpoint: user.endpoints?.['void:sparqlEndpoint'] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, 'sparql'),
-                        proxyUrl: user.endpoints?.proxyUrl,
-                        containers: []
-                    };
-                    if (!newConfig.jsonContext) newConfig.jsonContext = [
-                        'https://www.w3.org/ns/activitystreams',
-                        (0, ($parcel$interopDefault($bkNnK$urljoin)))(new URL(webId).origin, '/.well-known/context.jsonld')
-                    ];
-                    return newConfig;
-                }
-            }
-            // Nothing to change
-            return config;
-        }
-    });
-var $89358cee13a17a31$export$2e2bcd8739ae039 = $89358cee13a17a31$var$configureUserStorage;
 
-
-
-
-
-
-
-
-const $37dc42f6e1c3b4af$var$getContainerFromDataRegistration = async (dataRegistrationUri, config)=>{
-    const { json: dataRegistration } = await config.httpClient(dataRegistrationUri, {
+const $9232c0fad89a18f5$var$fetchContainerFromDataRegistration = async (dataRegistrationUri, httpClient)=>{
+    const { json: dataRegistration } = await httpClient(dataRegistrationUri, {
         headers: new Headers({
             Accept: 'application/ld+json',
             Prefer: 'return=representation; include="http://www.w3.org/ns/ldp#PreferMinimalContainer"'
@@ -1423,11 +1383,8 @@ const $37dc42f6e1c3b4af$var$getContainerFromDataRegistration = async (dataRegist
             '@container': '@language'
         }
     });
-    const userStorage = (0, $0a5fcc1f7fc2050f$export$2e2bcd8739ae039)('default', config.dataServers);
-    const { baseUrl: baseUrl } = config.dataServers[userStorage];
-    const containerPath = dataRegistration.id.replace(baseUrl, '');
     const container = {
-        path: containerPath,
+        uri: dataRegistration.id,
         shapeTreeUri: shapeTreeUri,
         label: shapeTree.label,
         labelPredicate: shapeTree.describesInstance,
@@ -1442,6 +1399,78 @@ const $37dc42f6e1c3b4af$var$getContainerFromDataRegistration = async (dataRegist
         container.types = shape?.[0]?.['http://www.w3.org/ns/shacl#targetClass']?.map((node)=>node?.['@id']);
     }
     return container;
+};
+var $9232c0fad89a18f5$export$2e2bcd8739ae039 = $9232c0fad89a18f5$var$fetchContainerFromDataRegistration;
+
+
+/**
+ * Return the containers of the data registrations of an agent (user, group...), by fetching its registry set
+ */ const $fd32526fd3a31112$var$fetchDataRegistryContainers = async (webId, httpClient)=>{
+    const { json: agent } = await httpClient(webId);
+    if (!agent['interop:hasRegistrySet']) throw new Error(`Agent ${webId} is missing interop:hasRegistrySet`);
+    const { json: registrySet } = await httpClient(agent['interop:hasRegistrySet']);
+    if (!registrySet['interop:hasDataRegistry']) throw new Error(`Agent ${webId} is missing interop:hasDataRegistry`);
+    const { json: dataRegistry } = await httpClient(registrySet['interop:hasDataRegistry']);
+    return Promise.all((0, $e6fbab1f303bdb93$export$2e2bcd8739ae039)(dataRegistry['interop:hasDataRegistration']).map((dataRegistrationUri)=>(0, $9232c0fad89a18f5$export$2e2bcd8739ae039)(dataRegistrationUri, httpClient)));
+};
+var $fd32526fd3a31112$export$2e2bcd8739ae039 = $fd32526fd3a31112$var$fetchDataRegistryContainers;
+
+
+
+
+/**
+ * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
+ */ const $89358cee13a17a31$var$configureUserStorage = ()=>({
+        name: 'configureUserStorage',
+        transformConfig: async (config)=>{
+            const token = localStorage.getItem('token');
+            // If the user is logged in
+            if (token) {
+                const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
+                const webId = payload.webId || payload.webid; // Currently we must deal with both formats
+                const { json: user } = await config.httpClient(webId);
+                if (user) {
+                    const newConfig = {
+                        ...config
+                    };
+                    // The user's Pod must be the only auth server, otherwise its proxy would not be used
+                    Object.values(newConfig.dataServers).forEach((server)=>delete server.authServer);
+                    newConfig.dataServers[webId] = {
+                        pod: true,
+                        default: true,
+                        authServer: true,
+                        baseUrl: user['pim:storage'] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, 'data'),
+                        sparqlEndpoint: user.endpoints?.['void:sparqlEndpoint'] || (0, ($parcel$interopDefault($bkNnK$urljoin)))(webId, 'sparql'),
+                        proxyUrl: user.endpoints?.proxyUrl,
+                        containers: []
+                    };
+                    if (!newConfig.jsonContext) newConfig.jsonContext = [
+                        'https://www.w3.org/ns/activitystreams',
+                        (0, ($parcel$interopDefault($bkNnK$urljoin)))(new URL(webId).origin, '/.well-known/context.jsonld')
+                    ];
+                    return newConfig;
+                }
+            }
+            // Nothing to change
+            return config;
+        }
+    });
+var $89358cee13a17a31$export$2e2bcd8739ae039 = $89358cee13a17a31$var$configureUserStorage;
+
+
+
+
+
+
+
+const $37dc42f6e1c3b4af$var$getContainerFromDataRegistration = async (dataRegistrationUri, config)=>{
+    const { uri: uri, ...container } = await (0, $9232c0fad89a18f5$export$2e2bcd8739ae039)(dataRegistrationUri, config.httpClient);
+    const userStorage = (0, $0a5fcc1f7fc2050f$export$2e2bcd8739ae039)('default', config.dataServers);
+    const { baseUrl: baseUrl } = config.dataServers[userStorage];
+    return {
+        ...container,
+        path: uri.replace(baseUrl, '')
+    };
 };
 var $37dc42f6e1c3b4af$export$2e2bcd8739ae039 = $37dc42f6e1c3b4af$var$getContainerFromDataRegistration;
 
@@ -1525,19 +1554,16 @@ var $c512de108ef5d674$export$2e2bcd8739ae039 = $c512de108ef5d674$var$fetchAppReg
                 const payload = (0, ($parcel$interopDefault($bkNnK$jwtdecode)))(token);
                 const webId = payload.webId || payload.webid; // Currently we must deal with both formats
                 if (!config.dataServers[webId]) throw new Error(`You must configure the user storage first with the configureUserStorage plugin`);
-                const { json: user } = await config.httpClient(webId);
-                if (!user['interop:hasRegistrySet']) throw new Error(`User ${webId} is missing interop:hasRegistrySet`);
-                const { json: registrySet } = await config.httpClient(user['interop:hasRegistrySet']);
-                if (!registrySet['interop:hasDataRegistry']) throw new Error(`User ${webId} is missing interop:hasDataRegistry`);
-                const { json: dataRegistry } = await config.httpClient(registrySet['interop:hasDataRegistry']);
-                if (dataRegistry['interop:hasDataRegistration']) {
-                    const results = await Promise.all(dataRegistry['interop:hasDataRegistration'].map((dataRegistrationUri)=>{
-                        return (0, $37dc42f6e1c3b4af$export$2e2bcd8739ae039)(dataRegistrationUri, config);
-                    }));
+                const containers = await (0, $fd32526fd3a31112$export$2e2bcd8739ae039)(webId, config.httpClient);
+                if (containers.length > 0) {
+                    const { baseUrl: baseUrl } = config.dataServers[webId];
                     const newConfig = {
                         ...config
                     };
-                    newConfig.dataServers[webId].containers?.push(...results.flat());
+                    newConfig.dataServers[webId].containers?.push(...containers.map(({ uri: uri, ...container })=>({
+                            ...container,
+                            path: uri.replace(baseUrl, '')
+                        })));
                     return newConfig;
                 }
             }
@@ -1939,8 +1965,9 @@ var $413b0e8af6982264$export$2e2bcd8739ae039 = $413b0e8af6982264$var$useGetExter
 
 const $d602250066d4ff3e$var$useGetPrefixFromUri = ()=>{
     const config = (0, $9def35f4441a9bb2$export$2e2bcd8739ae039)();
-    return (0, $bkNnK$react.useCallback)((uri)=>(0, $8c4c0f0b55649ce6$export$2e2bcd8739ae039)(uri, config.ontologies), [
-        config?.ontologies
+    // The config is loaded asynchronously
+    return (0, $bkNnK$react.useCallback)((uri)=>config ? (0, $8c4c0f0b55649ce6$export$2e2bcd8739ae039)(uri, config.ontologies) : uri, [
+        config
     ]);
 };
 var $d602250066d4ff3e$export$2e2bcd8739ae039 = $d602250066d4ff3e$var$useGetPrefixFromUri;

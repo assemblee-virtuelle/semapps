@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import rdf from '@rdfjs/data-model';
 import { MIME_TYPES } from '@semapps/mime-types';
-import { arrayOf } from '@semapps/ldp';
+import { arrayOf, getDatasetFromUri } from '@semapps/ldp';
 import type { ServiceSchema } from 'moleculer';
 import { ACTOR_TYPES, AS_PREFIX } from '../../../constants.ts';
 import { getSlugFromUri, waitForResource } from '../../../utils.ts';
@@ -92,8 +92,7 @@ const ActorService = {
       async handler(ctx) {
         const { actorUri, predicate, endpoint } = ctx.params;
 
-        const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-        const dataset = account.username;
+        const dataset = getDatasetFromUri(actorUri);
 
         await ctx.call('triplestore.update', {
           query: {
@@ -194,7 +193,8 @@ const ActorService = {
     'ldp.resource.created': {
       async handler(ctx) {
         const { resourceUri, newData } = ctx.params;
-        if (this.isActor(newData)) {
+        // In Pod provider config, actors are initialized on the webid.created event
+        if (!this.settings.podProvider && this.isActor(newData)) {
           await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
           await ctx.call('signature.keypair.generate', { actorUri: resourceUri });
           await ctx.call('signature.keypair.attachPublicKey', { actorUri: resourceUri });
@@ -211,7 +211,7 @@ const ActorService = {
       }
     },
 
-    'auth.registered': {
+    'webid.created': {
       async handler(ctx) {
         const { webId } = ctx.params;
         await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });

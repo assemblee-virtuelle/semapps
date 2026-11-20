@@ -4,15 +4,14 @@ const Schema = {
   visibility: 'public',
   params: {
     actionName: { type: 'string' },
-    priority: { type: 'number', default: 5 }
+    // The authorizers with the lowest priority are called first
+    priority: { type: 'number', default: 10 }
   },
   async handler(ctx) {
     const { actionName, priority } = ctx.params;
 
     this.authorizers.push({ actionName, priority });
-
-    // Re-order all authorizers by priority
-    this.authorizers.sort((a: any, b: any) => b.priority - a.priority);
+    this.authorizers.sort((a: any, b: any) => a.priority - b.priority);
   }
 } satisfies ActionSchema;
 

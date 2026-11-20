@@ -198,7 +198,7 @@ const TypeIndexesSchema = {
     }
   },
   events: {
-    'auth.registered': {
+    'webid.created': {
       async handler(ctx) {
         const { webId } = ctx.params;
 

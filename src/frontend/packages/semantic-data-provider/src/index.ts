@@ -4,6 +4,7 @@ export { default as buildSparqlQuery } from './dataProvider/utils/buildSparqlQue
 export { default as buildBlankNodesQuery } from './dataProvider/utils/buildBlankNodesQuery';
 export { default as getUriFromPrefix } from './dataProvider/utils/getUriFromPrefix';
 export { default as getPrefixFromUri } from './dataProvider/utils/getPrefixFromUri';
+export { default as fetchDataRegistryContainers } from './dataProvider/utils/fetchDataRegistryContainers';
 
 export { default as configureUserStorage } from './dataProvider/plugins/configureUserStorage';
 export { default as fetchAppRegistration } from './dataProvider/plugins/fetchAppRegistration';

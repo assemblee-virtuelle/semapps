@@ -72,10 +72,7 @@ const Schema = {
     'ldp.resource.created': {
       async handler(ctx) {
         const { resourceUri, newData, webId, dataset } = ctx.params;
-        this.actions.tagCreatedResource(
-          { resourceUri, newData, webId: ctx.meta.impersonatedUser || webId, dataset },
-          { parentCtx: ctx }
-        );
+        this.actions.tagCreatedResource({ resourceUri, newData, webId, dataset }, { parentCtx: ctx });
       }
     },
 

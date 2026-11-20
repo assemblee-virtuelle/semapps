@@ -95,10 +95,7 @@ const VCCredentialService = {
           keyId = undefined
         } = ctx.params;
 
-        const webId =
-          ctx.meta.webId === 'system' && ctx.params.webId
-            ? ctx.params.webId
-            : ctx.meta.impersonatedUser || ctx.meta.webId;
+        const webId = ctx.meta.webId === 'system' && ctx.params.webId ? ctx.params.webId : ctx.meta.webId;
 
         const key = await ctx.call('keys.getMultikey', {
           webId,

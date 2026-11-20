@@ -170,6 +170,10 @@ export const buildSparqlQuery: ({ containersUris, params, dataModel, ontologies 
 export const dataProvider: (originalConfig: Configuration) => SemanticDataProvider;
 export const getPrefixFromUri: (uri: string, ontologies: Record<string, string>) => string;
 /**
+ * Return the containers of the data registrations of an agent (user, group...), by fetching its registry set
+ */
+export const fetchDataRegistryContainers: (webId: string, httpClient: FetchJsonFn) => Promise<Omit<Container, "path">[]>;
+/**
  * Adds `dataServers.user` properties to configuration (baseUrl, sparqlEndpoint, proxyUrl, ...).
  */
 export const configureUserStorage: () => Plugin;

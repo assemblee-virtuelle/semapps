@@ -18,7 +18,7 @@ const Schema = {
   },
   async handler(ctx) {
     if (!(await this.actions.has(ctx.params, { parentCtx: ctx }))) {
-      throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED');
+      throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden' });
     }
   }
 } satisfies ActionSchema;

@@ -401,7 +401,7 @@ const $82adcd05a20fe158$var$authProvider = ({ dataProvider: dataProvider, authTy
                     id: webId,
                     fullName: // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     profileData['vcard:given-name'] || // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-                    profileData['pair:label'] || webIdData['foaf:name'] || webIdData['pair:label'],
+                    profileData['pair:label'] || webIdData['foaf:name'] || webIdData.name || webIdData['pair:label'],
                     avatar: // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
                     profileData['vcard:photo'] || webIdData.image?.url || webIdData.image || webIdData.icon?.url || webIdData.icon,
                     profileData: profileData,
